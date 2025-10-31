@@ -33,6 +33,7 @@ dofile(path .. "grasslandbuildings.lua") --
 dofile(path .. "lakebuildings.lua") --
 dofile(path .. "desertbuildings.lua") --
 dofile(path .. "savannabuildings.lua") --
+dofile(path .. "npcmood.lua") --
 dofile(path .. "grasslandcreatures.lua") --
 dofile(path .. "junglecreatures.lua") --
 dofile(path .. "arcticcreatures.lua") --
