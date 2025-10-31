@@ -4,22 +4,22 @@ nativevillages = nativevillages or {}
 nativevillages.mood = {}
 
 nativevillages.mood.moods = {
-	happy = {icon = "😊", color = "#FFD700"},
-	content = {icon = "🙂", color = "#90EE90"},
-	neutral = {icon = "😐", color = "#D3D3D3"},
-	sad = {icon = "😢", color = "#4682B4"},
-	angry = {icon = "😠", color = "#FF4500"},
-	hungry = {icon = "🍖", color = "#FFA500"},
-	lonely = {icon = "💔", color = "#9370DB"},
-	scared = {icon = "😨", color = "#FFE4B5"},
+	happy = {texture = "nativevillages_mood_happy.png"},
+	content = {texture = "nativevillages_mood_content.png"},
+	neutral = {texture = "nativevillages_mood_neutral.png"},
+	sad = {texture = "nativevillages_mood_sad.png"},
+	angry = {texture = "nativevillages_mood_angry.png"},
+	hungry = {texture = "nativevillages_mood_hungry.png"},
+	lonely = {texture = "nativevillages_mood_lonely.png"},
+	scared = {texture = "nativevillages_mood_scared.png"},
 }
 
 nativevillages.mood.desires = {
-	food = {icon = "🍞", priority = 1},
-	trade = {icon = "💰", priority = 2},
-	companionship = {icon = "👥", priority = 3},
-	safety = {icon = "🛡️", priority = 4},
-	rest = {icon = "💤", priority = 5},
+	food = {texture = "nativevillages_desire_food.png", priority = 1},
+	trade = {texture = "nativevillages_desire_trade.png", priority = 2},
+	companionship = {texture = "nativevillages_desire_companionship.png", priority = 3},
+	safety = {texture = "nativevillages_desire_safety.png", priority = 4},
+	rest = {texture = "nativevillages_desire_rest.png", priority = 5},
 }
 
 function nativevillages.mood.init_npc(self)
@@ -156,9 +156,9 @@ function nativevillages.mood.update_indicator(self)
 	local mood_data = nativevillages.mood.moods[self.nv_mood] or nativevillages.mood.moods.neutral
 	local desire_data = self.nv_current_desire and nativevillages.mood.desires[self.nv_current_desire]
 
-	local text = mood_data.icon
+	local texture = mood_data.texture
 	if desire_data and math.random(100) < 60 then
-		text = desire_data.icon
+		texture = desire_data.texture
 	end
 
 	self.nv_mood_indicator = minetest.add_entity(pos, "nativevillages:mood_indicator")
@@ -170,9 +170,7 @@ function nativevillages.mood.update_indicator(self)
 			{x=0, y=0, z=0}
 		)
 		self.nv_mood_indicator:set_properties({
-			textures = {"nativevillages_mood_bg.png"},
-			nametag = text,
-			nametag_color = mood_data.color,
+			textures = {texture},
 		})
 	end
 end
@@ -223,11 +221,12 @@ minetest.register_entity("nativevillages:mood_indicator", {
 		physical = false,
 		collisionbox = {0, 0, 0, 0, 0, 0},
 		visual = "sprite",
-		visual_size = {x=0.5, y=0.5},
-		textures = {"nativevillages_mood_bg.png"},
+		visual_size = {x=1.0, y=1.0},
+		textures = {"nativevillages_mood_neutral.png"},
 		is_visible = true,
 		pointable = false,
 		static_save = false,
+		glow = 5,
 	},
 
 	on_step = function(self, dtime)

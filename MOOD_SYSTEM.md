@@ -51,6 +51,8 @@ All mood data is saved when NPCs are unloaded and restored when they reload, ens
 Currently implemented on:
 - Grassland Female NPCs (nativevillages:grasslandfemale)
 
+**Textures:** Basic placeholder textures are included for testing. For better visuals, replace the texture files in `/textures/` with custom designs (see TEXTURE_LIST.md for specifications and design tips).
+
 ## Extending to Other NPCs
 
 To add mood tracking to other NPC types, add these callbacks to the mob definition:
