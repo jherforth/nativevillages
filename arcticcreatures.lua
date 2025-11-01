@@ -72,7 +72,7 @@ if not mobs.custom_spawn_nativevillages then
 mobs:spawn({
 	name = "nativevillages:icedog",
 	nodes = {"default:snowblock"},
-	neighbors = {"nativevillages:sledge"},
+	neighbors = {"nativevillages:sledge", "default:wood", "default:tree", "doors:door_wood_a"},
 	min_light = 14,
 	interval = 60,
 	chance = 8000, -- 15000
@@ -241,7 +241,7 @@ if not mobs.custom_spawn_nativevillages then
 mobs:spawn({
 	name = "nativevillages:icesledgetrader",
 	nodes = {"default:snowblock"},
-	neighbors = {"nativevillages:sledge"},
+	neighbors = {"nativevillages:sledge", "default:wood", "default:tree", "doors:door_wood_a"},
 	min_light = 0,
 	interval = 60,
 	active_object_count = 1,
@@ -410,9 +410,9 @@ if not mobs.custom_spawn_nativevillages then
 mobs:spawn({
 	name = "nativevillages:icevillagerfemale",
 	nodes = {"default:snowblock", "wool:brown"},
-	neighbors = {"nativevillages:blanket"},
+	neighbors = {"nativevillages:blanket", "default:wood", "default:tree", "doors:door_wood_a"},
 	min_light = 0,
-	interval = 60,
+	interval = 30,
 	active_object_count = 4,
 	chance = 1, -- 15000
 	min_height = 0,
@@ -550,9 +550,9 @@ if not mobs.custom_spawn_nativevillages then
 mobs:spawn({
 	name = "nativevillages:icevillagermale",
 	nodes = {"default:snowblock", "wool:brown"},
-	neighbors = {"nativevillages:blanket"},
+	neighbors = {"nativevillages:blanket", "default:wood", "default:tree", "doors:door_wood_a"},
 	min_light = 0,
-	interval = 60,
+	interval = 30,
 	active_object_count = 4,
 	chance = 1, -- 15000
 	min_height = 0,

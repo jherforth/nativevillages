@@ -501,7 +501,7 @@ if not mobs.custom_spawn_nativevillages then
 mobs:spawn({
 	name = "nativevillages:savannaqueen",
 	nodes = {"default:dry_dirt_with_dry_grass", "default:clay"},
-	neighbors = {"nativevillages:savannathrone"},
+	neighbors = {"nativevillages:savannathrone", "default:wood", "default:tree", "doors:door_wood_a"},
 	min_light = 0,
 	interval = 60,
 	active_object_count = 1,
@@ -670,9 +670,9 @@ if not mobs.custom_spawn_nativevillages then
 mobs:spawn({
 	name = "nativevillages:savannamale",
 	nodes = {"default:dry_dirt_with_dry_grass", "default:clay"},
-	neighbors = {"nativevillages:savannavessels"},
+	neighbors = {"nativevillages:savannavessels", "default:wood", "default:tree", "doors:door_wood_a"},
 	min_light = 0,
-	interval = 60,
+	interval = 30,
 	active_object_count = 4,
 	chance = 1, -- 15000
 	min_height = 0,
@@ -832,7 +832,7 @@ if not mobs.custom_spawn_nativevillages then
 mobs:spawn({
 	name = "nativevillages:savannaking",
 	nodes = {"default:dry_dirt_with_dry_grass", "default:clay"},
-	neighbors = {"nativevillages:savannathrone"},
+	neighbors = {"nativevillages:savannathrone", "default:wood", "default:tree", "doors:door_wood_a"},
 	min_light = 0,
 	interval = 60,
 	active_object_count = 1,
@@ -996,9 +996,9 @@ if not mobs.custom_spawn_nativevillages then
 mobs:spawn({
 	name = "nativevillages:savannafemale",
 	nodes = {"default:dry_dirt_with_dry_grass", "default:clay"},
-	neighbors = {"nativevillages:savannavessels"},
+	neighbors = {"nativevillages:savannavessels", "default:wood", "default:tree", "doors:door_wood_a"},
 	min_light = 0,
-	interval = 60,
+	interval = 30,
 	active_object_count = 4,
 	chance = 1, -- 15000
 	min_height = 0,

@@ -154,9 +154,9 @@ if not mobs.custom_spawn_nativevillages then
 mobs:spawn({
 	name = "nativevillages:desertvillagermale",
 	nodes = {"default:desert_sand", "group:wool"},
-	neighbors = {"nativevillages:desertcrpet"},
+	neighbors = {"nativevillages:desertcrpet", "default:wood", "default:desert_stone", "doors:door_wood_a"},
 	min_light = 0,
-	interval = 60,
+	interval = 30,
 	active_object_count = 4,
 	chance = 1, -- 15000
 	min_height = 0,
@@ -322,9 +322,9 @@ if not mobs.custom_spawn_nativevillages then
 mobs:spawn({
 	name = "nativevillages:desertvillagerfemale",
 	nodes = {"default:desert_sand", "group:wool"},
-	neighbors = {"nativevillages:desertcrpet"},
+	neighbors = {"nativevillages:desertcrpet", "default:wood", "default:desert_stone", "doors:door_wood_a"},
 	min_light = 0,
-	interval = 60,
+	interval = 30,
 	active_object_count = 4,
 	chance = 1, -- 15000
 	min_height = 0,
@@ -597,7 +597,7 @@ if not mobs.custom_spawn_nativevillages then
 mobs:spawn({
 	name = "nativevillages:desertranger",
 	nodes = {"default:desert_sand", "group:wool"},
-	neighbors = {"nativevillages:hookah"},
+	neighbors = {"nativevillages:hookah", "default:wood", "default:desert_stone", "doors:door_wood_a"},
 	min_light = 0,
 	interval = 60,
 	active_object_count = 4,
@@ -707,7 +707,7 @@ if not mobs.custom_spawn_nativevillages then
 mobs:spawn({
 	name = "nativevillages:desertraider",
 	nodes = {"default:desert_sand", "group:wool"},
-	neighbors = {"nativevillages:hookah"},
+	neighbors = {"nativevillages:hookah", "default:wood", "default:desert_stone", "doors:door_wood_a"},
 	min_light = 0,
 	interval = 60,
 	active_object_count = 4,

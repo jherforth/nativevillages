@@ -251,9 +251,9 @@ if not mobs.custom_spawn_nativevillages then
 mobs:spawn({
 	name = "nativevillages:grasslandfemale",
 	nodes = {"default:dirt_with_grass", "default:cobble", "default:dirt_with_coniferous_litter", "default:clay"},
-	neighbors = {"nativevillages:grasslandbarrel"},
+	neighbors = {"nativevillages:grasslandbarrel", "default:wood", "default:tree", "doors:door_wood_a"},
 	min_light = 0,
-	interval = 60,
+	interval = 30,
 	active_object_count = 4,
 	chance = 1, -- 15000
 	min_height = 0,
@@ -426,9 +426,9 @@ if not mobs.custom_spawn_nativevillages then
 mobs:spawn({
 	name = "nativevillages:grasslandmale",
 	nodes = {"default:dirt_with_grass", "default:cobble", "default:dirt_with_coniferous_litter", "default:clay"},
-	neighbors = {"nativevillages:grasslandbarrel"},
+	neighbors = {"nativevillages:grasslandbarrel", "default:wood", "default:tree", "doors:door_wood_a"},
 	min_light = 0,
-	interval = 60,
+	interval = 30,
 	active_object_count = 4,
 	chance = 1, -- 15000
 	min_height = 0,
