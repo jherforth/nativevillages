@@ -5,9 +5,10 @@ The mood system needs 13 texture files to be placed in the `textures/` directory
 ## Texture Specifications
 
 **Format:** PNG with alpha transparency
-**Recommended Size:** 32x32 pixels (or 64x64 for higher quality)
+**Recommended Size:** 20x20 pixels (matching other mod textures)
 **Location:** `/textures/` directory
 **Style:** Simple, clear icons that are recognizable at small sizes
+**Note:** Can use 32x32 or 64x64 if you want higher detail, but 20x20 works great
 
 ## Required Mood Textures (8 files)
 

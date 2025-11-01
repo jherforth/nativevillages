@@ -1,7 +1,7 @@
 MOOD SYSTEM TEXTURE FILES
 ========================
 
-✓ All 13 required textures have been created as placeholders
+✓ All 13 required textures created at 20x20 pixels
 
 MOOD TEXTURES (circles with colors):
 - nativevillages_mood_happy.png (gold/yellow)
@@ -21,12 +21,12 @@ DESIRE TEXTURES (simple shapes):
 - nativevillages_desire_rest.png (purple rectangle/bed)
 
 SPECIFICATIONS:
-- Size: 32x32 pixels
+- Size: 20x20 pixels
 - Format: PNG with transparency
 - Location: textures/ directory
 
 TO IMPROVE VISUALS:
-Replace these placeholder files with custom artwork.
+Replace these placeholder files with custom 20x20 artwork.
 See TEXTURE_LIST.md for detailed design suggestions.
 
 The system is ready to test!
