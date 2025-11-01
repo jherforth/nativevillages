@@ -38,10 +38,18 @@ The mood system tracks several internal values that affect NPC mood:
 
 ### Interaction Effects
 
-- **Feeding** - Reduces hunger by 30, boosts mood, resets interaction timer
-- **Right-clicking** - Reduces loneliness, boosts mood slightly
-- **Trading** - Resets interaction timer, reduces loneliness
+- **Feeding** - Reduces hunger by 30, boosts mood by 15 points, resets interaction timer
+- **Right-clicking** - Reduces loneliness by 20, boosts mood by 5 points
+- **Trading** - Reduces loneliness by 25, boosts mood by 20 points, resets interaction timer
 - **Combat** - Increases fear significantly
+
+### Trading
+
+NPCs have a trading system that significantly improves their mood:
+- **Grassland Female**: Give bread (any type) to receive random items from their drop list
+- Trading provides the largest mood boost (+20) compared to feeding (+15) or simple interaction (+5)
+- Shows the "trade" desire icon when mood calculation suggests they want to trade
+- Use trading to quickly improve a sad or angry NPC's mood
 
 ### Persistence
 All mood data is saved when NPCs are unloaded and restored when they reload, ensuring NPCs remember their emotional state.

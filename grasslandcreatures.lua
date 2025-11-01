@@ -219,7 +219,7 @@ sounds = {
 
 			minetest.chat_send_player(name, S("Grasslander dropped you an item for bread!"))
 
-			nativevillages.mood.on_feed(self, clicker)
+			nativevillages.mood.on_trade(self, clicker)
 
 			return
 		end

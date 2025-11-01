@@ -190,6 +190,13 @@ function nativevillages.mood.on_interact(self, clicker)
 	nativevillages.mood.update_mood(self, 0)
 end
 
+function nativevillages.mood.on_trade(self, clicker)
+	self.nv_last_interaction = 0
+	self.nv_loneliness = math.max(0, (self.nv_loneliness or 0) - 25)
+	self.nv_mood_value = math.min(100, (self.nv_mood_value or 50) + 20)
+	nativevillages.mood.update_mood(self, 0)
+end
+
 function nativevillages.mood.get_staticdata_extra(self)
 	return {
 		nv_mood = self.nv_mood,
