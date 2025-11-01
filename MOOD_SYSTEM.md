@@ -74,10 +74,17 @@ The mood system is implemented on all NPCs with trading:
 **Lake NPCs:**
 - Lake Fisher (trades gold_lump for catfish)
 
+**Desert NPCs:**
+- Desert Villager Male (trades stick)
+- Desert Villager Female (trades stick)
+- Desert Slave Trader (trades gold_ingot)
+
 **Slave NPCs:**
 - Slave Lion Trainer (trades gold_lump for lions)
 - Slave Female Dancer (trades gold_lump)
 - Slave Male Dancer (trades gold_lump)
+
+**Note:** Jungle/Cannibal NPCs do not have trading mechanics, so the mood system is not applicable to them.
 
 **Textures:** Basic placeholder textures are included for testing. For better visuals, replace the texture files in `/textures/` with custom designs (see TEXTURE_LIST.md for specifications and design tips).
 
