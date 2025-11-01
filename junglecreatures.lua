@@ -58,10 +58,35 @@ sounds = {
 	},
 	view_range = 15,
 
+	do_custom = function(self, dtime)
+		nativevillages.mood.update_mood(self, dtime)
+		return true
+	end,
+
+	on_activate = function(self, staticdata, dtime)
+		if staticdata and staticdata ~= "" then
+			local data = minetest.deserialize(staticdata)
+			if data then
+				nativevillages.mood.on_activate_extra(self, data)
+			end
+		end
+		nativevillages.mood.init_npc(self)
+	end,
+
+	get_staticdata = function(self)
+		local mood_data = nativevillages.mood.get_staticdata_extra(self)
+		return minetest.serialize(mood_data)
+	end,
+
 	on_rightclick = function(self, clicker)
 
+		nativevillages.mood.on_interact(self, clicker)
+
 		-- feed or tame
-		if mobs:feed_tame(self, clicker, 4, false, true) then return end
+		if mobs:feed_tame(self, clicker, 4, false, true) then
+			nativevillages.mood.on_feed(self, clicker)
+			return
+		end
 		if mobs:protect(self, clicker) then return end
 		if mobs:capture_mob(self, clicker, 0, 15, 25, false, nil) then return end
 	end,
@@ -166,10 +191,35 @@ sounds = {
 	},
 	view_range = 15,
 
+	do_custom = function(self, dtime)
+		nativevillages.mood.update_mood(self, dtime)
+		return true
+	end,
+
+	on_activate = function(self, staticdata, dtime)
+		if staticdata and staticdata ~= "" then
+			local data = minetest.deserialize(staticdata)
+			if data then
+				nativevillages.mood.on_activate_extra(self, data)
+			end
+		end
+		nativevillages.mood.init_npc(self)
+	end,
+
+	get_staticdata = function(self)
+		local mood_data = nativevillages.mood.get_staticdata_extra(self)
+		return minetest.serialize(mood_data)
+	end,
+
 	on_rightclick = function(self, clicker)
 
+		nativevillages.mood.on_interact(self, clicker)
+
 		-- feed or tame
-		if mobs:feed_tame(self, clicker, 4, false, true) then return end
+		if mobs:feed_tame(self, clicker, 4, false, true) then
+			nativevillages.mood.on_feed(self, clicker)
+			return
+		end
 		if mobs:protect(self, clicker) then return end
 		if mobs:capture_mob(self, clicker, 0, 15, 25, false, nil) then return end
 	end,
@@ -247,10 +297,35 @@ sounds = {
 	},
 	view_range = 15,
 
+	do_custom = function(self, dtime)
+		nativevillages.mood.update_mood(self, dtime)
+		return true
+	end,
+
+	on_activate = function(self, staticdata, dtime)
+		if staticdata and staticdata ~= "" then
+			local data = minetest.deserialize(staticdata)
+			if data then
+				nativevillages.mood.on_activate_extra(self, data)
+			end
+		end
+		nativevillages.mood.init_npc(self)
+	end,
+
+	get_staticdata = function(self)
+		local mood_data = nativevillages.mood.get_staticdata_extra(self)
+		return minetest.serialize(mood_data)
+	end,
+
 	on_rightclick = function(self, clicker)
 
+		nativevillages.mood.on_interact(self, clicker)
+
 		-- feed or tame
-		if mobs:feed_tame(self, clicker, 4, false, true) then return end
+		if mobs:feed_tame(self, clicker, 4, false, true) then
+			nativevillages.mood.on_feed(self, clicker)
+			return
+		end
 		if mobs:protect(self, clicker) then return end
 		if mobs:capture_mob(self, clicker, 0, 15, 25, false, nil) then return end
 	end,
@@ -329,10 +404,35 @@ sounds = {
 	},
 	view_range = 15,
 
+	do_custom = function(self, dtime)
+		nativevillages.mood.update_mood(self, dtime)
+		return true
+	end,
+
+	on_activate = function(self, staticdata, dtime)
+		if staticdata and staticdata ~= "" then
+			local data = minetest.deserialize(staticdata)
+			if data then
+				nativevillages.mood.on_activate_extra(self, data)
+			end
+		end
+		nativevillages.mood.init_npc(self)
+	end,
+
+	get_staticdata = function(self)
+		local mood_data = nativevillages.mood.get_staticdata_extra(self)
+		return minetest.serialize(mood_data)
+	end,
+
 	on_rightclick = function(self, clicker)
 
+		nativevillages.mood.on_interact(self, clicker)
+
 		-- feed or tame
-		if mobs:feed_tame(self, clicker, 4, false, true) then return end
+		if mobs:feed_tame(self, clicker, 4, false, true) then
+			nativevillages.mood.on_feed(self, clicker)
+			return
+		end
 		if mobs:protect(self, clicker) then return end
 		if mobs:capture_mob(self, clicker, 0, 15, 25, false, nil) then return end
 	end,
