@@ -2,6 +2,7 @@ mobs
 default
 people
 farming
+atl_path?
 animalworld?
 ethereal?
 xocean?
