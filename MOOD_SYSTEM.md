@@ -58,8 +58,26 @@ All mood data is saved when NPCs are unloaded and restored when they reload, ens
 
 ## Implementation Status
 
-Currently implemented on:
-- Grassland Female NPCs (nativevillages:grasslandfemale)
+The mood system is implemented on all NPCs with trading:
+
+**Grassland NPCs:**
+- Grassland Female (trades bread)
+- Grassland Male (trades bread)
+- Grassland Witch (trades diamond)
+
+**Savanna NPCs:**
+- Savanna Doctor (trades graves for tame zombies)
+- Savanna Queen (trades diamond)
+- Savanna King (trades diamond)
+- Savanna Female (trades pearl)
+
+**Lake NPCs:**
+- Lake Fisher (trades gold_lump for catfish)
+
+**Slave NPCs:**
+- Slave Lion Trainer (trades gold_lump for lions)
+- Slave Female Dancer (trades gold_lump)
+- Slave Male Dancer (trades gold_lump)
 
 **Textures:** Basic placeholder textures are included for testing. For better visuals, replace the texture files in `/textures/` with custom designs (see TEXTURE_LIST.md for specifications and design tips).
 
