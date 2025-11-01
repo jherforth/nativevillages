@@ -395,6 +395,7 @@ sounds = {
 
 			nativevillages.mood.on_trade(self, clicker)
 			return
+		end
 
 		-- by right-clicking owner can switch npc between follow and stand
 		if self.owner and self.owner == name then
