@@ -150,10 +150,37 @@ sounds = {
 		die_rotate = true,
 	},
 
+	do_custom = function(self, dtime)
+		self.nv_trade_items = {"default:steel_ingot"}
+		nativevillages.mood.update_mood(self, dtime)
+		return true
+	end,
+
+	on_activate = function(self, staticdata, dtime)
+		if staticdata and staticdata ~= "" then
+			local data = minetest.deserialize(staticdata)
+			if data then
+				nativevillages.mood.on_activate_extra(self, data)
+			end
+		end
+		nativevillages.mood.init_npc(self)
+		self.nv_trade_items = {"default:steel_ingot"}
+	end,
+
+	get_staticdata = function(self)
+		local mood_data = nativevillages.mood.get_staticdata_extra(self)
+		return minetest.serialize(mood_data)
+	end,
+
 	on_rightclick = function(self, clicker)
 
+		nativevillages.mood.on_interact(self, clicker)
+
 		-- feed to heal npc
-		if mobs:feed_tame(self, clicker, 8, true, true) then return end
+		if mobs:feed_tame(self, clicker, 8, true, true) then
+			nativevillages.mood.on_feed(self, clicker)
+			return
+		end
 
 		-- capture npc with net or lasso
 		if mobs:capture_mob(self, clicker, 0, 25, 0, false, nil) then return end
@@ -166,6 +193,8 @@ sounds = {
 
 		-- right clicking with gold lump drops random item from mobs.icesledgetrader_drops
 		if item:get_name() == "default:steel_ingot" then
+
+			nativevillages.mood.on_trade(self, clicker)
 
 			if not mobs.is_creative(name) then
 				item:take_item()
@@ -290,10 +319,37 @@ sounds = {
 		die_rotate = true,
 	},
 
+	do_custom = function(self, dtime)
+		self.nv_trade_items = {"default:iron_lump"}
+		nativevillages.mood.update_mood(self, dtime)
+		return true
+	end,
+
+	on_activate = function(self, staticdata, dtime)
+		if staticdata and staticdata ~= "" then
+			local data = minetest.deserialize(staticdata)
+			if data then
+				nativevillages.mood.on_activate_extra(self, data)
+			end
+		end
+		nativevillages.mood.init_npc(self)
+		self.nv_trade_items = {"default:iron_lump"}
+	end,
+
+	get_staticdata = function(self)
+		local mood_data = nativevillages.mood.get_staticdata_extra(self)
+		return minetest.serialize(mood_data)
+	end,
+
 	on_rightclick = function(self, clicker)
 
+		nativevillages.mood.on_interact(self, clicker)
+
 		-- feed to heal npc
-		if mobs:feed_tame(self, clicker, 8, true, true) then return end
+		if mobs:feed_tame(self, clicker, 8, true, true) then
+			nativevillages.mood.on_feed(self, clicker)
+			return
+		end
 
 		-- capture npc with net or lasso
 		if mobs:capture_mob(self, clicker, 0, 15, 25, false, nil) then return end
@@ -306,6 +362,8 @@ sounds = {
 
 		-- right clicking with gold lump drops random item from mobs.icevillagerfemale_drops
 		if item:get_name() == "default:iron_lump" then
+
+			nativevillages.mood.on_trade(self, clicker)
 
 			if not mobs.is_creative(name) then
 				item:take_item()

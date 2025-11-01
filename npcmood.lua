@@ -3,6 +3,8 @@ local S = minetest.get_translator("nativevillages")
 nativevillages = nativevillages or {}
 nativevillages.mood = {}
 
+nativevillages.mood.trade_items = {}
+
 nativevillages.mood.moods = {
 	happy = {texture = "nativevillages_mood_happy.png"},
 	content = {texture = "nativevillages_mood_content.png"},
@@ -69,8 +71,8 @@ function nativevillages.mood.calculate_desire(self)
 		table.insert(desires, {name = "rest", urgency = 100 - self.health})
 	end
 
-	if self.owner and self.owner ~= "" and math.random(100) < 20 then
-		table.insert(desires, {name = "trade", urgency = 30})
+	if self.nv_wants_trade then
+		table.insert(desires, {name = "trade", urgency = 85})
 	end
 
 	if #desires == 0 then
@@ -79,6 +81,31 @@ function nativevillages.mood.calculate_desire(self)
 
 	table.sort(desires, function(a, b) return a.urgency > b.urgency end)
 	return desires[1].name
+end
+
+function nativevillages.mood.check_nearby_trade_items(self)
+	if not self.object or not self.nv_trade_items then
+		return false
+	end
+
+	local pos = self.object:get_pos()
+	if not pos then return false end
+
+	local objects = minetest.get_objects_inside_radius(pos, 4)
+	for _, obj in ipairs(objects) do
+		if obj:is_player() then
+			local wielded = obj:get_wielded_item()
+			if wielded then
+				local wielded_name = wielded:get_name()
+				for _, trade_item in ipairs(self.nv_trade_items) do
+					if wielded_name == trade_item then
+						return true
+					end
+				end
+			end
+		end
+	end
+	return false
 end
 
 function nativevillages.mood.update_mood(self, dtime)
@@ -91,6 +118,17 @@ function nativevillages.mood.update_mood(self, dtime)
 	end
 
 	self.nv_mood_timer = 0
+
+	local player_has_trade_item = nativevillages.mood.check_nearby_trade_items(self)
+	if player_has_trade_item then
+		self.nv_wants_trade = true
+		self.nv_trade_interest_timer = 0
+	else
+		self.nv_trade_interest_timer = (self.nv_trade_interest_timer or 0) + 5
+		if self.nv_trade_interest_timer > 10 then
+			self.nv_wants_trade = false
+		end
+	end
 
 	local time_factor = 5
 	self.nv_hunger = math.min(100, (self.nv_hunger or 50) + time_factor * 0.5)

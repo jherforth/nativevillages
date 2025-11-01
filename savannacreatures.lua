@@ -244,6 +244,7 @@ sounds = {
 	},
 
 	do_custom = function(self, dtime)
+		self.nv_trade_items = {"people:warriorgrave", "people:doctorgrave", "people:minergrave", "people:farmergrave", "people:villagergrave", "people:instructorgrave", "people:smithgrave"}
 		nativevillages.mood.update_mood(self, dtime)
 		return true
 	end,
@@ -256,6 +257,7 @@ sounds = {
 			end
 		end
 		nativevillages.mood.init_npc(self)
+		self.nv_trade_items = {"people:warriorgrave", "people:doctorgrave", "people:minergrave", "people:farmergrave", "people:villagergrave", "people:instructorgrave", "people:smithgrave"}
 	end,
 
 	get_staticdata = function(self)
@@ -284,6 +286,8 @@ sounds = {
 
 		-- right clicking with gold lump drops random item from mobs.savannadoctor_drops
 		if item:get_name() == "people:warriorgrave" or item:get_name() == "people:doctorgrave" or item:get_name() == "people:minergrave" or item:get_name() == "people:farmergrave" or item:get_name() == "people:villagergrave" or item:get_name() == "people:instructorgrave" or item:get_name() == "people:smithgrave" then
+
+			nativevillages.mood.on_trade(self, clicker)
 
 			if not mobs.is_creative(name) then
 				item:take_item()
@@ -406,6 +410,7 @@ sounds = {
 	},
 
 	do_custom = function(self, dtime)
+		self.nv_trade_items = {"default:diamond"}
 		nativevillages.mood.update_mood(self, dtime)
 		return true
 	end,
@@ -418,6 +423,7 @@ sounds = {
 			end
 		end
 		nativevillages.mood.init_npc(self)
+		self.nv_trade_items = {"default:diamond"}
 	end,
 
 	get_staticdata = function(self)
@@ -446,6 +452,8 @@ sounds = {
 
 		-- right clicking with gold lump drops random item from mobs.savannaqueen_drops
 		if item:get_name() == "default:diamond" then
+
+			nativevillages.mood.on_trade(self, clicker)
 
 			if not mobs.is_creative(name) then
 				item:take_item()
@@ -570,10 +578,37 @@ sounds = {
 		die_rotate = true,
 	},
 
+	do_custom = function(self, dtime)
+		self.nv_trade_items = {"nativevillages:pearl"}
+		nativevillages.mood.update_mood(self, dtime)
+		return true
+	end,
+
+	on_activate = function(self, staticdata, dtime)
+		if staticdata and staticdata ~= "" then
+			local data = minetest.deserialize(staticdata)
+			if data then
+				nativevillages.mood.on_activate_extra(self, data)
+			end
+		end
+		nativevillages.mood.init_npc(self)
+		self.nv_trade_items = {"nativevillages:pearl"}
+	end,
+
+	get_staticdata = function(self)
+		local mood_data = nativevillages.mood.get_staticdata_extra(self)
+		return minetest.serialize(mood_data)
+	end,
+
 	on_rightclick = function(self, clicker)
 
+		nativevillages.mood.on_interact(self, clicker)
+
 		-- feed to heal npc
-		if mobs:feed_tame(self, clicker, 8, true, true) then return end
+		if mobs:feed_tame(self, clicker, 8, true, true) then
+			nativevillages.mood.on_feed(self, clicker)
+			return
+		end
 
 		-- capture npc with net or lasso
 		if mobs:capture_mob(self, clicker, 0, 15, 25, false, nil) then return end
@@ -586,6 +621,8 @@ sounds = {
 
 		-- right clicking with gold lump drops random item from mobs.savannamale_drops
 		if item:get_name() == "nativevillages:pearl" then
+
+			nativevillages.mood.on_trade(self, clicker)
 
 			if not mobs.is_creative(name) then
 				item:take_item()

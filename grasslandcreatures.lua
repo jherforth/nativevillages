@@ -161,6 +161,7 @@ sounds = {
 	},
 
 	do_custom = function(self, dtime)
+		self.nv_trade_items = {"farming:bread", "farming:garlic_bread", "ethereal:banana_bread"}
 		nativevillages.mood.update_mood(self, dtime)
 		return true
 	end,
@@ -173,6 +174,7 @@ sounds = {
 			end
 		end
 		nativevillages.mood.init_npc(self)
+		self.nv_trade_items = {"farming:bread", "farming:garlic_bread", "ethereal:banana_bread"}
 	end,
 
 	get_staticdata = function(self)
@@ -335,6 +337,7 @@ sounds = {
 	},
 
 	do_custom = function(self, dtime)
+		self.nv_trade_items = {"farming:bread", "farming:garlic_bread", "ethereal:banana_bread"}
 		nativevillages.mood.update_mood(self, dtime)
 		return true
 	end,
@@ -347,6 +350,7 @@ sounds = {
 			end
 		end
 		nativevillages.mood.init_npc(self)
+		self.nv_trade_items = {"farming:bread", "farming:garlic_bread", "ethereal:banana_bread"}
 	end,
 
 	get_staticdata = function(self)
@@ -509,6 +513,7 @@ sounds = {
 	},
 
 	do_custom = function(self, dtime)
+		self.nv_trade_items = {"default:diamond"}
 		nativevillages.mood.update_mood(self, dtime)
 		return true
 	end,
@@ -521,6 +526,7 @@ sounds = {
 			end
 		end
 		nativevillages.mood.init_npc(self)
+		self.nv_trade_items = {"default:diamond"}
 	end,
 
 	get_staticdata = function(self)
