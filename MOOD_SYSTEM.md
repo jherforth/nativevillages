@@ -38,18 +38,20 @@ The mood system tracks several internal values that affect NPC mood:
 
 ### Interaction Effects
 
-- **Feeding** - Reduces hunger by 30, boosts mood by 15 points, resets interaction timer
-- **Right-clicking** - Reduces loneliness by 20, boosts mood by 5 points
-- **Trading** - Reduces loneliness by 25, boosts mood by 20 points, resets interaction timer
-- **Combat** - Increases fear significantly
+- **Feeding** - Reduces hunger by 30, resets interaction timer (mood improves automatically from reduced hunger)
+- **Right-clicking** - Reduces loneliness by 20 (mood improves automatically from reduced loneliness)
+- **Trading** - Reduces loneliness by 25 and hunger by 15, resets interaction timer (best overall mood improvement)
+- **Combat** - Increases fear significantly (reduces mood)
 
 ### Trading
 
 NPCs have a trading system that significantly improves their mood:
 - **Grassland Female**: Give bread (any type) to receive random items from their drop list
-- Trading provides the largest mood boost (+20) compared to feeding (+15) or simple interaction (+5)
+- Trading reduces both loneliness (-25) and hunger (-15), providing the best overall mood improvement
 - Shows the "trade" desire icon when mood calculation suggests they want to trade
 - Use trading to quickly improve a sad or angry NPC's mood
+
+**Note:** Mood is calculated automatically from underlying stats (hunger, loneliness, fear, health). When you reduce hunger or loneliness through interactions, the mood updates accordingly.
 
 ### Persistence
 All mood data is saved when NPCs are unloaded and restored when they reload, ensuring NPCs remember their emotional state.
@@ -120,8 +122,10 @@ The system uses:
 
 - `nativevillages.mood.init_npc(self)` - Initialize mood system for an NPC
 - `nativevillages.mood.update_mood(self, dtime)` - Update mood state (call in do_custom)
-- `nativevillages.mood.on_interact(self, clicker)` - Call when player right-clicks NPC (+5 mood, -20 loneliness)
-- `nativevillages.mood.on_feed(self, clicker)` - Call after successful feeding (+15 mood, -30 hunger)
-- `nativevillages.mood.on_trade(self, clicker)` - Call after successful trade (+20 mood, -25 loneliness)
+- `nativevillages.mood.on_interact(self, clicker)` - Call when player right-clicks NPC (-20 loneliness)
+- `nativevillages.mood.on_feed(self, clicker)` - Call after successful feeding (-30 hunger)
+- `nativevillages.mood.on_trade(self, clicker)` - Call after successful trade (-25 loneliness, -15 hunger)
 - `nativevillages.mood.on_activate_extra(self, data)` - Restore mood data from staticdata
 - `nativevillages.mood.get_staticdata_extra(self)` - Get mood data for saving
+
+**Important:** These functions modify the underlying stats (hunger, loneliness, fear). Mood value is automatically calculated from these stats every 5 seconds.

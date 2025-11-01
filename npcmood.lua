@@ -178,7 +178,6 @@ end
 function nativevillages.mood.on_feed(self, clicker)
 	self.nv_hunger = math.max(0, (self.nv_hunger or 50) - 30)
 	self.nv_last_fed = 0
-	self.nv_mood_value = math.min(100, (self.nv_mood_value or 50) + 15)
 	self.nv_last_interaction = 0
 	nativevillages.mood.update_mood(self, 0)
 end
@@ -186,14 +185,13 @@ end
 function nativevillages.mood.on_interact(self, clicker)
 	self.nv_last_interaction = 0
 	self.nv_loneliness = math.max(0, (self.nv_loneliness or 0) - 20)
-	self.nv_mood_value = math.min(100, (self.nv_mood_value or 50) + 5)
 	nativevillages.mood.update_mood(self, 0)
 end
 
 function nativevillages.mood.on_trade(self, clicker)
 	self.nv_last_interaction = 0
 	self.nv_loneliness = math.max(0, (self.nv_loneliness or 0) - 25)
-	self.nv_mood_value = math.min(100, (self.nv_mood_value or 50) + 20)
+	self.nv_hunger = math.max(0, (self.nv_hunger or 50) - 15)
 	nativevillages.mood.update_mood(self, 0)
 end
 
