@@ -99,6 +99,10 @@ on_rightclick = function(self, clicker)
         return
     end
 
+    -- After successful trading:
+    -- (check for trade item and complete trade, then:)
+    nativevillages.mood.on_trade(self, clicker)
+
     -- Rest of your existing code...
 end,
 ```
@@ -106,7 +110,18 @@ end,
 ## Technical Details
 
 The system uses:
-- Entity attachment for visual indicators
+- Entity attachment for visual indicators (sprite entities attached above NPC heads)
 - Minetest's get_staticdata/on_activate for persistence
-- Entity nametags for emoji display
+- Texture-based mood/desire icons (20x20 pixels)
 - 5-second update intervals for performance
+- Icon size: 0.5x0.5 visual_size for subtle display
+
+## Available Mood Functions
+
+- `nativevillages.mood.init_npc(self)` - Initialize mood system for an NPC
+- `nativevillages.mood.update_mood(self, dtime)` - Update mood state (call in do_custom)
+- `nativevillages.mood.on_interact(self, clicker)` - Call when player right-clicks NPC (+5 mood, -20 loneliness)
+- `nativevillages.mood.on_feed(self, clicker)` - Call after successful feeding (+15 mood, -30 hunger)
+- `nativevillages.mood.on_trade(self, clicker)` - Call after successful trade (+20 mood, -25 loneliness)
+- `nativevillages.mood.on_activate_extra(self, data)` - Restore mood data from staticdata
+- `nativevillages.mood.get_staticdata_extra(self)` - Get mood data for saving
