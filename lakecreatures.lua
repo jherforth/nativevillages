@@ -240,7 +240,7 @@ mobs:spawn({
 	neighbors = {"nativevillages:hangingfish"},
 	min_light = 0,
 	interval = 60,
-	active_object_count = 2,
+	active_object_count = 4,
 	chance = 1, -- 15000
 	min_height = 0,
 	max_height = 120,
