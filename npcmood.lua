@@ -221,7 +221,7 @@ minetest.register_entity("nativevillages:mood_indicator", {
 		physical = false,
 		collisionbox = {0, 0, 0, 0, 0, 0},
 		visual = "sprite",
-		visual_size = {x=1.0, y=1.0},
+		visual_size = {x=0.5, y=0.5},
 		textures = {"nativevillages_mood_neutral.png"},
 		is_visible = true,
 		pointable = false,
