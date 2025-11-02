@@ -4,6 +4,7 @@ nativevillages = nativevillages or {}
 nativevillages.mood = {}
 
 nativevillages.mood.trade_items = {}
+nativevillages.mood.indicator_distance = 16
 
 nativevillages.mood.moods = {
 	happy = {texture = "nativevillages_mood_happy.png"},
@@ -108,6 +109,26 @@ function nativevillages.mood.check_nearby_trade_items(self)
 	return false
 end
 
+function nativevillages.mood.is_player_nearby(self)
+	if not self.object then return false end
+
+	local pos = self.object:get_pos()
+	if not pos then return false end
+
+	local players = minetest.get_connected_players()
+	for _, player in ipairs(players) do
+		local player_pos = player:get_pos()
+		if player_pos then
+			local distance = vector.distance(pos, player_pos)
+			if distance <= nativevillages.mood.indicator_distance then
+				return true
+			end
+		end
+	end
+
+	return false
+end
+
 function nativevillages.mood.update_mood(self, dtime)
 	nativevillages.mood.init_npc(self)
 
@@ -180,6 +201,16 @@ end
 
 function nativevillages.mood.update_indicator(self)
 	if not self.object then return end
+
+	local player_nearby = nativevillages.mood.is_player_nearby(self)
+
+	if not player_nearby then
+		if self.nv_mood_indicator then
+			self.nv_mood_indicator:remove()
+			self.nv_mood_indicator = nil
+		end
+		return
+	end
 
 	if self.nv_mood_indicator then
 		self.nv_mood_indicator:remove()
