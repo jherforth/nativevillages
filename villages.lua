@@ -86,79 +86,13 @@ minetest.register_decoration({
 
 if minetest.get_modpath("atl_path") then
     minetest.register_decoration({
-        name = "nativevillages:grasslandvillage_path",
+        name = "nativevillages:village_path_dirt",
         deco_type = "simple",
-        place_on = {"default:dirt_with_grass"},
+        place_on = {"default:dirt_with_grass", "default:dry_dirt_with_dry_grass", "default:dirt_with_rainforest_litter"},
         sidelen = 4,
-        fill_ratio = 0.08,
-        biomes = {"grassland", "snowy_grassland"},
-        y_max = 20.5,
-        y_min = 15.5,
-        decoration = "atl_path:path_dirt",
-        flags = "all_floors",
-    })
-
-    minetest.register_decoration({
-        name = "nativevillages:desertvillage_path",
-        deco_type = "simple",
-        place_on = {"default:desert_sand"},
-        sidelen = 4,
-        fill_ratio = 0.08,
-        biomes = {"desert"},
-        y_max = 30.5,
-        y_min = 25.5,
-        decoration = "atl_path:path_sand",
-        flags = "all_floors",
-    })
-
-    minetest.register_decoration({
-        name = "nativevillages:savannavillage_path",
-        deco_type = "simple",
-        place_on = {"default:dry_dirt_with_dry_grass"},
-        sidelen = 4,
-        fill_ratio = 0.08,
-        biomes = {"savanna"},
-        y_max = 30.5,
-        y_min = 25.5,
-        decoration = "atl_path:path_dirt",
-        flags = "all_floors",
-    })
-
-    minetest.register_decoration({
-        name = "nativevillages:icevillage_path",
-        deco_type = "simple",
-        place_on = {"default:snowblock"},
-        sidelen = 4,
-        fill_ratio = 0.08,
-        biomes = {"icesheet", "icesheet_ocean", "tundra", "tundra_ocean", "tundra_highland"},
-        y_max = 30.5,
-        y_min = 25.5,
-        decoration = "atl_path:path_snow",
-        flags = "all_floors",
-    })
-
-    minetest.register_decoration({
-        name = "nativevillages:lakevillage_path",
-        deco_type = "simple",
-        place_on = {"default:dirt", "default:sand"},
-        sidelen = 4,
-        fill_ratio = 0.08,
-        biomes = {"deciduous_forest_ocean", "grassland_ocean", "deciduous_forest_shore", "coniferous_forest_ocean"},
-        y_max = -0.5,
-        y_min = -0.5,
-        decoration = "atl_path:path_dirt",
-        flags = "all_floors",
-    })
-
-    minetest.register_decoration({
-        name = "nativevillages:junglevillage_path",
-        deco_type = "simple",
-        place_on = {"default:dirt_with_rainforest_litter"},
-        sidelen = 4,
-        fill_ratio = 0.08,
-        biomes = {"rainforest", "rainforest_swamp"},
-        y_max = 20.5,
-        y_min = 10.5,
+        fill_ratio = 0.15,
+        y_max = 31000,
+        y_min = -31000,
         decoration = "atl_path:path_dirt",
         flags = "all_floors",
     })
