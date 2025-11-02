@@ -1,5 +1,7 @@
 local S = minetest.get_translator("nativevillages")
 
+-- Disabled: schematic file lakevillage3_0_180.mts does not exist
+--[[
 minetest.register_decoration({
     name = "nativevillages:lakevillage",
     deco_type = "schematic",
@@ -13,7 +15,10 @@ minetest.register_decoration({
     schematic = minetest.get_modpath("nativevillages").."/schematics/lakevillage3_0_180.mts",
     flags = "force_placement",
 })
+]]
 
+-- Disabled: schematic file junglevillage_4_180.mts does not exist
+--[[
 minetest.register_decoration({
     name = "nativevillages:junglevillage",
     deco_type = "schematic",
@@ -27,7 +32,10 @@ minetest.register_decoration({
     schematic = minetest.get_modpath("nativevillages").."/schematics/junglevillage_4_180.mts",
     flags = "force_placement",
 })
+]]
 
+-- Disabled: schematic file grasslandvillage_4_270.mts does not exist
+--[[
 minetest.register_decoration({
     name = "nativevillages:grasslandvillage",
     deco_type = "schematic",
@@ -41,7 +49,10 @@ minetest.register_decoration({
     schematic = minetest.get_modpath("nativevillages").."/schematics/grasslandvillage_4_270.mts",
     flags = "force_placement",
 })
+]]
 
+-- Disabled: schematic file savannavillage_4_180.mts does not exist
+--[[
 minetest.register_decoration({
     name = "nativevillages:savannavillge",
     deco_type = "schematic",
@@ -55,7 +66,10 @@ minetest.register_decoration({
     schematic = minetest.get_modpath("nativevillages").."/schematics/savannavillage_4_180.mts",
     flags = "force_placement",
 })
+]]
 
+-- Disabled: schematic file desertvillage_4_180.mts does not exist
+--[[
 minetest.register_decoration({
     name = "nativevillages:desertvillage",
     deco_type = "schematic",
@@ -69,7 +83,10 @@ minetest.register_decoration({
     schematic = minetest.get_modpath("nativevillages").."/schematics/desertvillage_4_180.mts",
     flags = "force_placement",
 })
+]]
 
+-- Disabled: schematic file icevillage_4_90.mts does not exist
+--[[
 minetest.register_decoration({
     name = "nativevillages:icevillage",
     deco_type = "schematic",
@@ -83,6 +100,7 @@ minetest.register_decoration({
     schematic = minetest.get_modpath("nativevillages").."/schematics/icevillage_4_90.mts",
     flags = "force_placement",
 })
+]]
 
 
 if minetest.get_modpath("farming") then
