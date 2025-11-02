@@ -84,60 +84,6 @@ minetest.register_decoration({
     flags = "force_placement",
 })
 
-if minetest.get_modpath("atl_path") then
-    local path_dirt = minetest.get_content_id("atl_path:path_dirt")
-    local path_sand = minetest.get_content_id("atl_path:path_sand")
-    local path_snow = minetest.get_content_id("atl_path:path_snow")
-
-    local dirt_with_grass = minetest.get_content_id("default:dirt_with_grass")
-    local dry_dirt_with_dry_grass = minetest.get_content_id("default:dry_dirt_with_dry_grass")
-    local dirt_with_rainforest = minetest.get_content_id("default:dirt_with_rainforest_litter")
-    local desert_sand = minetest.get_content_id("default:desert_sand")
-    local snowblock = minetest.get_content_id("default:snowblock")
-    local dirt = minetest.get_content_id("default:dirt")
-
-    minetest.register_on_generated(function(minp, maxp, blockseed)
-        local vm, emin, emax = minetest.get_mapgen_object("voxelmanip")
-        local data = vm:get_data()
-        local area = VoxelArea:new({MinEdge=emin, MaxEdge=emax})
-
-        local pr = PseudoRandom(blockseed + 719)
-        local changed = false
-
-        for y = minp.y, maxp.y do
-            for z = minp.z, maxp.z do
-                for x = minp.x, maxp.x do
-                    local vi = area:index(x, y, z)
-                    local vi_above = area:index(x, y+1, z)
-                    local node = data[vi]
-                    local node_above = data[vi_above]
-
-                    if node_above == minetest.CONTENT_AIR or
-                       node_above == dirt_with_grass or
-                       node_above == dry_dirt_with_dry_grass or
-                       node_above == dirt_with_rainforest then
-
-                        if (node == dirt_with_grass or node == dry_dirt_with_dry_grass or node == dirt_with_rainforest) and pr:next(1, 100) <= 8 then
-                            data[vi] = path_dirt
-                            changed = true
-                        elseif node == desert_sand and pr:next(1, 100) <= 8 then
-                            data[vi] = path_sand
-                            changed = true
-                        elseif node == snowblock and pr:next(1, 100) <= 8 then
-                            data[vi] = path_snow
-                            changed = true
-                        end
-                    end
-                end
-            end
-        end
-
-        if changed then
-            vm:set_data(data)
-            vm:write_to_map()
-        end
-    end)
-end
 
 if minetest.get_modpath("farming") then
     minetest.register_decoration({
