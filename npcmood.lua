@@ -91,6 +91,19 @@ function nativevillages.mood.check_nearby_trade_items(self)
 	local pos = self.object:get_pos()
 	if not pos then return false end
 
+	local players = minetest.get_connected_players()
+	local player_nearby = false
+	for _, player in ipairs(players) do
+		if vector.distance(pos, player:get_pos()) < 5 then
+			player_nearby = true
+			break
+		end
+	end
+
+	if not player_nearby then
+		return false
+	end
+
 	local objects = minetest.get_objects_inside_radius(pos, 4)
 	for _, obj in ipairs(objects) do
 		if obj:is_player() then
@@ -113,7 +126,28 @@ function nativevillages.mood.update_mood(self, dtime)
 
 	self.nv_mood_timer = (self.nv_mood_timer or 0) + dtime
 
-	if self.nv_mood_timer < 5 then
+	local pos = self.object and self.object:get_pos()
+	if not pos then return end
+
+	local players = minetest.get_connected_players()
+	local min_distance = 999999
+	for _, player in ipairs(players) do
+		local dist = vector.distance(pos, player:get_pos())
+		if dist < min_distance then
+			min_distance = dist
+		end
+	end
+
+	local update_interval
+	if min_distance < 10 then
+		update_interval = 10
+	elseif min_distance < 30 then
+		update_interval = 30
+	else
+		update_interval = 60
+	end
+
+	if self.nv_mood_timer < update_interval then
 		return
 	end
 
@@ -181,13 +215,30 @@ end
 function nativevillages.mood.update_indicator(self)
 	if not self.object then return end
 
+	local pos = self.object:get_pos()
+	if not pos then return end
+
+	local players = minetest.get_connected_players()
+	local player_nearby = false
+	for _, player in ipairs(players) do
+		if vector.distance(pos, player:get_pos()) < 15 then
+			player_nearby = true
+			break
+		end
+	end
+
+	if not player_nearby then
+		if self.nv_mood_indicator then
+			self.nv_mood_indicator:remove()
+			self.nv_mood_indicator = nil
+		end
+		return
+	end
+
 	if self.nv_mood_indicator then
 		self.nv_mood_indicator:remove()
 		self.nv_mood_indicator = nil
 	end
-
-	local pos = self.object:get_pos()
-	if not pos then return end
 
 	pos.y = pos.y + 2.2
 
