@@ -83,3 +83,45 @@ minetest.register_decoration({
     schematic = minetest.get_modpath("nativevillages").."/schematics/icevillage_4_90.mts",
     flags = "force_placement",
 })
+
+
+if minetest.get_modpath("farming") then
+    minetest.register_decoration({
+        name = "nativevillages:grasslandvillage_wheat",
+        deco_type = "simple",
+        place_on = {"default:dirt_with_grass"},
+        sidelen = 4,
+        fill_ratio = 0.08,
+        biomes = {"grassland", "snowy_grassland"},
+        y_max = 20.5,
+        y_min = 15.5,
+        decoration = "farming:wheat_8",
+        flags = "all_floors",
+    })
+
+    minetest.register_decoration({
+        name = "nativevillages:grasslandvillage_cotton",
+        deco_type = "simple",
+        place_on = {"default:dirt_with_grass"},
+        sidelen = 4,
+        fill_ratio = 0.04,
+        biomes = {"grassland", "snowy_grassland"},
+        y_max = 20.5,
+        y_min = 15.5,
+        decoration = "farming:cotton_8",
+        flags = "all_floors",
+    })
+
+    minetest.register_decoration({
+        name = "nativevillages:grasslandvillage_carrot",
+        deco_type = "simple",
+        place_on = {"default:dirt_with_grass"},
+        sidelen = 4,
+        fill_ratio = 0.03,
+        biomes = {"grassland"},
+        y_max = 20.5,
+        y_min = 15.5,
+        decoration = "farming:carrot_8",
+        flags = "all_floors",
+    })
+end
