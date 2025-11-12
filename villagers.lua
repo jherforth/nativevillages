@@ -343,15 +343,27 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 				"nv_class", "nv_trade_items"
 			}
 
-			local safe_data = {}
-			for _, field in ipairs(allowed_fields) do
-				local value = self[field]
-				if is_safe_value(value) then
-					safe_data[field] = value
-				end
-			end
+			local minimal_data = {
+				health = type(self.health) == "number" and self.health or nil,
+				owner = type(self.owner) == "string" and self.owner or nil,
+				tamed = type(self.tamed) == "boolean" and self.tamed or nil,
+				nametag = type(self.nametag) == "string" and self.nametag or nil,
+				child = type(self.child) == "boolean" and self.child or nil,
+				gotten = type(self.gotten) == "boolean" and self.gotten or nil,
+				order = type(self.order) == "string" and self.order or nil,
+				nv_mood = type(self.nv_mood) == "string" and self.nv_mood or nil,
+				nv_mood_value = type(self.nv_mood_value) == "number" and self.nv_mood_value or nil,
+				nv_hunger = type(self.nv_hunger) == "number" and self.nv_hunger or nil,
+				nv_loneliness = type(self.nv_loneliness) == "number" and self.nv_loneliness or nil,
+				nv_fear = type(self.nv_fear) == "number" and self.nv_fear or nil,
+				nv_last_fed = type(self.nv_last_fed) == "number" and self.nv_last_fed or nil,
+				nv_last_interaction = type(self.nv_last_interaction) == "number" and self.nv_last_interaction or nil,
+				nv_current_desire = type(self.nv_current_desire) == "string" and self.nv_current_desire or nil,
+				nv_biome = type(self.nv_biome) == "string" and self.nv_biome or nil,
+				nv_class = type(self.nv_class) == "string" and self.nv_class or nil,
+			}
 
-			return minetest.serialize(safe_data)
+			return minetest.serialize(minimal_data)
 		end,
 
 		on_die = function(self, pos)
