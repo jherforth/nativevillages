@@ -234,7 +234,7 @@ function nativevillages.mood.update_indicator(self)
 		self.nv_mood_indicator:set_attach(
 			self.object,
 			"",
-			{x=0, y=13, z=0},
+			{x=0, y=22, z=0},
 			{x=0, y=0, z=0}
 		)
 		self.nv_mood_indicator:set_properties({
