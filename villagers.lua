@@ -276,6 +276,16 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 		end,
 
 		on_activate = function(self, staticdata, dtime)
+			if staticdata and staticdata ~= "" then
+				local tmp = minetest.deserialize(staticdata)
+
+				if tmp then
+					for tag, stat in pairs(tmp) do
+						self[tag] = stat
+					end
+				end
+			end
+
 			nativevillages.mood.init_npc(self)
 			if class_def.trade_items and #class_def.trade_items > 0 then
 				self.nv_trade_items = class_def.trade_items
@@ -287,7 +297,24 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 				self.nv_mood_indicator:remove()
 				self.nv_mood_indicator = nil
 			end
-			return ""
+
+			self.attack = nil
+
+			local tmp = {}
+
+			for tag, stat in pairs(self) do
+				local t = type(stat)
+
+				if t ~= "function"
+				and t ~= "nil"
+				and t ~= "userdata"
+				and tag ~= "object"
+				and tag ~= "_cmi_components" then
+					tmp[tag] = stat
+				end
+			end
+
+			return minetest.serialize(tmp)
 		end,
 
 		on_die = function(self, pos)
