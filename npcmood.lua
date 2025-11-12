@@ -1,6 +1,5 @@
 local S = minetest.get_translator("nativevillages")
 
-nativevillages = nativevillages or {}
 nativevillages.mood = {}
 
 nativevillages.mood.trade_items = {}
@@ -295,12 +294,12 @@ minetest.register_entity("nativevillages:mood_indicator", {
 		physical = false,
 		collisionbox = {0, 0, 0, 0, 0, 0},
 		visual = "sprite",
-		visual_size = {x=0.25, y=0.25},
+		visual_size = {x=0.5, y=0.5},
 		textures = {"nativevillages_mood_neutral.png"},
 		is_visible = true,
 		pointable = false,
 		static_save = false,
-		glow = 5,
+		glow = 10,
 	},
 
 	on_step = function(self, dtime)
