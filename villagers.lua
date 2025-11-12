@@ -300,16 +300,30 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 
 			self.attack = nil
 
+			local function is_serializable(value)
+				local t = type(value)
+
+				if t == "function" or t == "userdata" or t == "thread" then
+					return false
+				end
+
+				if t == "table" then
+					for k, v in pairs(value) do
+						if not is_serializable(k) or not is_serializable(v) then
+							return false
+						end
+					end
+				end
+
+				return true
+			end
+
 			local tmp = {}
 
 			for tag, stat in pairs(self) do
-				local t = type(stat)
-
-				if t ~= "function"
-				and t ~= "nil"
-				and t ~= "userdata"
-				and tag ~= "object"
-				and tag ~= "_cmi_components" then
+				if tag ~= "object"
+				and tag ~= "_cmi_components"
+				and is_serializable(stat) then
 					tmp[tag] = stat
 				end
 			end
