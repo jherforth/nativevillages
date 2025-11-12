@@ -3,32 +3,32 @@ local S = minetest.get_translator("nativevillages")
 local biome_spawn_config = {
 	grassland = {
 		nodes = {"default:dirt_with_grass", "default:cobble", "default:dirt_with_coniferous_litter", "default:clay"},
-		neighbors = {"nativevillages:grasslandbarrel", "default:wood", "default:tree", "doors:door_wood_a"},
+		markers = {"nativevillages:grasslandbarrel"},
 		stay_near = {"nativevillages:grasslandbarrel"}
 	},
 	desert = {
 		nodes = {"default:desert_sand", "group:wool"},
-		neighbors = {"nativevillages:desertcrpet", "default:wood", "default:desert_stone", "doors:door_wood_a"},
+		markers = {"nativevillages:hookah", "nativevillages:desertcrpet"},
 		stay_near = {"nativevillages:hookah", "nativevillages:desertcrpet"}
 	},
 	savanna = {
 		nodes = {"default:dry_dirt_with_dry_grass"},
-		neighbors = {"nativevillages:savannashrine", "default:wood", "default:tree", "doors:door_wood_a"},
+		markers = {"nativevillages:savannashrine"},
 		stay_near = {"nativevillages:savannashrine"}
 	},
 	lake = {
 		nodes = {"default:dirt", "default:sand"},
-		neighbors = {"nativevillages:fishtrap", "default:wood", "doors:door_wood_a"},
+		markers = {"nativevillages:fishtrap"},
 		stay_near = {"nativevillages:fishtrap"}
 	},
 	ice = {
 		nodes = {"default:snowblock", "default:ice", "default:snow"},
-		neighbors = {"nativevillages:sledge", "default:wood", "doors:door_wood_a"},
+		markers = {"nativevillages:sledge"},
 		stay_near = {"nativevillages:sledge"}
 	},
 	cannibal = {
 		nodes = {"default:dirt_with_grass", "default:dirt_with_rainforest_litter"},
-		neighbors = {"nativevillages:cannibalshrine", "nativevillages:driedpeople"},
+		markers = {"nativevillages:cannibalshrine", "nativevillages:driedpeople"},
 		stay_near = {"nativevillages:cannibalshrine", "nativevillages:driedpeople"}
 	}
 }
@@ -190,6 +190,8 @@ local villager_classes = {
 	},
 }
 
+local class_order = {"hostile", "raider", "ranger", "jeweler", "farmer", "blacksmith", "fisherman", "cleric", "bum", "entertainer", "witch"}
+
 local function register_villager(class_name, class_def, biome_name, biome_config)
 	local mob_name = "nativevillages:" .. biome_name .. "_" .. class_name
 
@@ -325,27 +327,6 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 		end,
 	})
 
-	if not mobs.custom_spawn_nativevillages then
-		local spawn_chance = 100
-		if class_name == "hostile" or class_name == "raider" then
-			spawn_chance = 200
-		elseif class_name == "witch" or class_name == "jeweler" then
-			spawn_chance = 500
-		end
-
-		mobs:spawn({
-			name = mob_name,
-			nodes = biome_config.nodes,
-			neighbors = biome_config.neighbors,
-			min_light = 0,
-			interval = 30,
-			active_object_count = 2,
-			chance = spawn_chance,
-			min_height = 0,
-			max_height = 120,
-		})
-	end
-
 	mobs:register_egg(mob_name, S(biome_name:gsub("^%l", string.upper) .. " " .. class_name:gsub("^%l", string.upper)), "character.png")
 end
 
@@ -354,5 +335,87 @@ for biome_name, biome_config in pairs(biome_spawn_config) do
 		register_villager(class_name, class_def, biome_name, biome_config)
 	end
 end
+
+local villages_spawned = {}
+
+local function find_village_center(pos, biome_markers, radius)
+	local marker_positions = minetest.find_nodes_in_area(
+		{x=pos.x-radius, y=pos.y-10, z=pos.z-radius},
+		{x=pos.x+radius, y=pos.y+10, z=pos.z+radius},
+		biome_markers
+	)
+
+	if #marker_positions > 0 then
+		local center = {x=0, y=0, z=0, count=0}
+		for _, mpos in ipairs(marker_positions) do
+			center.x = center.x + mpos.x
+			center.y = center.y + mpos.y
+			center.z = center.z + mpos.z
+			center.count = center.count + 1
+		end
+
+		center.x = math.floor(center.x / center.count)
+		center.y = math.floor(center.y / center.count)
+		center.z = math.floor(center.z / center.count)
+
+		return {x=center.x, y=center.y, z=center.z}
+	end
+
+	return nil
+end
+
+local function get_village_key(pos)
+	return math.floor(pos.x/50) .. "," .. math.floor(pos.z/50)
+end
+
+local function spawn_villagers_near(center_pos, biome_name)
+	local biome_config = biome_spawn_config[biome_name]
+	if not biome_config then return end
+
+	local spawn_radius = 15
+	local class_index = 0
+
+	for _, class_name in ipairs(class_order) do
+		local mob_name = "nativevillages:" .. biome_name .. "_" .. class_name
+
+		local angle = (class_index / #class_order) * math.pi * 2
+		local distance = math.random(5, spawn_radius)
+
+		local spawn_pos = {
+			x = center_pos.x + math.cos(angle) * distance,
+			y = center_pos.y,
+			z = center_pos.z + math.sin(angle) * distance
+		}
+
+		local ground_pos = minetest.find_node_near(spawn_pos, 5, biome_config.nodes)
+		if ground_pos then
+			ground_pos.y = ground_pos.y + 1
+			minetest.add_entity(ground_pos, mob_name)
+		end
+
+		class_index = class_index + 1
+	end
+end
+
+minetest.register_on_generated(function(minp, maxp, blockseed)
+	for biome_name, biome_config in pairs(biome_spawn_config) do
+		local center_pos = find_village_center(
+			{x=(minp.x+maxp.x)/2, y=(minp.y+maxp.y)/2, z=(minp.z+maxp.z)/2},
+			biome_config.markers,
+			40
+		)
+
+		if center_pos then
+			local village_key = get_village_key(center_pos)
+
+			if not villages_spawned[village_key] then
+				villages_spawned[village_key] = true
+				minetest.after(2, function()
+					spawn_villagers_near(center_pos, biome_name)
+				end)
+			end
+		end
+	end
+end)
 
 print(S("[MOD] Villagers loaded"))
