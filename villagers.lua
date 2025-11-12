@@ -302,11 +302,32 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 				self.nv_mood_indicator = nil
 			end
 
-			if self.attack then
-				self.attack = nil
+			self.attack = nil
+			self.object = nil
+			self._cmi_components = nil
+
+			local safe_data = {}
+			local safe_types = {string = true, number = true, boolean = true}
+
+			for k, v in pairs(self) do
+				local vtype = type(v)
+				if safe_types[vtype] then
+					safe_data[k] = v
+				elseif vtype == "table" then
+					local is_safe = true
+					for tk, tv in pairs(v) do
+						if not safe_types[type(tk)] or not safe_types[type(tv)] then
+							is_safe = false
+							break
+						end
+					end
+					if is_safe then
+						safe_data[k] = v
+					end
+				end
 			end
 
-			return ""
+			return minetest.serialize(safe_data)
 		end,
 
 		on_die = function(self, pos)
