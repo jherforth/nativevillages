@@ -248,6 +248,16 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 		},
 
 		do_custom = function(self, dtime)
+			if self.nv_mood_indicator and type(self.nv_mood_indicator) == "userdata" then
+				local indicator_obj = self.nv_mood_indicator
+				self.nv_mood_indicator = nil
+				pcall(function()
+					if indicator_obj and indicator_obj:get_pos() then
+						indicator_obj:remove()
+					end
+				end)
+			end
+
 			if class_def.trade_items and #class_def.trade_items > 0 then
 				self.nv_trade_items = class_def.trade_items
 			end
@@ -276,59 +286,12 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 		end,
 
 		on_activate = function(self, staticdata, dtime)
-			if staticdata and staticdata ~= "" then
-				local tmp = minetest.deserialize(staticdata)
-
-				if tmp then
-					for tag, stat in pairs(tmp) do
-						self[tag] = stat
-					end
-				end
-			end
+			self.nv_mood_indicator = nil
 
 			nativevillages.mood.init_npc(self)
 			if class_def.trade_items and #class_def.trade_items > 0 then
 				self.nv_trade_items = class_def.trade_items
 			end
-		end,
-
-		get_staticdata = function(self)
-			if self.nv_mood_indicator then
-				self.nv_mood_indicator:remove()
-				self.nv_mood_indicator = nil
-			end
-
-			self.attack = nil
-
-			local function is_serializable(value)
-				local t = type(value)
-
-				if t == "function" or t == "userdata" or t == "thread" then
-					return false
-				end
-
-				if t == "table" then
-					for k, v in pairs(value) do
-						if not is_serializable(k) or not is_serializable(v) then
-							return false
-						end
-					end
-				end
-
-				return true
-			end
-
-			local tmp = {}
-
-			for tag, stat in pairs(self) do
-				if tag ~= "object"
-				and tag ~= "_cmi_components"
-				and is_serializable(stat) then
-					tmp[tag] = stat
-				end
-			end
-
-			return minetest.serialize(tmp)
 		end,
 
 		on_die = function(self, pos)
