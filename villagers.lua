@@ -306,54 +306,46 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 			self.object = nil
 			self._cmi_components = nil
 
-			local function is_serializable(value, depth, seen)
-				depth = depth or 0
-				seen = seen or {}
-
-				if depth > 10 then
-					return false
-				end
-
-				if seen[value] then
-					return false
-				end
-
-				local vtype = type(value)
-				if vtype == "userdata" or vtype == "function" or vtype == "thread" then
-					return false
-				end
-
-				if vtype == "string" or vtype == "number" or vtype == "boolean" or vtype == "nil" then
-					return true
-				end
-
-				if vtype == "table" then
-					seen[value] = true
-					for k, v in pairs(value) do
-						if not is_serializable(k, depth + 1, seen) or not is_serializable(v, depth + 1, seen) then
-							return false
-						end
-					end
-					return true
-				end
-
-				return false
-			end
+			local allowed_fields = {
+				"health", "texture_mods", "child", "hornytimer", "gotten", "tamed",
+				"owner", "order", "nametag", "protected", "persistance",
+				"docile_by_day", "fire_resistant", "light_damage", "old_y",
+				"lifetimer", "jump_height", "stepheight", "fear_height",
+				"path", "target", "state", "v_start", "timer", "blinktimer",
+				"blinkstatus", "attack", "following", "horny", "hornytimer",
+				"child_texture", "tamed_by", "base_texture", "gotten",
+				"nv_mood", "nv_mood_value", "nv_hunger", "nv_loneliness",
+				"nv_fear", "nv_last_fed", "nv_last_interaction",
+				"nv_current_desire", "nv_wants_trade", "nv_biome",
+				"nv_class", "nv_trade_items"
+			}
 
 			local safe_data = {}
-			for k, v in pairs(self) do
-				if is_serializable(k) and is_serializable(v) then
-					safe_data[k] = v
+			for _, field in ipairs(allowed_fields) do
+				local value = self[field]
+				local vtype = type(value)
+				if vtype == "string" or vtype == "number" or vtype == "boolean" then
+					safe_data[field] = value
+				elseif vtype == "table" then
+					local is_simple = true
+					for k, v in pairs(value) do
+						if type(k) ~= "string" and type(k) ~= "number" then
+							is_simple = false
+							break
+						end
+						local tv = type(v)
+						if tv ~= "string" and tv ~= "number" and tv ~= "boolean" and tv ~= "table" then
+							is_simple = false
+							break
+						end
+					end
+					if is_simple then
+						safe_data[field] = value
+					end
 				end
 			end
 
-			local success, result = pcall(minetest.serialize, safe_data)
-			if success then
-				return result
-			else
-				minetest.log("warning", "[nativevillages] Failed to serialize entity data: " .. tostring(result))
-				return ""
-			end
+			return minetest.serialize(safe_data)
 		end,
 
 		on_die = function(self, pos)

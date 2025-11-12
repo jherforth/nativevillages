@@ -219,13 +219,22 @@ function nativevillages.mood.update_indicator(self)
 		texture = desire_data.texture
 	end
 
-	if self.nv_mood_indicator and self.nv_mood_indicator:get_pos() then
+	local indicator_valid = false
+	if self.nv_mood_indicator then
+		local indicator_obj = self.nv_mood_indicator:get_luaentity()
+		if indicator_obj then
+			indicator_valid = true
+		end
+	end
+
+	if indicator_valid then
 		self.nv_mood_indicator:set_properties({
 			textures = {texture},
 		})
 	else
 		if self.nv_mood_indicator then
-			self.nv_mood_indicator:remove()
+			pcall(function() self.nv_mood_indicator:remove() end)
+			self.nv_mood_indicator = nil
 		end
 
 		local pos = self.object:get_pos()
