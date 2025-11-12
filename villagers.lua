@@ -347,7 +347,13 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 				end
 			end
 
-			return minetest.serialize(safe_data)
+			local success, result = pcall(minetest.serialize, safe_data)
+			if success then
+				return result
+			else
+				minetest.log("warning", "[nativevillages] Failed to serialize entity data: " .. tostring(result))
+				return ""
+			end
 		end,
 
 		on_die = function(self, pos)

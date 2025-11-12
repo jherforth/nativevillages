@@ -211,16 +211,6 @@ function nativevillages.mood.update_indicator(self)
 		return
 	end
 
-	if self.nv_mood_indicator then
-		self.nv_mood_indicator:remove()
-		self.nv_mood_indicator = nil
-	end
-
-	local pos = self.object:get_pos()
-	if not pos then return end
-
-	pos.y = pos.y + 2.2
-
 	local mood_data = nativevillages.mood.moods[self.nv_mood] or nativevillages.mood.moods.neutral
 	local desire_data = self.nv_current_desire and nativevillages.mood.desires[self.nv_current_desire]
 
@@ -229,17 +219,32 @@ function nativevillages.mood.update_indicator(self)
 		texture = desire_data.texture
 	end
 
-	self.nv_mood_indicator = minetest.add_entity(pos, "nativevillages:mood_indicator")
-	if self.nv_mood_indicator then
-		self.nv_mood_indicator:set_attach(
-			self.object,
-			"",
-			{x=0, y=22, z=0},
-			{x=0, y=0, z=0}
-		)
+	if self.nv_mood_indicator and self.nv_mood_indicator:get_pos() then
 		self.nv_mood_indicator:set_properties({
 			textures = {texture},
 		})
+	else
+		if self.nv_mood_indicator then
+			self.nv_mood_indicator:remove()
+		end
+
+		local pos = self.object:get_pos()
+		if not pos then return end
+
+		pos.y = pos.y + 2.2
+
+		self.nv_mood_indicator = minetest.add_entity(pos, "nativevillages:mood_indicator")
+		if self.nv_mood_indicator then
+			self.nv_mood_indicator:set_attach(
+				self.object,
+				"",
+				{x=0, y=22, z=0},
+				{x=0, y=0, z=0}
+			)
+			self.nv_mood_indicator:set_properties({
+				textures = {texture},
+			})
+		end
 	end
 end
 
