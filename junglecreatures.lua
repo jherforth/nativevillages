@@ -99,7 +99,7 @@ mobs:spawn({
 	neighbors = {"nativevillages:cannibalshrine"},
 	min_light = 0,
 	interval = 60,
-	chance = 2, -- 15000
+	chance = 200, -- 15000
 	min_height = 0,
 	max_height = 40,
 })
@@ -232,7 +232,7 @@ mobs:spawn({
 	neighbors = {"nativevillages:cannibalshrine"},
 	min_light = 0,
 	interval = 60,
-	chance = 2, -- 15000
+	chance = 200, -- 15000
 	active_object_count = 2,
 	min_height = 0,
 	max_height = 40,
@@ -339,7 +339,7 @@ mobs:spawn({
 	min_light = 0,
 	interval = 60,
 	active_object_count = 2,
-	chance = 2, -- 15000
+	chance = 200, -- 15000
 	min_height = 0,
 	max_height = 40,
 })
@@ -445,7 +445,7 @@ mobs:spawn({
 	neighbors = {"nativevillages:driedpeople"},
 	min_light = 0,
 	interval = 60,
-	chance = 2, -- 15000
+	chance = 200, -- 15000
 	active_object_count = 2,
 	min_height = 0,
 	max_height = 40,
@@ -453,3 +453,4 @@ mobs:spawn({
 end
 
 mobs:register_egg("nativevillages:cannibalchild", S("Cannibal Child"), "acannibalchild.png")
+
