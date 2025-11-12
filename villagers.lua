@@ -276,21 +276,17 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 		end,
 
 		on_activate = function(self, staticdata, dtime)
-			if staticdata and staticdata ~= "" then
-				local data = minetest.deserialize(staticdata)
-				if data then
-					nativevillages.mood.on_activate_extra(self, data)
-				end
-			end
 			nativevillages.mood.init_npc(self)
 			if class_def.trade_items and #class_def.trade_items > 0 then
 				self.nv_trade_items = class_def.trade_items
 			end
 		end,
 
-		get_staticdata = function(self)
-			local mood_data = nativevillages.mood.get_staticdata_extra(self)
-			return minetest.serialize(mood_data)
+		on_die = function(self, pos)
+			if self.nv_mood_indicator then
+				self.nv_mood_indicator:remove()
+				self.nv_mood_indicator = nil
+			end
 		end,
 
 		on_punch = function(self, hitter, tflp, tool_capabilities, dir)
