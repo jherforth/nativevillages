@@ -252,8 +252,12 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 				self.nv_trade_items = class_def.trade_items
 			end
 
-			if self.health and self.health > 0 then
-				local health_percent = (self.health / self.hp_max) * 100
+			if not self.nv_hp_max then
+				self.nv_hp_max = class_def.hp_max
+			end
+
+			if self.health and self.health > 0 and self.nv_hp_max then
+				local health_percent = (self.health / self.nv_hp_max) * 100
 
 				if health_percent < 30 then
 					self.nv_mood = "sad"
@@ -292,6 +296,10 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 		on_punch = function(self, hitter, tflp, tool_capabilities, dir)
 			if not self.health then return end
 
+			if not self.nv_hp_max then
+				self.nv_hp_max = class_def.hp_max
+			end
+
 			self.nv_recently_damaged = true
 			self.nv_damage_timer = 0
 
@@ -301,8 +309,8 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 				end
 			end)
 
-			if self.health and self.health > 0 then
-				local health_percent = (self.health / self.hp_max) * 100
+			if self.health and self.health > 0 and self.nv_hp_max then
+				local health_percent = (self.health / self.nv_hp_max) * 100
 
 				if health_percent < 30 then
 					self.nv_mood = "sad"
