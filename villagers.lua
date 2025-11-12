@@ -256,22 +256,8 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 				self.nv_hp_max = class_def.hp_max
 			end
 
-			if self.health and self.health > 0 and self.nv_hp_max then
-				local health_percent = (self.health / self.nv_hp_max) * 100
-
-				if health_percent < 30 then
-					self.nv_mood = "sad"
-					self.passive = true
-					self.attack = nil
-				elseif self.nv_recently_damaged and health_percent > 30 then
-					self.nv_mood = "angry"
-					if class_def.type ~= "npc" or class_def.attacks_monsters then
-						self.passive = false
-					end
-				end
-			end
-
 			nativevillages.mood.update_mood(self, dtime)
+
 			return true
 		end,
 
@@ -285,6 +271,10 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 		end,
 
 		get_staticdata = function(self)
+			if self.nv_is_dead then
+				return ""
+			end
+
 			if self.nv_mood_indicator then
 				pcall(function()
 					self.nv_mood_indicator:remove()
@@ -367,10 +357,18 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 		end,
 
 		on_die = function(self, pos)
+			self.nv_is_dead = true
+
 			if self.nv_mood_indicator then
-				self.nv_mood_indicator:remove()
+				pcall(function()
+					self.nv_mood_indicator:remove()
+				end)
 				self.nv_mood_indicator = nil
 			end
+
+			self.attack = nil
+			self.object = nil
+			self._cmi_components = nil
 		end,
 
 		on_punch = function(self, hitter, tflp, tool_capabilities, dir)
