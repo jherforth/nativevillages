@@ -75,7 +75,7 @@ mobs:spawn({
 	neighbors = {"nativevillages:sledge", "default:wood", "default:tree", "doors:door_wood_a"},
 	min_light = 14,
 	interval = 60,
-	chance = 8000, -- 15000
+	chance = 6000, -- 15000
 	active_object_count = 3,
 	min_height = 1,
 	max_height = 80,
@@ -245,7 +245,7 @@ mobs:spawn({
 	min_light = 0,
 	interval = 60,
 	active_object_count = 1,
-	chance = 1, -- 15000
+	chance = 100, -- 15000
 	min_height = 0,
 	max_height = 120,
 })
@@ -414,7 +414,7 @@ mobs:spawn({
 	min_light = 0,
 	interval = 30,
 	active_object_count = 2,
-	chance = 1, -- 15000
+	chance = 100, -- 15000
 	min_height = 0,
 	max_height = 120,
 })
@@ -554,7 +554,7 @@ mobs:spawn({
 	min_light = 0,
 	interval = 30,
 	active_object_count = 2,
-	chance = 1, -- 15000
+	chance = 100, -- 15000
 	min_height = 0,
 	max_height = 120,
 })
@@ -791,4 +791,5 @@ mobs:register_mob("nativevillages:sledgewithdog", {
 
 
 mobs:register_egg("nativevillages:sledgewithdog", S("Sledge with Dog"), "asledwithdog.png")
+
 
