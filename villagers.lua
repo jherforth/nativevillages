@@ -251,6 +251,22 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 			if class_def.trade_items and #class_def.trade_items > 0 then
 				self.nv_trade_items = class_def.trade_items
 			end
+
+			if self.health and self.health > 0 then
+				local health_percent = (self.health / self.hp_max) * 100
+
+				if health_percent < 30 then
+					self.nv_mood = "sad"
+					self.passive = true
+					self.attack = nil
+				elseif self.nv_recently_damaged and health_percent > 30 then
+					self.nv_mood = "angry"
+					if class_def.type ~= "npc" or class_def.attacks_monsters then
+						self.passive = false
+					end
+				end
+			end
+
 			nativevillages.mood.update_mood(self, dtime)
 			return true
 		end,
@@ -271,6 +287,46 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 		get_staticdata = function(self)
 			local mood_data = nativevillages.mood.get_staticdata_extra(self)
 			return minetest.serialize(mood_data)
+		end,
+
+		on_punch = function(self, hitter, tflp, tool_capabilities, dir)
+			if not self.health then return end
+
+			self.nv_recently_damaged = true
+			self.nv_damage_timer = 0
+
+			minetest.after(5, function()
+				if self and self.object then
+					self.nv_recently_damaged = false
+				end
+			end)
+
+			if self.health and self.health > 0 then
+				local health_percent = (self.health / self.hp_max) * 100
+
+				if health_percent < 30 then
+					self.nv_mood = "sad"
+					self.nv_mood_value = 10
+					self.passive = true
+					self.attack = nil
+					self.state = "runaway"
+				else
+					self.nv_mood = "angry"
+					self.nv_mood_value = 5
+					self.nv_fear = 80
+
+					if class_def.type == "monster" or class_def.attacks_monsters then
+						self.passive = false
+						if hitter and hitter:is_player() then
+							self.attack = hitter
+						end
+					else
+						self.state = "runaway"
+					end
+				end
+			end
+
+			nativevillages.mood.update_indicator(self)
 		end,
 
 		on_rightclick = function(self, clicker)
