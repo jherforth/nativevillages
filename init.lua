@@ -34,13 +34,7 @@ dofile(path .. "lakebuildings.lua") --
 dofile(path .. "desertbuildings.lua") --
 dofile(path .. "savannabuildings.lua") --
 dofile(path .. "npcmood.lua") --
-dofile(path .. "grasslandcreatures.lua") --
-dofile(path .. "junglecreatures.lua") --
-dofile(path .. "arcticcreatures.lua") --
-dofile(path .. "savannacreatures.lua") --
-dofile(path .. "lakecreatures.lua") --
-dofile(path .. "desertcreatures.lua") --
-dofile(path .. "slavecreatures.lua") --
+dofile(path .. "villagers.lua") --
 dofile(path .. "buyablestuff.lua") --
 dofile(path .. "explodingtoad.lua") --
 dofile(path .. "hunger.lua") --
@@ -53,4 +47,4 @@ end
 
 
 
-print (S("[MOD] Buildings loaded"))
+print (S("[MOD] Native Villages loaded"))
