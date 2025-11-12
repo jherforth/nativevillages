@@ -294,6 +294,21 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 			end
 		end,
 
+		get_staticdata = function(self)
+			if self.nv_mood_indicator then
+				pcall(function()
+					self.nv_mood_indicator:remove()
+				end)
+				self.nv_mood_indicator = nil
+			end
+
+			if self.attack then
+				self.attack = nil
+			end
+
+			return ""
+		end,
+
 		on_die = function(self, pos)
 			if self.nv_mood_indicator then
 				self.nv_mood_indicator:remove()
