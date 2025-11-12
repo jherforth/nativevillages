@@ -306,24 +306,44 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 			self.object = nil
 			self._cmi_components = nil
 
-			local safe_data = {}
-			local safe_types = {string = true, number = true, boolean = true}
+			local function is_serializable(value, depth, seen)
+				depth = depth or 0
+				seen = seen or {}
 
-			for k, v in pairs(self) do
-				local vtype = type(v)
-				if safe_types[vtype] then
-					safe_data[k] = v
-				elseif vtype == "table" then
-					local is_safe = true
-					for tk, tv in pairs(v) do
-						if not safe_types[type(tk)] or not safe_types[type(tv)] then
-							is_safe = false
-							break
+				if depth > 10 then
+					return false
+				end
+
+				if seen[value] then
+					return false
+				end
+
+				local vtype = type(value)
+				if vtype == "userdata" or vtype == "function" or vtype == "thread" then
+					return false
+				end
+
+				if vtype == "string" or vtype == "number" or vtype == "boolean" or vtype == "nil" then
+					return true
+				end
+
+				if vtype == "table" then
+					seen[value] = true
+					for k, v in pairs(value) do
+						if not is_serializable(k, depth + 1, seen) or not is_serializable(v, depth + 1, seen) then
+							return false
 						end
 					end
-					if is_safe then
-						safe_data[k] = v
-					end
+					return true
+				end
+
+				return false
+			end
+
+			local safe_data = {}
+			for k, v in pairs(self) do
+				if is_serializable(k) and is_serializable(v) then
+					safe_data[k] = v
 				end
 			end
 
