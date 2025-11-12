@@ -255,7 +255,7 @@ mobs:spawn({
 	min_light = 0,
 	interval = 30,
 	active_object_count = 2,
-	chance = 1, -- 15000
+	chance = 100, -- 15000
 	min_height = 0,
 	max_height = 120,
 })
@@ -430,7 +430,7 @@ mobs:spawn({
 	min_light = 0,
 	interval = 30,
 	active_object_count = 2,
-	chance = 1, -- 15000
+	chance = 100, -- 15000
 	min_height = 0,
 	max_height = 120,
 })
@@ -606,7 +606,7 @@ mobs:spawn({
 	min_light = 0,
 	interval = 60,
 	active_object_count = 1,
-	chance = 1, -- 15000
+	chance = 100, -- 15000
 	min_height = 0,
 	max_height = 120,
 })
@@ -615,4 +615,5 @@ end
 mobs:register_egg("nativevillages:grasslandwitch", S("Grassland Witch"), "agrasslandwitch.png")
 
 -- compatibility
+
 mobs:alias_mob("nativevillages:grasslandwitch", "nativevillages:grasslandwitch")
