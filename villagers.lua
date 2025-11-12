@@ -248,16 +248,6 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 		},
 
 		do_custom = function(self, dtime)
-			if self.nv_mood_indicator and type(self.nv_mood_indicator) == "userdata" then
-				local indicator_obj = self.nv_mood_indicator
-				self.nv_mood_indicator = nil
-				pcall(function()
-					if indicator_obj and indicator_obj:get_pos() then
-						indicator_obj:remove()
-					end
-				end)
-			end
-
 			if class_def.trade_items and #class_def.trade_items > 0 then
 				self.nv_trade_items = class_def.trade_items
 			end
@@ -306,14 +296,47 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 			self.object = nil
 			self._cmi_components = nil
 
+			local function is_safe_value(value, depth, seen)
+				depth = depth or 0
+				if depth > 5 then
+					return false
+				end
+
+				local vtype = type(value)
+				if vtype == "userdata" or vtype == "function" or vtype == "thread" then
+					return false
+				end
+
+				if vtype == "string" or vtype == "number" or vtype == "boolean" or vtype == "nil" then
+					return true
+				end
+
+				if vtype == "table" then
+					if seen and seen[value] then
+						return false
+					end
+					seen = seen or {}
+					seen[value] = true
+
+					for k, v in pairs(value) do
+						if not is_safe_value(k, depth + 1, seen) or not is_safe_value(v, depth + 1, seen) then
+							return false
+						end
+					end
+					return true
+				end
+
+				return false
+			end
+
 			local allowed_fields = {
-				"health", "texture_mods", "child", "hornytimer", "gotten", "tamed",
+				"health", "texture_mods", "child", "gotten", "tamed",
 				"owner", "order", "nametag", "protected", "persistance",
 				"docile_by_day", "fire_resistant", "light_damage", "old_y",
 				"lifetimer", "jump_height", "stepheight", "fear_height",
-				"path", "target", "state", "v_start", "timer", "blinktimer",
-				"blinkstatus", "attack", "following", "horny", "hornytimer",
-				"child_texture", "tamed_by", "base_texture", "gotten",
+				"state", "v_start", "timer", "blinktimer",
+				"blinkstatus", "horny",
+				"child_texture", "tamed_by", "base_texture",
 				"nv_mood", "nv_mood_value", "nv_hunger", "nv_loneliness",
 				"nv_fear", "nv_last_fed", "nv_last_interaction",
 				"nv_current_desire", "nv_wants_trade", "nv_biome",
@@ -323,25 +346,8 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 			local safe_data = {}
 			for _, field in ipairs(allowed_fields) do
 				local value = self[field]
-				local vtype = type(value)
-				if vtype == "string" or vtype == "number" or vtype == "boolean" then
+				if is_safe_value(value) then
 					safe_data[field] = value
-				elseif vtype == "table" then
-					local is_simple = true
-					for k, v in pairs(value) do
-						if type(k) ~= "string" and type(k) ~= "number" then
-							is_simple = false
-							break
-						end
-						local tv = type(v)
-						if tv ~= "string" and tv ~= "number" and tv ~= "boolean" and tv ~= "table" then
-							is_simple = false
-							break
-						end
-					end
-					if is_simple then
-						safe_data[field] = value
-					end
 				end
 			end
 
