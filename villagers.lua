@@ -210,7 +210,8 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 		visual = "mesh",
 		mesh = "character.b3d",
 		textures = {
-			{"character.png"},
+			{class_name .. "1.png"},
+			{class_name .. "2.png"},
 		},
 		visual_size = {x=1, y=1},
 		makes_footstep_sound = true,
