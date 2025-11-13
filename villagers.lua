@@ -285,9 +285,16 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 		},
 
 		do_custom = function(self, dtime)
-			-- Update mood system
-			if nativevillages.mood then
-				nativevillages.mood.update_mood(self, dtime)
+			-- Wrap in error handler to prevent crashes
+			local success, err = pcall(function()
+				-- Update mood system
+				if nativevillages.mood then
+					nativevillages.mood.update_mood(self, dtime)
+				end
+			end)
+
+			if not success then
+				minetest.log("warning", "[nativevillages] do_custom error: " .. tostring(err))
 			end
 		end,
 
