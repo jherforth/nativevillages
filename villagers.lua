@@ -371,35 +371,6 @@ for biome_name, biome_config in pairs(biome_spawn_config) do
 end
 
 --------------------------------------------------------------------
--- Entity aliases for backward compatibility with old mob names
---------------------------------------------------------------------
--- Old mob names that need to be removed
-local old_mob_names = {
-	"grasslandfemale", "grasslandmale",
-	"desertfemale", "desertmale",
-	"savannafemale", "savannamale",
-	"lakefemale", "lakemale",
-	"icefemale", "icemale",
-	"cannibalfemale", "cannibalmale",
-}
-
--- Register dummy entities that just despawn old mobs
-for _, old_name in ipairs(old_mob_names) do
-	minetest.register_entity("nativevillages:" .. old_name, {
-		physical = false,
-		collisionbox = {0, 0, 0, 0, 0, 0},
-		visual = "sprite",
-		textures = {"blank.png"},
-		on_activate = function(self, staticdata)
-			self.object:remove()
-		end,
-		on_step = function(self, dtime)
-			self.object:remove()
-		end,
-	})
-end
-
---------------------------------------------------------------------
 -- Village detection & spawning
 --------------------------------------------------------------------
 local villages_spawned = {}
