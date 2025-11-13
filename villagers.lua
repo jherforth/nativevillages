@@ -268,6 +268,7 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 		owner = "",
 		order = "follow",
 		fear_height = 3,
+		nv_trade_items = class_def.trade_items or {},
 		animation = {
 			speed_normal = 30,
 			stand_start = 0,
@@ -283,6 +284,36 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 			die_rotate = true,
 		},
 
+		do_custom = function(self, dtime)
+			-- Update mood system
+			if nativevillages.mood then
+				nativevillages.mood.update_mood(self, dtime)
+			end
+		end,
+
+		on_activate = function(self, staticdata, dtime_s)
+			-- Deserialize saved data
+			if staticdata and staticdata ~= "" then
+				local success, data = pcall(minetest.deserialize, staticdata)
+				if success and data then
+					self.health = data.health or self.health
+					self.owner = data.owner or ""
+					self.tamed = data.tamed or false
+					self.nametag = data.nametag or ""
+
+					-- Restore mood data
+					if nativevillages.mood and data.mood then
+						nativevillages.mood.on_activate_extra(self, data.mood)
+					end
+				end
+			end
+
+			-- Initialize mood system
+			if nativevillages.mood then
+				nativevillages.mood.init_npc(self)
+			end
+		end,
+
 		get_staticdata = function(self)
 			-- Catch all serialization errors and return empty string
 			local success, result = pcall(function()
@@ -291,13 +322,18 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 					return ""
 				end
 
-				-- Only serialize minimal essential data
+				-- Serialize minimal essential data
 				local tmp = {
 					health = self.health or 0,
 					owner = self.owner or "",
 					tamed = self.tamed or false,
 					nametag = self.nametag or "",
 				}
+
+				-- Add mood data if available
+				if nativevillages.mood then
+					tmp.mood = nativevillages.mood.get_staticdata_extra(self)
+				end
 
 				return minetest.serialize(tmp)
 			end)
