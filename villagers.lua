@@ -1,6 +1,27 @@
 -- villagers.lua
 local S = minetest.get_translator("nativevillages")
 
+-- Register a dummy mood_indicator entity to clean up old ones
+minetest.register_entity("nativevillages:mood_indicator", {
+	initial_properties = {
+		physical = false,
+		collisionbox = {0,0,0,0,0,0},
+		visual = "sprite",
+		visual_size = {x=0.01, y=0.01},
+		textures = {"blank.png"},
+		static_save = false,
+	},
+	on_activate = function(self, staticdata)
+		self.object:remove()
+	end,
+	on_step = function(self, dtime)
+		self.object:remove()
+	end,
+	get_staticdata = function(self)
+		return ""
+	end,
+})
+
 --------------------------------------------------------------------
 -- Biome / spawn configuration
 --------------------------------------------------------------------
