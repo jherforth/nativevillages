@@ -373,30 +373,40 @@ end
 --------------------------------------------------------------------
 -- Entity aliases for backward compatibility with old mob names
 --------------------------------------------------------------------
-local old_mob_aliases = {
-	-- Map old gender-based names to new class-based names
-	-- Default old female/male mobs to "friendly" class
-	grasslandfemale = "grassland_friendly",
-	grasslandmale = "grassland_friendly",
-	desertfemale = "desert_friendly",
-	desertmale = "desert_friendly",
-	savannafemale = "savanna_friendly",
-	savannamale = "savanna_friendly",
-	lakefemale = "lake_friendly",
-	lakemale = "lake_friendly",
-	icefemale = "ice_friendly",
-	icemale = "ice_friendly",
-	cannibalfemale = "cannibal_hostile",
-	cannibalmale = "cannibal_hostile",
+-- List of peaceful classes to randomly choose from
+local peaceful_classes = {"farmer", "blacksmith", "fisherman", "cleric", "jeweler", "bum", "entertainer", "witch", "ranger"}
+local hostile_classes = {"hostile", "raider"}
+
+-- Old mob names that need to be converted
+local old_mob_names = {
+	"grasslandfemale", "grasslandmale",
+	"desertfemale", "desertmale",
+	"savannafemale", "savannamale",
+	"lakefemale", "lakemale",
+	"icefemale", "icemale",
+	"cannibalfemale", "cannibalmale",
 }
 
-for old_name, new_name in pairs(old_mob_aliases) do
+for _, old_name in ipairs(old_mob_names) do
 	minetest.register_entity("nativevillages:" .. old_name, {
 		on_activate = function(self, staticdata)
 			local pos = self.object:get_pos()
 			if pos then
 				self.object:remove()
-				minetest.add_entity(pos, "nativevillages:" .. new_name)
+
+				-- Extract biome name from old mob name
+				local biome_name = old_name:match("^([^f^m]+)")
+
+				-- Cannibals become hostile, others become random peaceful class
+				local new_class
+				if biome_name == "cannibal" then
+					new_class = hostile_classes[math.random(#hostile_classes)]
+				else
+					new_class = peaceful_classes[math.random(#peaceful_classes)]
+				end
+
+				local new_mob_name = "nativevillages:" .. biome_name .. "_" .. new_class
+				minetest.add_entity(pos, new_mob_name)
 			end
 		end
 	})
