@@ -575,25 +575,6 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 			-- protect npc with mobs:protector
 			if mobs:protect(self, clicker) then return end
 
-			-- right clicking with gold ingot drops random item from mobs.desertslavetrader_drops
-			if item:get_name() == "default:gold_ingot" then
-				if not mobs.is_creative(name) then
-					item:take_item()
-					clicker:set_wielded_item(item)
-				end
-
-				local pos = self.object:get_pos()
-				pos.y = pos.y + 0.5
-
-				local drops = self.npc_drops or mobs.desertslavetrader_drops
-				minetest.add_item(pos, {
-					name = drops[math.random(1, #drops)]
-				})
-
-				minetest.chat_send_player(name, S("Slave delivered!"))
-				return
-			end
-
 			-- owner can toggle follow / stand
 			if self.owner and self.owner == name then
 				if self.order == "follow" then
