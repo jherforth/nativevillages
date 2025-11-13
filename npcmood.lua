@@ -188,7 +188,6 @@ function nativevillages.mood.update_mood(self, dtime)
 
 	minetest.log("action", "[nativevillages] update_mood: updating indicator")
 	nativevillages.mood.update_indicator(self)
-	nativevillages.mood.update_nametag(self)
 
 	minetest.log("action", "[nativevillages] update_mood: complete")
 end
@@ -240,40 +239,13 @@ function nativevillages.mood.update_indicator(self)
 		self.nv_mood_indicator:set_properties({
 			textures = {texture},
 		})
+
+		-- Store reference to parent NPC for info display
+		local luaent = self.nv_mood_indicator:get_luaentity()
+		if luaent then
+			luaent.parent_npc = self
+		end
 	end
-end
-
---------------------------------------------------------------------
--- Info display (when player looks at NPC)
---------------------------------------------------------------------
-function nativevillages.mood.update_nametag(self)
-	if not self.object then return end
-
-	local mood_name = self.nv_mood or "neutral"
-	local hunger = math.floor(self.nv_hunger or 30)
-	local health = math.floor(self.health or 20)
-
-	local mood_emoji = {
-		happy = "😊",
-		content = "🙂",
-		neutral = "😐",
-		sad = "😢",
-		angry = "😠",
-		hungry = "🍞",
-		lonely = "💭",
-		scared = "😨"
-	}
-
-	local info = string.format("%s HP:%d Hunger:%d",
-		mood_emoji[mood_name] or "😐",
-		health,
-		hunger
-	)
-
-	self.object:set_properties({
-		nametag = info,
-		nametag_color = "#FFFFFF"
-	})
 end
 
 --------------------------------------------------------------------
@@ -339,12 +311,12 @@ end
 minetest.register_entity("nativevillages:mood_indicator", {
 	initial_properties = {
 		physical      = false,
-		collisionbox  = {0, 0, 0, 0, 0, 0},
+		collisionbox  = {-0.25, -0.25, -0.25, 0.25, 0.25, 0.25},
 		visual        = "sprite",
 		visual_size   = {x=0.25, y=0.25},
 		textures      = {"nativevillages_mood_neutral.png"},
 		is_visible    = true,
-		pointable     = false,
+		pointable     = true,
 		static_save   = false,
 		glow          = 5,
 	},
@@ -355,6 +327,36 @@ minetest.register_entity("nativevillages:mood_indicator", {
 		local parent = self.object:get_attach()
 		if not parent then
 			self.object:remove()
+			return
+		end
+
+		-- Update infotext when pointed at
+		if self.parent_npc then
+			local npc = self.parent_npc
+			local mood_name = npc.nv_mood or "neutral"
+			local hunger = math.floor(npc.nv_hunger or 1)
+			local health = math.floor(npc.health or 20)
+
+			local mood_emoji = {
+				happy = "😊",
+				content = "🙂",
+				neutral = "😐",
+				sad = "😢",
+				angry = "😠",
+				hungry = "🍞",
+				lonely = "💭",
+				scared = "😨"
+			}
+
+			local info = string.format("%s HP:%d Hunger:%d",
+				mood_emoji[mood_name] or "😐",
+				health,
+				hunger
+			)
+
+			self.object:set_properties({
+				infotext = info
+			})
 		end
 	end,
 
