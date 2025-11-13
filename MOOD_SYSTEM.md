@@ -60,79 +60,16 @@ All mood data is saved when NPCs are unloaded and restored when they reload, ens
 
 The mood system is implemented on all NPCs with trading:
 
-**Grassland NPCs:**
-- Grassland Female (trades bread)
-- Grassland Male (trades bread)
-- Grassland Witch (trades diamond)
-
-**Savanna NPCs:**
-- Savanna Doctor (trades graves for tame zombies)
-- Savanna Queen (trades diamond)
-- Savanna King (trades diamond)
-- Savanna Female (trades pearl)
-
-**Lake NPCs:**
-- Lake Fisher (trades gold_lump for catfish)
-
-**Desert NPCs:**
-- Desert Villager Male (trades stick)
-- Desert Villager Female (trades stick)
-- Desert Slave Trader (trades gold_ingot)
-
-**Slave NPCs:**
-- Slave Lion Trainer (trades gold_lump for lions)
-- Slave Female Dancer (trades gold_lump)
-- Slave Male Dancer (trades gold_lump)
-
-**Note:** Jungle/Cannibal NPCs do not have trading mechanics, so the mood system is not applicable to them.
-
-**Textures:** Basic placeholder textures are included for testing. For better visuals, replace the texture files in `/textures/` with custom designs (see TEXTURE_LIST.md for specifications and design tips).
-
-## Extending to Other NPCs
-
-To add mood tracking to other NPC types, add these callbacks to the mob definition:
-
-```lua
-do_custom = function(self, dtime)
-    nativevillages.mood.update_mood(self, dtime)
-    return true
-end,
-
-on_activate = function(self, staticdata, dtime)
-    if staticdata and staticdata ~= "" then
-        local data = minetest.deserialize(staticdata)
-        if data then
-            nativevillages.mood.on_activate_extra(self, data)
-        end
-    end
-    nativevillages.mood.init_npc(self)
-end,
-
-get_staticdata = function(self)
-    local mood_data = nativevillages.mood.get_staticdata_extra(self)
-    return minetest.serialize(mood_data)
-end,
-```
-
-And update interaction handlers:
-
-```lua
-on_rightclick = function(self, clicker)
-    nativevillages.mood.on_interact(self, clicker)
-
-    -- After successful feeding:
-    if mobs:feed_tame(self, clicker, 8, true, true) then
-        nativevillages.mood.on_feed(self, clicker)
-        return
-    end
-
-    -- After successful trading:
-    -- (check for trade item and complete trade, then:)
-    nativevillages.mood.on_trade(self, clicker)
-
-    -- Rest of your existing code...
-end,
-```
+**NPCs:**
+- Ranger (trades accepted: stick, wood planks, bread) (Trade drops: cooked meat, random sword)
+- Jeweler (trades accepted: gold ingot, bread) (Trade drops: diamond (rare chance), mese_crystal, too_many_stones.quartz_crystal)
+- Farmer (trades accpeted: any seeds, bread) (Trade drops: anamilia.lasso, leather, nametag)
+- Blacksmith (trades accepted: any ingot, coal_lump, bread) (Trade drops: steel_bucket, any sword (diamond rare), any pickaxe (diamond rare))
+- Fisherman (trades accepted: stick, farming.string, bread) (Trade drops: ethereal.fishing_rod, any fish)
+- Cleric (trades accepted: book, gold_ingot, bread) (Trade drops: mese_crystal, people.firstaidkit)
+- Bum (trades accepted: bread) (Trade drops: any flower)
+- Entertainer (trades accepted: none) (Trade drops: none)
+- Witch (trades accepted: too_many_stones.crystal (any kind), herbs (any), bread) (Trade drops: bottle (any), ethereal.flight_potion (rare)
 
 ## Technical Details
 
@@ -154,3 +91,4 @@ The system uses:
 - `nativevillages.mood.get_staticdata_extra(self)` - Get mood data for saving
 
 **Important:** These functions modify the underlying stats (hunger, loneliness, fear). Mood value is automatically calculated from these stats every 5 seconds.
+
