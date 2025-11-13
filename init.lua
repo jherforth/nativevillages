@@ -9,6 +9,23 @@ local S = minetest.get_translator and minetest.get_translator("nativevillages") 
 
 mobs.intllib = S
 
+-- Global fix for serialization errors - override minetest.serialize to handle userdata gracefully
+local original_serialize = minetest.serialize
+minetest.serialize = function(data)
+	-- Wrap in pcall to catch any serialization errors
+	local success, result = pcall(function()
+		return original_serialize(data)
+	end)
+
+	if success then
+		return result
+	else
+		-- If serialization fails, log and return empty table serialization
+		minetest.log("warning", "[nativevillages] Serialization failed, returning empty data")
+		return original_serialize({})
+	end
+end
+
 
 -- Check for custom mob spawn file
 local input = io.open(path .. "spawn.lua", "r")
