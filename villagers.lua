@@ -66,7 +66,9 @@ local villager_classes = {
 		attacks_monsters = false,
 		attack_npcs = true,
 		reach = 2,
-		drops = {"default:iron_lump"},
+		drops = {
+			{name = "default:iron_lump", chance = 1, min = 0, max = 2}
+		},
 		trade_items = {},
 	},
 	ranger = {
@@ -80,7 +82,10 @@ local villager_classes = {
 		attacks_monsters = true,
 		attack_npcs = false,
 		reach = 2,
-		drops = {"default:copper_lump", "default:tin_lump"},
+		drops = {
+			{name = "default:copper_lump", chance = 1, min = 0, max = 1},
+			{name = "default:tin_lump", chance = 1, min = 0, max = 1}
+		},
 		trade_items = {"farming:bread", "default:apple"},
 	},
 	jeweler = {
@@ -94,7 +99,10 @@ local villager_classes = {
 		attacks_monsters = false,
 		attack_npcs = false,
 		reach = 1,
-		drops = {"default:gold_lump", "default:diamond"},
+		drops = {
+			{name = "default:gold_lump", chance = 1, min = 0, max = 1},
+			{name = "default:diamond", chance = 2, min = 0, max = 1}
+		},
 		trade_items = {"default:gold_lump"},
 	},
 	farmer = {
@@ -108,7 +116,10 @@ local villager_classes = {
 		attacks_monsters = false,
 		attack_npcs = false,
 		reach = 1,
-		drops = {"farming:wheat", "farming:bread"},
+		drops = {
+			{name = "farming:wheat", chance = 1, min = 0, max = 2},
+			{name = "farming:bread", chance = 1, min = 0, max = 1}
+		},
 		trade_items = {"farming:bread", "farming:wheat"},
 	},
 	blacksmith = {
@@ -122,7 +133,10 @@ local villager_classes = {
 		attacks_monsters = true,
 		attack_npcs = false,
 		reach = 2,
-		drops = {"default:iron_lump", "default:steel_ingot"},
+		drops = {
+			{name = "default:iron_lump", chance = 1, min = 0, max = 2},
+			{name = "default:steel_ingot", chance = 1, min = 0, max = 1}
+		},
 		trade_items = {"default:iron_lump", "default:coal_lump"},
 	},
 	fisherman = {
@@ -136,7 +150,9 @@ local villager_classes = {
 		attacks_monsters = false,
 		attack_npcs = false,
 		reach = 1,
-		drops = {"nativevillages:catfish_raw"},
+		drops = {
+			{name = "nativevillages:catfish_raw", chance = 1, min = 0, max = 2}
+		},
 		trade_items = {"nativevillages:catfish_raw", "nativevillages:catfish_cooked"},
 	},
 	cleric = {
@@ -150,7 +166,9 @@ local villager_classes = {
 		attacks_monsters = true,
 		attack_npcs = false,
 		reach = 2,
-		drops = {"default:mese_crystal"},
+		drops = {
+			{name = "default:mese_crystal", chance = 1, min = 0, max = 1}
+		},
 		trade_items = {"default:mese_crystal_fragment"},
 	},
 	bum = {
@@ -164,7 +182,9 @@ local villager_classes = {
 		attacks_monsters = false,
 		attack_npcs = false,
 		reach = 1,
-		drops = {"default:stick"},
+		drops = {
+			{name = "default:stick", chance = 1, min = 0, max = 2}
+		},
 		trade_items = {"farming:bread", "default:apple"},
 	},
 	entertainer = {
@@ -178,7 +198,9 @@ local villager_classes = {
 		attacks_monsters = false,
 		attack_npcs = false,
 		reach = 1,
-		drops = {"default:gold_lump"},
+		drops = {
+			{name = "default:gold_lump", chance = 1, min = 0, max = 1}
+		},
 		trade_items = {"default:gold_lump"},
 	},
 	witch = {
@@ -192,7 +214,10 @@ local villager_classes = {
 		attacks_monsters = true,
 		attack_npcs = false,
 		reach = 3,
-		drops = {"default:mese_crystal", "nativevillages:zombietame"},
+		drops = {
+			{name = "default:mese_crystal", chance = 1, min = 0, max = 1},
+			{name = "nativevillages:zombietame", chance = 3, min = 0, max = 1}
+		},
 		trade_items = {"nativevillages:driedhumanmeat", "default:mese_crystal_fragment"},
 	},
 }
