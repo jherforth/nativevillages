@@ -273,24 +273,28 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 		},
 
 		do_custom = function(self, dtime)
-			nativevillages.mood.update_mood(self, dtime)
+			-- Mood system temporarily disabled
+			-- nativevillages.mood.update_mood(self, dtime)
 			return true
 		end,
 
 		on_activate = function(self, staticdata, dtime)
-			if staticdata and staticdata ~= "" then
-				local data = minetest.deserialize(staticdata)
-				if data then
-					nativevillages.mood.on_activate_extra(self, data)
-				end
-			end
-			nativevillages.mood.init_npc(self)
+			-- Mood system temporarily disabled
+			-- if staticdata and staticdata ~= "" then
+			-- 	local data = minetest.deserialize(staticdata)
+			-- 	if data then
+			-- 		nativevillages.mood.on_activate_extra(self, data)
+			-- 	end
+			-- end
+			-- nativevillages.mood.init_npc(self)
 		end,
 
 		-- *** FIXED ***  Safe serialization
 		get_staticdata = function(self)
-			local mood_data = nativevillages.mood.get_staticdata_extra(self) or {}
-			return minetest.serialize(strip_userdata(mood_data))
+			-- Mood system temporarily disabled
+			-- local mood_data = nativevillages.mood.get_staticdata_extra(self) or {}
+			-- return minetest.serialize(strip_userdata(mood_data))
+			return ""
 		end,
 
 		on_deactivate = function(self)
@@ -302,11 +306,12 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 		end,
 
 		on_rightclick = function(self, clicker)
-			nativevillages.mood.on_interact(self, clicker)
+			-- Mood system temporarily disabled
+			-- nativevillages.mood.on_interact(self, clicker)
 
 			-- feed to heal npc
 			if mobs:feed_tame(self, clicker, 8, true, true) then
-				nativevillages.mood.on_feed(self, clicker)
+				-- nativevillages.mood.on_feed(self, clicker)
 				return
 			end
 
@@ -335,7 +340,7 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 				})
 
 				minetest.chat_send_player(name, S("Slave delivered!"))
-				nativevillages.mood.on_trade(self, clicker)
+				-- nativevillages.mood.on_trade(self, clicker)
 				return
 			end
 
@@ -434,25 +439,26 @@ local function spawn_villagers_near(center_pos, biome_name)
 	end
 end
 
-minetest.register_on_generated(function(minp, maxp, blockseed)
-	for biome_name, biome_config in pairs(biome_spawn_config) do
-		local center_pos = find_village_center(
-			{x=(minp.x+maxp.x)/2, y=(minp.y+maxp.y)/2, z=(minp.z+maxp.z)/2},
-			biome_config.markers,
-			40
-		)
+-- Automatic village spawning temporarily disabled
+-- minetest.register_on_generated(function(minp, maxp, blockseed)
+-- 	for biome_name, biome_config in pairs(biome_spawn_config) do
+-- 		local center_pos = find_village_center(
+-- 			{x=(minp.x+maxp.x)/2, y=(minp.y+maxp.y)/2, z=(minp.z+maxp.z)/2},
+-- 			biome_config.markers,
+-- 			40
+-- 		)
 
-		if center_pos then
-			local village_key = get_village_key(center_pos)
+-- 		if center_pos then
+-- 			local village_key = get_village_key(center_pos)
 
-			if not villages_spawned[village_key] then
-				villages_spawned[village_key] = true
-				minetest.after(2, function()
-					spawn_villagers_near(center_pos, biome_name)
-				end)
-			end
-		end
-	end
-end)
+-- 			if not villages_spawned[village_key] then
+-- 				villages_spawned[village_key] = true
+-- 				minetest.after(2, function()
+-- 					spawn_villagers_near(center_pos, biome_name)
+-- 				end)
+-- 			end
+-- 		end
+-- 	end
+-- end)
 
 print(S("[MOD] Villagers loaded"))
