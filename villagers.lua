@@ -259,48 +259,31 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 		},
 
 		get_staticdata = function(self)
-			-- Prevent death entity issues
-			if self.state == "die" or self.dead then
+			-- Catch all serialization errors and return empty string
+			local success, result = pcall(function()
+				-- Prevent death entity issues
+				if self.state == "die" or self.dead then
+					return ""
+				end
+
+				-- Only serialize minimal essential data
+				local tmp = {
+					health = self.health or 0,
+					owner = self.owner or "",
+					tamed = self.tamed or false,
+					nametag = self.nametag or "",
+				}
+
+				return minetest.serialize(tmp)
+			end)
+
+			if success then
+				return result
+			else
+				-- Log error and return empty string to prevent crash
+				minetest.log("warning", "[nativevillages] Serialization error: " .. tostring(result))
 				return ""
 			end
-
-			-- Recursive function to sanitize tables
-			local function sanitize(val, depth)
-				depth = depth or 0
-				if depth > 10 then return nil end  -- Prevent infinite recursion
-
-				local vtype = type(val)
-				if vtype == "function" or vtype == "userdata" then
-					return nil
-				elseif vtype == "table" then
-					local clean = {}
-					for k, v in pairs(val) do
-						local ktype = type(k)
-						if ktype ~= "function" and ktype ~= "userdata" then
-							local cleaned_v = sanitize(v, depth + 1)
-							if cleaned_v ~= nil then
-								clean[k] = cleaned_v
-							end
-						end
-					end
-					return clean
-				else
-					return val
-				end
-			end
-
-			-- Create a clean tmp table with only serializable data
-			local tmp = {}
-			for tag, stat in pairs(self) do
-				if type(tag) ~= "function" and type(tag) ~= "userdata" and tag ~= "object" then
-					local cleaned = sanitize(stat)
-					if cleaned ~= nil then
-						tmp[tag] = cleaned
-					end
-				end
-			end
-
-			return minetest.serialize(tmp)
 		end,
 
 		on_die = function(self, pos)

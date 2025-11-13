@@ -61,40 +61,24 @@ sounds = {
 	follow = {"fishing:bait:worm", "ethereal:worm", "animalworld:ant", "animalworld:termite"},
 	view_range = 13,
 	get_staticdata = function(self)
-		if self.state == "die" or self.dead then
+		local success, result = pcall(function()
+			if self.state == "die" or self.dead then
+				return ""
+			end
+			local tmp = {
+				health = self.health or 0,
+				owner = self.owner or "",
+				tamed = self.tamed or false,
+				nametag = self.nametag or "",
+			}
+			return minetest.serialize(tmp)
+		end)
+		if success then
+			return result
+		else
+			minetest.log("warning", "[nativevillages] Serialization error: " .. tostring(result))
 			return ""
 		end
-		local function sanitize(val, depth)
-			depth = depth or 0
-			if depth > 10 then return nil end
-			local vtype = type(val)
-			if vtype == "function" or vtype == "userdata" then
-				return nil
-			elseif vtype == "table" then
-				local clean = {}
-				for k, v in pairs(val) do
-					if type(k) ~= "function" and type(k) ~= "userdata" then
-						local cleaned_v = sanitize(v, depth + 1)
-						if cleaned_v ~= nil then
-							clean[k] = cleaned_v
-						end
-					end
-				end
-				return clean
-			else
-				return val
-			end
-		end
-		local tmp = {}
-		for tag, stat in pairs(self) do
-			if type(tag) ~= "function" and type(tag) ~= "userdata" and tag ~= "object" then
-				local cleaned = sanitize(stat)
-				if cleaned ~= nil then
-					tmp[tag] = cleaned
-				end
-			end
-		end
-		return minetest.serialize(tmp)
 	end,
 	on_die = function(self, pos)
 		if self.object then
