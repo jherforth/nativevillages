@@ -371,6 +371,38 @@ for biome_name, biome_config in pairs(biome_spawn_config) do
 end
 
 --------------------------------------------------------------------
+-- Entity aliases for backward compatibility with old mob names
+--------------------------------------------------------------------
+local old_mob_aliases = {
+	-- Map old gender-based names to new class-based names
+	-- Default old female/male mobs to "friendly" class
+	grasslandfemale = "grassland_friendly",
+	grasslandmale = "grassland_friendly",
+	desertfemale = "desert_friendly",
+	desertmale = "desert_friendly",
+	savannafemale = "savanna_friendly",
+	savannamale = "savanna_friendly",
+	lakefemale = "lake_friendly",
+	lakemale = "lake_friendly",
+	icefemale = "ice_friendly",
+	icemale = "ice_friendly",
+	cannibalfemale = "cannibal_hostile",
+	cannibalmale = "cannibal_hostile",
+}
+
+for old_name, new_name in pairs(old_mob_aliases) do
+	minetest.register_entity("nativevillages:" .. old_name, {
+		on_activate = function(self, staticdata)
+			local pos = self.object:get_pos()
+			if pos then
+				self.object:remove()
+				minetest.add_entity(pos, "nativevillages:" .. new_name)
+			end
+		end
+	})
+end
+
+--------------------------------------------------------------------
 -- Village detection & spawning
 --------------------------------------------------------------------
 local villages_spawned = {}
