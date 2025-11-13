@@ -264,6 +264,13 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 		on_activate = function(self, staticdata, dtime)
 			self.nv_mood_indicator = nil
 
+			if staticdata and staticdata ~= "" then
+				local data = minetest.deserialize(staticdata)
+				if data then
+					nativevillages.mood.on_activate_extra(self, data)
+				end
+			end
+
 			nativevillages.mood.init_npc(self)
 			if class_def.trade_items and #class_def.trade_items > 0 then
 				self.nv_trade_items = class_def.trade_items
@@ -282,78 +289,8 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 				self.nv_mood_indicator = nil
 			end
 
-			self.attack = nil
-			self.object = nil
-			self._cmi_components = nil
-
-			local function is_safe_value(value, depth, seen)
-				depth = depth or 0
-				if depth > 5 then
-					return false
-				end
-
-				local vtype = type(value)
-				if vtype == "userdata" or vtype == "function" or vtype == "thread" then
-					return false
-				end
-
-				if vtype == "string" or vtype == "number" or vtype == "boolean" or vtype == "nil" then
-					return true
-				end
-
-				if vtype == "table" then
-					if seen and seen[value] then
-						return false
-					end
-					seen = seen or {}
-					seen[value] = true
-
-					for k, v in pairs(value) do
-						if not is_safe_value(k, depth + 1, seen) or not is_safe_value(v, depth + 1, seen) then
-							return false
-						end
-					end
-					return true
-				end
-
-				return false
-			end
-
-			local allowed_fields = {
-				"health", "texture_mods", "child", "gotten", "tamed",
-				"owner", "order", "nametag", "protected", "persistance",
-				"docile_by_day", "fire_resistant", "light_damage", "old_y",
-				"lifetimer", "jump_height", "stepheight", "fear_height",
-				"state", "v_start", "timer", "blinktimer",
-				"blinkstatus", "horny",
-				"child_texture", "tamed_by", "base_texture",
-				"nv_mood", "nv_mood_value", "nv_hunger", "nv_loneliness",
-				"nv_fear", "nv_last_fed", "nv_last_interaction",
-				"nv_current_desire", "nv_wants_trade", "nv_biome",
-				"nv_class", "nv_trade_items"
-			}
-
-			local minimal_data = {
-				health = type(self.health) == "number" and self.health or nil,
-				owner = type(self.owner) == "string" and self.owner or nil,
-				tamed = type(self.tamed) == "boolean" and self.tamed or nil,
-				nametag = type(self.nametag) == "string" and self.nametag or nil,
-				child = type(self.child) == "boolean" and self.child or nil,
-				gotten = type(self.gotten) == "boolean" and self.gotten or nil,
-				order = type(self.order) == "string" and self.order or nil,
-				nv_mood = type(self.nv_mood) == "string" and self.nv_mood or nil,
-				nv_mood_value = type(self.nv_mood_value) == "number" and self.nv_mood_value or nil,
-				nv_hunger = type(self.nv_hunger) == "number" and self.nv_hunger or nil,
-				nv_loneliness = type(self.nv_loneliness) == "number" and self.nv_loneliness or nil,
-				nv_fear = type(self.nv_fear) == "number" and self.nv_fear or nil,
-				nv_last_fed = type(self.nv_last_fed) == "number" and self.nv_last_fed or nil,
-				nv_last_interaction = type(self.nv_last_interaction) == "number" and self.nv_last_interaction or nil,
-				nv_current_desire = type(self.nv_current_desire) == "string" and self.nv_current_desire or nil,
-				nv_biome = type(self.nv_biome) == "string" and self.nv_biome or nil,
-				nv_class = type(self.nv_class) == "string" and self.nv_class or nil,
-			}
-
-			return minetest.serialize(minimal_data)
+			local mood_data = nativevillages.mood.get_staticdata_extra(self)
+			return minetest.serialize(mood_data)
 		end,
 
 		on_die = function(self, pos)
