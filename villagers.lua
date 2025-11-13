@@ -201,25 +201,6 @@ local class_order = {"hostile", "raider", "ranger", "jeweler", "farmer", "blacks
                      "fisherman", "cleric", "bum", "entertainer", "witch"}
 
 --------------------------------------------------------------------
--- Helper: strip non-serializable values (userdata, functions, threads)
--- Also checks keys to prevent "userdata as key" errors
---------------------------------------------------------------------
-local function strip_userdata(obj)
-	if type(obj) ~= "table" then return obj end
-	local clean = {}
-	for k, v in pairs(obj) do
-		-- Skip if key or value is userdata, function, or thread
-		local key_type = type(k)
-		local val_type = type(v)
-		if key_type ~= "userdata" and key_type ~= "function" and key_type ~= "thread" and
-		   val_type ~= "userdata" and val_type ~= "function" and val_type ~= "thread" then
-			clean[k] = strip_userdata(v)
-		end
-	end
-	return clean
-end
-
---------------------------------------------------------------------
 -- Register a single villager mob
 --------------------------------------------------------------------
 local function register_villager(class_name, class_def, biome_name, biome_config)
@@ -276,23 +257,6 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 			die_loop = false,
 			die_rotate = true,
 		},
-
-		get_staticdata = function(self)
-			-- Clean the self table before serialization
-			local clean_self = strip_userdata(self)
-			return minetest.serialize(clean_self)
-		end,
-
-		on_activate = function(self, staticdata, dtime_s)
-			if staticdata and staticdata ~= "" then
-				local data = minetest.deserialize(staticdata)
-				if data then
-					for k, v in pairs(data) do
-						self[k] = v
-					end
-				end
-			end
-		end,
 
 		on_rightclick = function(self, clicker)
 			-- feed to heal npc
