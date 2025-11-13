@@ -3,7 +3,7 @@ local S = minetest.get_translator("nativevillages")
 
 nativevillages.mood = {}
 
--- TEMPORARY: Disable visual indicators to debug crashes
+-- Enable/disable visual mood indicators (set to true to show sprites)
 nativevillages.mood.enable_visual_indicators = false
 
 nativevillages.mood.trade_items = {}
@@ -189,29 +189,28 @@ function nativevillages.mood.update_mood(self, dtime)
 end
 
 --------------------------------------------------------------------
--- Mood indicator (floating icon above head)
+-- Cleanup mood indicator
 --------------------------------------------------------------------
-function nativevillages.mood.update_indicator(self)
-	-- DISABLED: Skip all indicator creation until crash is fixed
-	if not nativevillages.mood.enable_visual_indicators then return end
-
-	if not self.object then return end
-
-	-- Don't create indicators during initial activation
-	if not self.nv_fully_activated then return end
-
-	-- Remove old indicator if it exists
+function nativevillages.mood.cleanup_indicator(self)
 	if self.nv_mood_indicator_id then
-		local success, old_objects = pcall(minetest.get_objects_by_id, self.nv_mood_indicator_id)
-		if success and old_objects and old_objects[1] then
-			pcall(function() old_objects[1]:remove() end)
+		local indicator = minetest.get_objects_by_id(self.nv_mood_indicator_id)
+		if indicator and indicator[1] then
+			indicator[1]:remove()
 		end
 		self.nv_mood_indicator_id = nil
 	end
+end
+
+--------------------------------------------------------------------
+-- Mood indicator (floating icon above head)
+--------------------------------------------------------------------
+function nativevillages.mood.update_indicator(self)
+	if not nativevillages.mood.enable_visual_indicators then return end
+	if not self.object then return end
+	if not self.nv_fully_activated then return end
 
 	local pos = self.object:get_pos()
 	if not pos then return end
-	pos.y = pos.y + 2.2
 
 	local mood_data   = nativevillages.mood.moods[self.nv_mood] or nativevillages.mood.moods.neutral
 	local desire_data = self.nv_current_desire and nativevillages.mood.desires[self.nv_current_desire]
@@ -221,19 +220,24 @@ function nativevillages.mood.update_indicator(self)
 		texture = desire_data.texture
 	end
 
-	-- Spawn the indicator entity
-	local success, indicator = pcall(minetest.add_entity, pos, "nativevillages:mood_indicator")
-	if success and indicator then
-		local attach_success = pcall(function()
-			indicator:set_attach(self.object, "", {x=0, y=13, z=0}, {x=0, y=0, z=0})
-			indicator:set_properties({textures = {texture}})
-		end)
+	-- Remove old indicator if exists
+	if self.nv_mood_indicator_id then
+		local old_obj = minetest.get_objects_by_id(self.nv_mood_indicator_id)
+		if old_obj and old_obj[1] then
+			old_obj[1]:remove()
+		end
+		self.nv_mood_indicator_id = nil
+	end
 
-		if attach_success then
-			local luaent = indicator:get_luaentity()
-			if luaent then
-				self.nv_mood_indicator_id = luaent.id
-			end
+	-- Create new indicator at villager position (attachment handles offset)
+	local indicator = minetest.add_entity(pos, "nativevillages:mood_indicator")
+	if indicator then
+		indicator:set_properties({textures = {texture}})
+		indicator:set_attach(self.object, "", {x=0, y=11, z=0}, {x=0, y=0, z=0})
+
+		local luaent = indicator:get_luaentity()
+		if luaent then
+			self.nv_mood_indicator_id = luaent.id
 		end
 	end
 end
@@ -292,38 +296,35 @@ function nativevillages.mood.on_activate_extra(self, data)
 end
 
 --------------------------------------------------------------------
--- Mood-indicator entity (never saves parent ObjectRef)
+-- Mood-indicator entity
 --------------------------------------------------------------------
 minetest.register_entity("nativevillages:mood_indicator", {
 	initial_properties = {
 		physical      = false,
-		collisionbox  = {0,0,0,0,0,0},
+		collisionbox  = {0, 0, 0, 0, 0, 0},
 		visual        = "sprite",
-		visual_size   = {x=0.25, y=0.25},
+		visual_size   = {x=0.3, y=0.3},
 		textures      = {"nativevillages_mood_neutral.png"},
 		is_visible    = true,
 		pointable     = false,
 		static_save   = false,
 		glow          = 5,
+		backface_culling = false,
 	},
 
-	-- Store the parent villager's **entity ID** (number) for safe re-attach
-	parent_id = nil,
-
 	on_step = function(self, dtime)
-		local parent_obj = self.object:get_attach()
-		if not parent_obj then
+		if not self.object then return end
+
+		local parent = self.object:get_attach()
+		if not parent then
 			self.object:remove()
-			return
 		end
 	end,
 
-	on_activate = function(self, staticdata)
-		-- staticdata is ignored – we re-attach in the villager's on_activate
+	get_staticdata = function(self)
+		return ""
 	end,
 
-	-- Called by the villager when it is deactivated
-	on_deactivate = function(self)
-		self.object:remove()
+	on_activate = function(self, staticdata)
 	end,
 })

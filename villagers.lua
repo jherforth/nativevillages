@@ -362,6 +362,15 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 		end,
 
 		on_die = function(self, pos)
+			-- Clean up mood indicator
+			if self.nv_mood_indicator_id then
+				local indicator = minetest.get_objects_by_id(self.nv_mood_indicator_id)
+				if indicator and indicator[1] then
+					indicator[1]:remove()
+				end
+				self.nv_mood_indicator_id = nil
+			end
+
 			-- Clean up entity immediately on death to prevent serialization issues
 			if self.object then
 				self.object:remove()
