@@ -264,18 +264,39 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 				return ""
 			end
 
+			-- Recursive function to sanitize tables
+			local function sanitize(val, depth)
+				depth = depth or 0
+				if depth > 10 then return nil end  -- Prevent infinite recursion
+
+				local vtype = type(val)
+				if vtype == "function" or vtype == "userdata" then
+					return nil
+				elseif vtype == "table" then
+					local clean = {}
+					for k, v in pairs(val) do
+						local ktype = type(k)
+						if ktype ~= "function" and ktype ~= "userdata" then
+							local cleaned_v = sanitize(v, depth + 1)
+							if cleaned_v ~= nil then
+								clean[k] = cleaned_v
+							end
+						end
+					end
+					return clean
+				else
+					return val
+				end
+			end
+
 			-- Create a clean tmp table with only serializable data
 			local tmp = {}
-
-			-- Copy only safe, serializable fields, excluding functions and userdata
 			for tag, stat in pairs(self) do
-				local tstat = type(stat)
-				local ttag = type(tag)
-				-- Skip if value is function/userdata, key is function/userdata, or key is "object"
-				if tstat ~= "function" and tstat ~= "userdata"
-					and ttag ~= "function" and ttag ~= "userdata"
-					and tag ~= "object" then
-					tmp[tag] = stat
+				if type(tag) ~= "function" and type(tag) ~= "userdata" and tag ~= "object" then
+					local cleaned = sanitize(stat)
+					if cleaned ~= nil then
+						tmp[tag] = cleaned
+					end
 				end
 			end
 
