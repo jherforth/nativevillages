@@ -278,40 +278,7 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 			return true
 		end,
 
-		on_activate = function(self, staticdata, dtime)
-			-- Mood system temporarily disabled
-			-- if staticdata and staticdata ~= "" then
-			-- 	local data = minetest.deserialize(staticdata)
-			-- 	if data then
-			-- 		nativevillages.mood.on_activate_extra(self, data)
-			-- 	end
-			-- end
-			-- nativevillages.mood.init_npc(self)
-		end,
-
-		get_staticdata = function(self)
-			-- Create a clean copy of self without userdata
-			local safe_data = {}
-			for k, v in pairs(self) do
-				local t = type(v)
-				if t ~= "userdata" and t ~= "function" and t ~= "thread" then
-					if t == "table" then
-						safe_data[k] = strip_userdata(v)
-					else
-						safe_data[k] = v
-					end
-				end
-			end
-			return minetest.serialize(safe_data)
-		end,
-
-		on_deactivate = function(self)
-  		  	if self.nv_mood_indicator_id then
-   		    	local ind = minetest.get_objects_by_id(self.nv_mood_indicator_id)[1]
-     		 	if ind then ind:remove() end
-    		    	self.nv_mood_indicator_id = nil
-  		  		end
-		end,
+		-- on_deactivate removed - mood system disabled
 
 		on_rightclick = function(self, clicker)
 			-- Mood system temporarily disabled
