@@ -4,7 +4,7 @@ local S = minetest.get_translator("nativevillages")
 nativevillages.mood = {}
 
 -- Enable/disable visual mood indicators (set to true to show sprites)
-nativevillages.mood.enable_visual_indicators = false
+nativevillages.mood.enable_visual_indicators = true
 
 nativevillages.mood.trade_items = {}
 
@@ -205,12 +205,30 @@ end
 -- Mood indicator (floating icon above head)
 --------------------------------------------------------------------
 function nativevillages.mood.update_indicator(self)
-	if not nativevillages.mood.enable_visual_indicators then return end
-	if not self.object then return end
-	if not self.nv_fully_activated then return end
+	minetest.log("action", "[nativevillages] update_indicator: enter")
+
+	if not nativevillages.mood.enable_visual_indicators then
+		minetest.log("action", "[nativevillages] update_indicator: disabled")
+		return
+	end
+
+	if not self.object then
+		minetest.log("action", "[nativevillages] update_indicator: no object")
+		return
+	end
+
+	if not self.nv_fully_activated then
+		minetest.log("action", "[nativevillages] update_indicator: not activated yet")
+		return
+	end
 
 	local pos = self.object:get_pos()
-	if not pos then return end
+	if not pos then
+		minetest.log("action", "[nativevillages] update_indicator: no position")
+		return
+	end
+
+	minetest.log("action", "[nativevillages] update_indicator: pos=" .. minetest.pos_to_string(pos))
 
 	local mood_data   = nativevillages.mood.moods[self.nv_mood] or nativevillages.mood.moods.neutral
 	local desire_data = self.nv_current_desire and nativevillages.mood.desires[self.nv_current_desire]
@@ -220,25 +238,35 @@ function nativevillages.mood.update_indicator(self)
 		texture = desire_data.texture
 	end
 
+	minetest.log("action", "[nativevillages] update_indicator: texture=" .. texture)
+
 	-- Remove old indicator if exists
 	if self.nv_mood_indicator_id then
 		local old_obj = minetest.get_objects_by_id(self.nv_mood_indicator_id)
 		if old_obj and old_obj[1] then
 			old_obj[1]:remove()
+			minetest.log("action", "[nativevillages] update_indicator: removed old indicator")
 		end
 		self.nv_mood_indicator_id = nil
 	end
 
 	-- Create new indicator at villager position (attachment handles offset)
+	minetest.log("action", "[nativevillages] update_indicator: creating entity")
 	local indicator = minetest.add_entity(pos, "nativevillages:mood_indicator")
 	if indicator then
+		minetest.log("action", "[nativevillages] update_indicator: entity created, setting properties")
 		indicator:set_properties({textures = {texture}})
 		indicator:set_attach(self.object, "", {x=0, y=11, z=0}, {x=0, y=0, z=0})
 
 		local luaent = indicator:get_luaentity()
 		if luaent then
 			self.nv_mood_indicator_id = luaent.id
+			minetest.log("action", "[nativevillages] update_indicator: attached with id=" .. tostring(luaent.id))
+		else
+			minetest.log("action", "[nativevillages] update_indicator: no luaentity")
 		end
+	else
+		minetest.log("action", "[nativevillages] update_indicator: failed to create entity")
 	end
 end
 
