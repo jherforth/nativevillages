@@ -111,6 +111,12 @@ end
 function nativevillages.mood.update_mood(self, dtime)
 	nativevillages.mood.init_npc(self)
 
+	-- Mark as fully activated after first update cycle
+	self.nv_activation_timer = (self.nv_activation_timer or 0) + dtime
+	if self.nv_activation_timer >= 2 then
+		self.nv_fully_activated = true
+	end
+
 	self.nv_mood_timer = (self.nv_mood_timer or 0) + dtime
 	if self.nv_mood_timer < 5 then return end
 	self.nv_mood_timer = 0
@@ -174,6 +180,9 @@ end
 --------------------------------------------------------------------
 function nativevillages.mood.update_indicator(self)
 	if not self.object then return end
+
+	-- Don't create indicators during initial activation
+	if not self.nv_fully_activated then return end
 
 	-- Remove old indicator if it exists
 	if self.nv_mood_indicator_id then
