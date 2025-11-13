@@ -379,14 +379,21 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 		end,
 
 		on_punch = function(self, hitter, time_from_last_punch, tool_capabilities, dir)
+			minetest.log("action", "[nativevillages] on_punch called")
+
 			-- Check if hitter is a player
 			if not hitter or not hitter:is_player() then
+				minetest.log("action", "[nativevillages] Not a player punch")
 				return
 			end
 
 			local item = hitter:get_wielded_item()
 			local item_name = item:get_name()
 			local player_name = hitter:get_player_name()
+
+			minetest.log("action", "[nativevillages] Player: " .. player_name .. " Item: " .. item_name)
+			minetest.log("action", "[nativevillages] Has trade_items: " .. tostring(self.nv_trade_items ~= nil))
+			minetest.log("action", "[nativevillages] Wants trade: " .. tostring(self.nv_wants_trade))
 
 			-- Check if player is holding a trade item this villager wants
 			if self.nv_trade_items then
@@ -397,6 +404,8 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 						break
 					end
 				end
+
+				minetest.log("action", "[nativevillages] Wants this item: " .. tostring(wants_this_item))
 
 				if wants_this_item and self.nv_wants_trade then
 					-- Take the item from player (if not creative)
