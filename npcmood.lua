@@ -233,7 +233,7 @@ function nativevillages.mood.update_indicator(self)
 	local indicator = minetest.add_entity(pos, "nativevillages:mood_indicator")
 	if indicator then
 		indicator:set_properties({textures = {texture}})
-		indicator:set_attach(self.object, "", {x=0, y=2.2, z=0}, {x=0, y=0, z=0})
+		indicator:set_attach(self.object, "", {x=0, y=12, z=0}, {x=0, y=0, z=0})
 
 		local luaent = indicator:get_luaentity()
 		if luaent then
@@ -328,4 +328,5 @@ minetest.register_entity("nativevillages:mood_indicator", {
 	on_activate = function(self, staticdata)
 	end,
 })
+
 
