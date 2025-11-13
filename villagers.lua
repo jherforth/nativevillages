@@ -289,8 +289,24 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 				self.nv_mood_indicator = nil
 			end
 
-			local mood_data = nativevillages.mood.get_staticdata_extra(self)
-			return minetest.serialize(mood_data)
+			local success, result = pcall(function()
+				local mood_data = nativevillages.mood.get_staticdata_extra(self)
+
+				for k, v in pairs(mood_data) do
+					local vtype = type(v)
+					if vtype ~= "string" and vtype ~= "number" and vtype ~= "boolean" and v ~= nil then
+						mood_data[k] = nil
+					end
+				end
+
+				return minetest.serialize(mood_data)
+			end)
+
+			if success then
+				return result
+			else
+				return ""
+			end
 		end,
 
 		on_die = function(self, pos)
