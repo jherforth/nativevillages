@@ -1,0 +1,26 @@
+# Manual Methods to Clear Entities in Minetest:
+
+## Method 1: Using /clearobjects command (RECOMMENDED)
+This is a built-in Minetest command that removes all entities and objects:
+
+1. Start the server
+2. Join as admin/server owner
+3. Run in chat:
+   /clearobjects full
+
+This will remove ALL entities from the world (including dropped items, mobs, etc.)
+The "full" option scans all mapblocks, not just loaded ones.
+
+## Method 2: Using /deleteblocks (DESTRUCTIVE - NOT RECOMMENDED)
+This removes entire map chunks - USE WITH CAUTION:
+   /deleteblocks <x1> <y1> <z1> <x2> <y2> <z2>
+
+## Method 3: Delete entity database files manually (Server must be STOPPED)
+Navigate to your world folder and delete:
+   - map.sqlite (or map_meta.txt if using that format)
+   - players/ folder contents (if you want to reset player data too)
+
+## Method 4: Use WorldEdit mod to clear entities in a region
+If WorldEdit is installed:
+   //clearobjects
+

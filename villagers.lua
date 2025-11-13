@@ -292,25 +292,32 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 		end,
 
 		on_activate = function(self, staticdata, dtime_s)
-			-- Deserialize saved data
-			if staticdata and staticdata ~= "" then
-				local success, data = pcall(minetest.deserialize, staticdata)
-				if success and data then
-					self.health = data.health or self.health
-					self.owner = data.owner or ""
-					self.tamed = data.tamed or false
-					self.nametag = data.nametag or ""
+			-- Wrap everything in error handler to prevent crashes
+			local success, err = pcall(function()
+				-- Deserialize saved data
+				if staticdata and staticdata ~= "" then
+					local success, data = pcall(minetest.deserialize, staticdata)
+					if success and data then
+						self.health = data.health or self.health
+						self.owner = data.owner or ""
+						self.tamed = data.tamed or false
+						self.nametag = data.nametag or ""
 
-					-- Restore mood data
-					if nativevillages.mood and data.mood then
-						nativevillages.mood.on_activate_extra(self, data.mood)
+						-- Restore mood data
+						if nativevillages.mood and data.mood then
+							nativevillages.mood.on_activate_extra(self, data.mood)
+						end
 					end
 				end
-			end
 
-			-- Initialize mood system
-			if nativevillages.mood then
-				nativevillages.mood.init_npc(self)
+				-- Initialize mood system
+				if nativevillages.mood then
+					nativevillages.mood.init_npc(self)
+				end
+			end)
+
+			if not success then
+				minetest.log("warning", "[nativevillages] on_activate error: " .. tostring(err))
 			end
 		end,
 
