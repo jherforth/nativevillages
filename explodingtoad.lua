@@ -60,6 +60,12 @@ sounds = {
 	floats = 0,
 	follow = {"fishing:bait:worm", "ethereal:worm", "animalworld:ant", "animalworld:termite"},
 	view_range = 13,
+	get_staticdata = function(self)
+		self.path = nil
+		self.path_pos = nil
+		self.path_following = nil
+		return mobs.mob_staticdata(self)
+	end,
 	on_rightclick = function(self, clicker)
 
 		if mobs:feed_tame(self, clicker, 8, true, true) then return end
@@ -153,7 +159,13 @@ sounds = {
 	floats = 0,
 	follow = {"fishing:bait:worm", "ethereal:worm", "animalworld:ant", "animalworld:termite"},
 	view_range = 13,
-	
+	get_staticdata = function(self)
+		self.path = nil
+		self.path_pos = nil
+		self.path_following = nil
+		return mobs.mob_staticdata(self)
+	end,
+
 on_rightclick = function(self, clicker)
 
 		-- feed to heal npc

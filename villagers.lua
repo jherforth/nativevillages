@@ -258,6 +258,15 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 			die_rotate = true,
 		},
 
+		get_staticdata = function(self)
+			-- Clear pathfinding data before serialization to avoid userdata issues
+			self.path = nil
+			self.path_pos = nil
+			self.path_following = nil
+			-- Let mobs redo handle the rest of serialization
+			return mobs.mob_staticdata(self)
+		end,
+
 		on_rightclick = function(self, clicker)
 			-- feed to heal npc
 			if mobs:feed_tame(self, clicker, 8, true, true) then

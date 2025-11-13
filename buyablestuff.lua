@@ -63,6 +63,12 @@ mobs:register_mob("nativevillages:tamecatfish", {
 		die_loop = false,
 		die_rotate = true,
 	},
+	get_staticdata = function(self)
+		self.path = nil
+		self.path_pos = nil
+		self.path_following = nil
+		return mobs.mob_staticdata(self)
+	end,
 	on_rightclick = function(self, clicker)
 
 		if mobs:feed_tame(self, clicker, 8, true, true) then return end
@@ -164,6 +170,12 @@ mobs:register_mob("nativevillages:zombietame", {
 		die_loop = false,
 		die_rotate = true,
 	},
+	get_staticdata = function(self)
+		self.path = nil
+		self.path_pos = nil
+		self.path_following = nil
+		return mobs.mob_staticdata(self)
+	end,
 
 	on_rightclick = function(self, clicker)
 
@@ -278,6 +290,12 @@ mobs:register_mob("nativevillages:domesticcow", {
 	},
 --	stay_near = {"farming:straw", "group:grass"}, 10},
 	fear_height = 2,
+	get_staticdata = function(self)
+		self.path = nil
+		self.path_pos = nil
+		self.path_following = nil
+		return mobs.mob_staticdata(self)
+	end,
 	on_rightclick = function(self, clicker)
 
 		-- feed or tame
@@ -520,6 +538,12 @@ stepheight = 1,
 		"farming:seed_oat", "farming:seed_rye", "animalworld:cockroach", "bees:frame_full", "animalworld:fishfood", "animalworld:ant", "animalworld:termite", "animalworld:bugice", "animalworld:termitequeen", "animalworld:notoptera", "animalworld:anteggs_raw", "farming:corn_cob", "farming:seed_hemp", "farming:seed_barley", "farming:seed_oat", "farming:seed_cotton", "farming:seed_sunflower", "farming:seed_wheat", "farming:seed_rye", "naturalbiomes:coconut_slice", "naturalbiomes:hazelnut_cracked", "farming:sunflower_seeds_toasted", "livingfloatlands:roasted_pine_nuts", "livingfloatlands:coldsteppe_pine3_pinecone", "livingfloatlands:coldsteppe_pine_pinecone", "livingfloatlands:coldsteppe_pine2_pinecone"
 	},
 	view_range = 10,
+	get_staticdata = function(self)
+		self.path = nil
+		self.path_pos = nil
+		self.path_following = nil
+		return mobs.mob_staticdata(self)
+	end,
 
 	on_rightclick = function(self, clicker)
 
@@ -622,6 +646,12 @@ speed_normal = 75,
 		die_loop = false,
 		die_rotate = true,
 	},
+	get_staticdata = function(self)
+		self.path = nil
+		self.path_pos = nil
+		self.path_following = nil
+		return mobs.mob_staticdata(self)
+	end,
 	on_rightclick = function(self, clicker)
 
 		-- feed to heal npc
@@ -728,6 +758,12 @@ speed_normal = 75,
 		die_loop = false,
 		die_rotate = true,
 	},
+	get_staticdata = function(self)
+		self.path = nil
+		self.path_pos = nil
+		self.path_following = nil
+		return mobs.mob_staticdata(self)
+	end,
 
 	on_rightclick = function(self, clicker)
 
@@ -846,6 +882,12 @@ mobs:register_mob("nativevillages:grasslandcat", {
 	},
 	follow = {"ethereal:fish_raw", "animalworld:rawfish", "mobs_fish:tropical",
 		"mobs:meat_raw", "animalworld:rabbit_raw", "xocean:fish_edible", "fishing:fish_raw", "water_life:meat_raw", "fishing:carp_raw", "animalworld:chicken_raw", "nativevillages:chicken_raw", "nativevillages:chicken_cooked", "nativevillages:catfish_raw", "nativevillages:catfish_cooked", "fishing:fish_cooked", "marinaramobs:cooked_exotic_fish", "animalworld:cookedfish", "marinara:mussels", "nativevillages:catfish_cooked", "fishing:pike_cooked", "animalworld:cooked_athropod", "livingfloatlands:theropodcooked", "mobs:meatblock", "animalworld:whelaemeat_cooked", "animalworld:rat_cooked", "mobs:meat", "animalworld:chicken_cooked", "livingfloatlands:sauropodcooked", "livingfloatlands:ornithischiacooked", "nativevillages:driedhumanmeat", "livingfloatlands:largemammalcooked", "pie:meat"},
+	get_staticdata = function(self)
+		self.path = nil
+		self.path_pos = nil
+		self.path_following = nil
+		return mobs.mob_staticdata(self)
+	end,
 	on_rightclick = function(self, clicker)
 		if mobs:feed_tame(self, clicker, 6, true, true) then return end
 		if mobs:protect(self, clicker) then return end
