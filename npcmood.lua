@@ -241,6 +241,8 @@ end
 -- Interaction callbacks
 --------------------------------------------------------------------
 function nativevillages.mood.on_feed(self, clicker, food_value)
+	minetest.log("action", "[nativevillages] on_feed called - Before: hunger=" .. tostring(self.nv_hunger) .. " health=" .. tostring(self.health))
+
 	self.nv_hunger           = 1
 	self.nv_last_fed         = 0
 	self.nv_last_interaction = 0
@@ -249,7 +251,11 @@ function nativevillages.mood.on_feed(self, clicker, food_value)
 		self.health = math.min(self.hp_max or 20, self.health + 5)
 	end
 
+	minetest.log("action", "[nativevillages] on_feed - After: hunger=" .. tostring(self.nv_hunger) .. " health=" .. tostring(self.health))
+
 	nativevillages.mood.update_mood(self, 0)
+
+	minetest.log("action", "[nativevillages] on_feed - After update_mood: hunger=" .. tostring(self.nv_hunger) .. " health=" .. tostring(self.health))
 end
 
 function nativevillages.mood.on_interact(self, clicker)
