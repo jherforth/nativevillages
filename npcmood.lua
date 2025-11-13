@@ -112,10 +112,7 @@ end
 -- Mood update (called from do_custom)
 --------------------------------------------------------------------
 function nativevillages.mood.update_mood(self, dtime)
-	minetest.log("action", "[nativevillages] update_mood: start")
-
 	nativevillages.mood.init_npc(self)
-	minetest.log("action", "[nativevillages] update_mood: init_npc done")
 
 	-- Mark as fully activated after first update cycle
 	self.nv_activation_timer = (self.nv_activation_timer or 0) + dtime
@@ -127,7 +124,6 @@ function nativevillages.mood.update_mood(self, dtime)
 	if self.nv_mood_timer < 5 then return end
 	self.nv_mood_timer = 0
 
-	minetest.log("action", "[nativevillages] update_mood: checking trade")
 	-- ---- trade interest -------------------------------------------------
 	local player_has_trade_item = nativevillages.mood.check_nearby_trade_items(self)
 	if player_has_trade_item then
@@ -140,7 +136,6 @@ function nativevillages.mood.update_mood(self, dtime)
 		end
 	end
 
-	minetest.log("action", "[nativevillages] update_mood: updating needs")
 	-- ---- basic needs ---------------------------------------------------
 	local time_factor = 5
 	self.nv_hunger           = math.min(100, (self.nv_hunger or 1) + time_factor * 0.1)
@@ -163,7 +158,6 @@ function nativevillages.mood.update_mood(self, dtime)
 		self.nv_fear = math.max(0, (self.nv_fear or 0) - 5)
 	end
 
-	minetest.log("action", "[nativevillages] update_mood: calculating mood")
 	-- ---- mood value ----------------------------------------------------
 	local mood_value = 50
 	mood_value = mood_value - (self.nv_hunger - 50) * 0.5
@@ -183,13 +177,8 @@ function nativevillages.mood.update_mood(self, dtime)
 	elseif self.nv_fear > 70 then self.nv_mood = "scared"
 	elseif self.nv_loneliness > 80 then self.nv_mood = "lonely" end
 
-	minetest.log("action", "[nativevillages] update_mood: calculating desire")
 	self.nv_current_desire = nativevillages.mood.calculate_desire(self)
-
-	minetest.log("action", "[nativevillages] update_mood: updating indicator")
 	nativevillages.mood.update_indicator(self)
-
-	minetest.log("action", "[nativevillages] update_mood: complete")
 end
 
 --------------------------------------------------------------------
@@ -252,13 +241,12 @@ end
 -- Interaction callbacks
 --------------------------------------------------------------------
 function nativevillages.mood.on_feed(self, clicker, food_value)
-	food_value = food_value or 30
-	self.nv_hunger           = math.max(0, (self.nv_hunger or 1) - food_value)
+	self.nv_hunger           = 1
 	self.nv_last_fed         = 0
 	self.nv_last_interaction = 0
 
 	if self.health then
-		self.health = math.min(self.hp_max or 20, self.health + (food_value / 3))
+		self.health = math.min(self.hp_max or 20, self.health + 5)
 	end
 
 	nativevillages.mood.update_mood(self, 0)
