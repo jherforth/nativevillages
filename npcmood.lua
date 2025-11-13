@@ -34,15 +34,14 @@ function nativevillages.mood.init_npc(self)
 	if not self.nv_mood then
 		self.nv_mood               = "neutral"
 		self.nv_mood_value         = 50
-		self.nv_hunger             = 30
+		self.nv_hunger             = 1
 		self.nv_loneliness         = 0
 		self.nv_fear               = 0
 		self.nv_last_fed           = 0
 		self.nv_last_interaction   = 0
 		self.nv_current_desire     = nil
 		self.nv_mood_timer         = 0
-		self.nv_mood_indicator_id  = nil
-		self.nv_indicator_cycle    = 0
+		self.nv_mood_indicator     = nil
 	end
 end
 
@@ -144,7 +143,7 @@ function nativevillages.mood.update_mood(self, dtime)
 	minetest.log("action", "[nativevillages] update_mood: updating needs")
 	-- ---- basic needs ---------------------------------------------------
 	local time_factor = 5
-	self.nv_hunger           = math.min(100, (self.nv_hunger or 30) + time_factor * 0.3)
+	self.nv_hunger           = math.min(100, (self.nv_hunger or 1) + time_factor * 0.1)
 	self.nv_last_fed         = (self.nv_last_fed or 0) + time_factor
 	self.nv_last_interaction = (self.nv_last_interaction or 0) + time_factor
 
@@ -180,9 +179,9 @@ function nativevillages.mood.update_mood(self, dtime)
 	local old_mood = self.nv_mood
 	self.nv_mood = nativevillages.mood.get_mood_from_value(self.nv_mood_value)
 
-	if self.nv_fear > 50 then self.nv_mood = "scared"
-	elseif self.nv_hunger > 70 then self.nv_mood = "hungry"
-	elseif self.nv_loneliness > 70 then self.nv_mood = "lonely" end
+	if self.nv_hunger > 80 then self.nv_mood = "hungry"
+	elseif self.nv_fear > 70 then self.nv_mood = "scared"
+	elseif self.nv_loneliness > 80 then self.nv_mood = "lonely" end
 
 	minetest.log("action", "[nativevillages] update_mood: calculating desire")
 	self.nv_current_desire = nativevillages.mood.calculate_desire(self)
@@ -198,12 +197,9 @@ end
 -- Cleanup mood indicator
 --------------------------------------------------------------------
 function nativevillages.mood.cleanup_indicator(self)
-	if self.nv_mood_indicator_id then
-		local indicator = minetest.get_objects_by_id(self.nv_mood_indicator_id)
-		if indicator and indicator[1] then
-			indicator[1]:remove()
-		end
-		self.nv_mood_indicator_id = nil
+	if self.nv_mood_indicator then
+		self.nv_mood_indicator:remove()
+		self.nv_mood_indicator = nil
 	end
 end
 
@@ -215,48 +211,35 @@ function nativevillages.mood.update_indicator(self)
 	if not self.object then return end
 	if not self.nv_fully_activated then return end
 
+	-- Remove old indicator
+	if self.nv_mood_indicator then
+		self.nv_mood_indicator:remove()
+		self.nv_mood_indicator = nil
+	end
+
 	local pos = self.object:get_pos()
 	if not pos then return end
 
 	local mood_data   = nativevillages.mood.moods[self.nv_mood] or nativevillages.mood.moods.neutral
 	local desire_data = self.nv_current_desire and nativevillages.mood.desires[self.nv_current_desire]
 
-	self.nv_indicator_cycle = (self.nv_indicator_cycle or 0) + 1
-	local show_desire = desire_data and (self.nv_indicator_cycle % 4 < 2)
-
-	local texture = show_desire and desire_data.texture or mood_data.texture
-
-	-- Try to reuse existing indicator
-	local indicator = nil
-	if self.nv_mood_indicator_id then
-		local old_obj = minetest.get_objects_by_id(self.nv_mood_indicator_id)
-		if old_obj and old_obj[1] then
-			indicator = old_obj[1]
-			local parent = indicator:get_attach()
-			if parent == self.object then
-				indicator:set_properties({textures = {texture}})
-			else
-				indicator:remove()
-				indicator = nil
-				self.nv_mood_indicator_id = nil
-			end
-		else
-			self.nv_mood_indicator_id = nil
-		end
+	local texture = mood_data.texture
+	if desire_data and math.random(100) < 60 then
+		texture = desire_data.texture
 	end
 
-	-- Create new indicator if needed
-	if not indicator then
-		indicator = minetest.add_entity(pos, "nativevillages:mood_indicator")
-		if indicator then
-			indicator:set_properties({textures = {texture}})
-			indicator:set_attach(self.object, "", {x=0, y=20, z=0}, {x=0, y=0, z=0})
-
-			local luaent = indicator:get_luaentity()
-			if luaent then
-				self.nv_mood_indicator_id = luaent.id
-			end
-		end
+	-- Create new indicator
+	self.nv_mood_indicator = minetest.add_entity(pos, "nativevillages:mood_indicator")
+	if self.nv_mood_indicator then
+		self.nv_mood_indicator:set_attach(
+			self.object,
+			"",
+			{x=0, y=2.2, z=0},
+			{x=0, y=0, z=0}
+		)
+		self.nv_mood_indicator:set_properties({
+			textures = {texture},
+		})
 	end
 end
 
@@ -298,7 +281,7 @@ end
 --------------------------------------------------------------------
 function nativevillages.mood.on_feed(self, clicker, food_value)
 	food_value = food_value or 30
-	self.nv_hunger           = math.max(0, (self.nv_hunger or 30) - food_value)
+	self.nv_hunger           = math.max(0, (self.nv_hunger or 1) - food_value)
 	self.nv_last_fed         = 0
 	self.nv_last_interaction = 0
 
@@ -335,8 +318,6 @@ function nativevillages.mood.get_staticdata_extra(self)
 		nv_last_fed           = self.nv_last_fed,
 		nv_last_interaction   = self.nv_last_interaction,
 		nv_current_desire     = self.nv_current_desire,
-		nv_mood_indicator_id  = self.nv_mood_indicator_id,
-		nv_indicator_cycle    = self.nv_indicator_cycle,
 	}
 end
 
@@ -344,14 +325,12 @@ function nativevillages.mood.on_activate_extra(self, data)
 	if not data then return end
 	self.nv_mood               = data.nv_mood or "neutral"
 	self.nv_mood_value         = data.nv_mood_value or 50
-	self.nv_hunger             = data.nv_hunger or 30
+	self.nv_hunger             = data.nv_hunger or 1
 	self.nv_loneliness         = data.nv_loneliness or 0
 	self.nv_fear               = data.nv_fear or 0
 	self.nv_last_fed           = data.nv_last_fed or 0
 	self.nv_last_interaction   = data.nv_last_interaction or 0
 	self.nv_current_desire     = data.nv_current_desire
-	self.nv_mood_indicator_id  = data.nv_mood_indicator_id
-	self.nv_indicator_cycle    = data.nv_indicator_cycle or 0
 end
 
 --------------------------------------------------------------------
@@ -362,13 +341,12 @@ minetest.register_entity("nativevillages:mood_indicator", {
 		physical      = false,
 		collisionbox  = {0, 0, 0, 0, 0, 0},
 		visual        = "sprite",
-		visual_size   = {x=0.3, y=0.3},
+		visual_size   = {x=0.25, y=0.25},
 		textures      = {"nativevillages_mood_neutral.png"},
 		is_visible    = true,
 		pointable     = false,
 		static_save   = false,
 		glow          = 5,
-		backface_culling = false,
 	},
 
 	on_step = function(self, dtime)
