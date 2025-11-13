@@ -234,7 +234,7 @@ function nativevillages.mood.update_indicator(self)
 		self.nv_mood_indicator:set_attach(
 			self.object,
 			"",
-			{x=0, y=2.2, z=0},
+			{x=0, y=20, z=0},
 			{x=0, y=0, z=0}
 		)
 		self.nv_mood_indicator:set_properties({
@@ -365,6 +365,7 @@ minetest.register_entity("nativevillages:mood_indicator", {
 	on_activate = function(self, staticdata)
 	end,
 })
+
 
 
 
