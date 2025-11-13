@@ -61,10 +61,17 @@ sounds = {
 	follow = {"fishing:bait:worm", "ethereal:worm", "animalworld:ant", "animalworld:termite"},
 	view_range = 13,
 	get_staticdata = function(self)
-		self.path = nil
-		self.path_pos = nil
-		self.path_following = nil
-		return mobs.mob_staticdata(self)
+		local tmp = {}
+		for tag, stat in pairs(self) do
+			local tstat = type(stat)
+			local ttag = type(tag)
+			if tstat ~= "function" and tstat ~= "userdata"
+				and ttag ~= "function" and ttag ~= "userdata"
+				and tag ~= "object" then
+				tmp[tag] = stat
+			end
+		end
+		return minetest.serialize(tmp)
 	end,
 	on_rightclick = function(self, clicker)
 
@@ -160,10 +167,17 @@ sounds = {
 	follow = {"fishing:bait:worm", "ethereal:worm", "animalworld:ant", "animalworld:termite"},
 	view_range = 13,
 	get_staticdata = function(self)
-		self.path = nil
-		self.path_pos = nil
-		self.path_following = nil
-		return mobs.mob_staticdata(self)
+		local tmp = {}
+		for tag, stat in pairs(self) do
+			local tstat = type(stat)
+			local ttag = type(tag)
+			if tstat ~= "function" and tstat ~= "userdata"
+				and ttag ~= "function" and ttag ~= "userdata"
+				and tag ~= "object" then
+				tmp[tag] = stat
+			end
+		end
+		return minetest.serialize(tmp)
 	end,
 
 on_rightclick = function(self, clicker)

@@ -259,12 +259,22 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 		},
 
 		get_staticdata = function(self)
-			-- Clear pathfinding data before serialization to avoid userdata issues
-			self.path = nil
-			self.path_pos = nil
-			self.path_following = nil
-			-- Let mobs redo handle the rest of serialization
-			return mobs.mob_staticdata(self)
+			-- Create a clean tmp table with only serializable data
+			local tmp = {}
+
+			-- Copy only safe, serializable fields, excluding functions and userdata
+			for tag, stat in pairs(self) do
+				local tstat = type(stat)
+				local ttag = type(tag)
+				-- Skip if value is function/userdata, key is function/userdata, or key is "object"
+				if tstat ~= "function" and tstat ~= "userdata"
+					and ttag ~= "function" and ttag ~= "userdata"
+					and tag ~= "object" then
+					tmp[tag] = stat
+				end
+			end
+
+			return minetest.serialize(tmp)
 		end,
 
 		on_rightclick = function(self, clicker)
