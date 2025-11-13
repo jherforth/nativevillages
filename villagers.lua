@@ -1,5 +1,9 @@
+-- villagers.lua
 local S = minetest.get_translator("nativevillages")
 
+--------------------------------------------------------------------
+-- Biome / spawn configuration
+--------------------------------------------------------------------
 local biome_spawn_config = {
 	grassland = {
 		nodes = {"default:dirt_with_grass", "default:cobble", "default:dirt_with_coniferous_litter", "default:clay"},
@@ -33,6 +37,9 @@ local biome_spawn_config = {
 	}
 }
 
+--------------------------------------------------------------------
+-- Villager class definitions
+--------------------------------------------------------------------
 local villager_classes = {
 	hostile = {
 		type = "monster",
@@ -190,8 +197,26 @@ local villager_classes = {
 	},
 }
 
-local class_order = {"hostile", "raider", "ranger", "jeweler", "farmer", "blacksmith", "fisherman", "cleric", "bum", "entertainer", "witch"}
+local class_order = {"hostile", "raider", "ranger", "jeweler", "farmer", "blacksmith",
+                     "fisherman", "cleric", "bum", "entertainer", "witch"}
 
+--------------------------------------------------------------------
+-- Helper: strip non-serializable values (userdata, functions, threads)
+--------------------------------------------------------------------
+local function strip_userdata(obj)
+	if type(obj) ~= "table" then return obj end
+	local clean = {}
+	for k, v in pairs(obj) do
+		if type(v) ~= "userdata" and type(v) ~= "function" and type(v) ~= "thread" then
+			clean[k] = strip_userdata(v)
+		end
+	end
+	return clean
+end
+
+--------------------------------------------------------------------
+-- Register a single villager mob
+--------------------------------------------------------------------
 local function register_villager(class_name, class_def, biome_name, biome_config)
 	local mob_name = "nativevillages:" .. biome_name .. "_" .. class_name
 
@@ -262,13 +287,13 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 			nativevillages.mood.init_npc(self)
 		end,
 
+		-- *** FIXED ***  Safe serialization
 		get_staticdata = function(self)
-			local mood_data = nativevillages.mood.get_staticdata_extra(self)
-			return minetest.serialize(mood_data)
+			local mood_data = nativevillages.mood.get_staticdata_extra(self) or {}
+			return minetest.serialize(strip_userdata(mood_data))
 		end,
 
 		on_rightclick = function(self, clicker)
-
 			nativevillages.mood.on_interact(self, clicker)
 
 			-- feed to heal npc
@@ -286,60 +311,60 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 			local item = clicker:get_wielded_item()
 			local name = clicker:get_player_name()
 
-			-- right clicking with gold lump drops random item from mobs.desertslavetrader_drops
+			-- right clicking with gold ingot drops random item from mobs.desertslavetrader_drops
 			if item:get_name() == "default:gold_ingot" then
-
 				if not mobs.is_creative(name) then
 					item:take_item()
 					clicker:set_wielded_item(item)
 				end
 
 				local pos = self.object:get_pos()
-
 				pos.y = pos.y + 0.5
 
 				local drops = self.npc_drops or mobs.desertslavetrader_drops
-
 				minetest.add_item(pos, {
 					name = drops[math.random(1, #drops)]
 				})
 
 				minetest.chat_send_player(name, S("Slave delivered!"))
-
 				nativevillages.mood.on_trade(self, clicker)
 				return
 			end
 
-			-- by right-clicking owner can switch npc between follow and stand
+			-- owner can toggle follow / stand
 			if self.owner and self.owner == name then
-
 				if self.order == "follow" then
-
 					self.attack = nil
 					self.order = "stand"
 					self.state = "stand"
 					self:set_animation("stand")
 					self:set_velocity(0)
-
 					minetest.chat_send_player(name, S("Slavetrader stands still."))
 				else
 					self.order = "follow"
-
 					minetest.chat_send_player(name, S("Slavetrader will follow you."))
 				end
 			end
 		end,
 	})
 
-	mobs:register_egg(mob_name, S(biome_name:gsub("^%l", string.upper) .. " " .. class_name:gsub("^%l", string.upper)), "character.png")
+	mobs:register_egg(mob_name,
+		S(biome_name:gsub("^%l", string.upper) .. " " .. class_name:gsub("^%l", string.upper)),
+		"character.png")
 end
 
+--------------------------------------------------------------------
+-- Register all biome + class combinations
+--------------------------------------------------------------------
 for biome_name, biome_config in pairs(biome_spawn_config) do
 	for class_name, class_def in pairs(villager_classes) do
 		register_villager(class_name, class_def, biome_name, biome_config)
 	end
 end
 
+--------------------------------------------------------------------
+-- Village detection & spawning
+--------------------------------------------------------------------
 local villages_spawned = {}
 
 local function find_village_center(pos, biome_markers, radius)
