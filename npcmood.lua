@@ -278,15 +278,26 @@ function nativevillages.mood.on_trade(self, clicker)
 end
 
 function nativevillages.mood.get_staticdata_extra(self)
+	local function safe_value(val, default)
+		local vtype = type(val)
+		if vtype == "string" or vtype == "number" or vtype == "boolean" then
+			return val
+		elseif vtype == "nil" then
+			return default
+		else
+			return default
+		end
+	end
+
 	return {
-		nv_mood = self.nv_mood,
-		nv_mood_value = self.nv_mood_value,
-		nv_hunger = self.nv_hunger,
-		nv_loneliness = self.nv_loneliness,
-		nv_fear = self.nv_fear,
-		nv_last_fed = self.nv_last_fed,
-		nv_last_interaction = self.nv_last_interaction,
-		nv_current_desire = self.nv_current_desire,
+		nv_mood = safe_value(self.nv_mood, "neutral"),
+		nv_mood_value = safe_value(self.nv_mood_value, 50),
+		nv_hunger = safe_value(self.nv_hunger, 50),
+		nv_loneliness = safe_value(self.nv_loneliness, 0),
+		nv_fear = safe_value(self.nv_fear, 0),
+		nv_last_fed = safe_value(self.nv_last_fed, 0),
+		nv_last_interaction = safe_value(self.nv_last_interaction, 0),
+		nv_current_desire = safe_value(self.nv_current_desire, nil),
 	}
 end
 

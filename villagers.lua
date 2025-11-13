@@ -289,22 +289,50 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 				self.nv_mood_indicator = nil
 			end
 
+			local known_userdata_fields = {
+				object = true,
+				attack = true,
+				following = true,
+				_cmi_components = true,
+				nv_mood_indicator = true,
+				_target = true,
+				_shooter = true,
+			}
+
+			local function is_serializable(value)
+				local vtype = type(value)
+				if vtype == "string" or vtype == "number" or vtype == "boolean" then
+					return true
+				elseif vtype == "table" then
+					for k, v in pairs(value) do
+						if not is_serializable(v) then
+							return false
+						end
+					end
+					return true
+				end
+				return false
+			end
+
 			local success, result = pcall(function()
 				local mood_data = nativevillages.mood.get_staticdata_extra(self)
 
+				local clean_data = {}
 				for k, v in pairs(mood_data) do
-					local vtype = type(v)
-					if vtype ~= "string" and vtype ~= "number" and vtype ~= "boolean" and v ~= nil then
-						mood_data[k] = nil
+					if not known_userdata_fields[k] then
+						if is_serializable(v) then
+							clean_data[k] = v
+						end
 					end
 				end
 
-				return minetest.serialize(mood_data)
+				return minetest.serialize(clean_data)
 			end)
 
 			if success then
 				return result
 			else
+				minetest.log("error", "[NativeVillages] Serialization failed for NPC: " .. tostring(result))
 				return ""
 			end
 		end,
