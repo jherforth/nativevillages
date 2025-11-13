@@ -373,11 +373,7 @@ end
 --------------------------------------------------------------------
 -- Entity aliases for backward compatibility with old mob names
 --------------------------------------------------------------------
--- List of peaceful classes to randomly choose from
-local peaceful_classes = {"farmer", "blacksmith", "fisherman", "cleric", "jeweler", "bum", "entertainer", "witch", "ranger"}
-local hostile_classes = {"hostile", "raider"}
-
--- Old mob names that need to be converted
+-- Old mob names that need to be removed
 local old_mob_names = {
 	"grasslandfemale", "grasslandmale",
 	"desertfemale", "desertmale",
@@ -387,28 +383,19 @@ local old_mob_names = {
 	"cannibalfemale", "cannibalmale",
 }
 
+-- Register dummy entities that just despawn old mobs
 for _, old_name in ipairs(old_mob_names) do
 	minetest.register_entity("nativevillages:" .. old_name, {
+		physical = false,
+		collisionbox = {0, 0, 0, 0, 0, 0},
+		visual = "sprite",
+		textures = {"blank.png"},
 		on_activate = function(self, staticdata)
-			local pos = self.object:get_pos()
-			if pos then
-				self.object:remove()
-
-				-- Extract biome name from old mob name
-				local biome_name = old_name:match("^([^f^m]+)")
-
-				-- Cannibals become hostile, others become random peaceful class
-				local new_class
-				if biome_name == "cannibal" then
-					new_class = hostile_classes[math.random(#hostile_classes)]
-				else
-					new_class = peaceful_classes[math.random(#peaceful_classes)]
-				end
-
-				local new_mob_name = "nativevillages:" .. biome_name .. "_" .. new_class
-				minetest.add_entity(pos, new_mob_name)
-			end
-		end
+			self.object:remove()
+		end,
+		on_step = function(self, dtime)
+			self.object:remove()
+		end,
 	})
 end
 
