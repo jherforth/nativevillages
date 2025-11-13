@@ -248,159 +248,84 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 		},
 
 		do_custom = function(self, dtime)
-			if class_def.trade_items and #class_def.trade_items > 0 then
-				self.nv_trade_items = class_def.trade_items
-			end
-
-			if not self.nv_hp_max then
-				self.nv_hp_max = class_def.hp_max
-			end
-
 			nativevillages.mood.update_mood(self, dtime)
-
 			return true
 		end,
 
 		on_activate = function(self, staticdata, dtime)
-			self.nv_mood_indicator = nil
-
 			if staticdata and staticdata ~= "" then
 				local data = minetest.deserialize(staticdata)
 				if data then
 					nativevillages.mood.on_activate_extra(self, data)
 				end
 			end
-
 			nativevillages.mood.init_npc(self)
-			if class_def.trade_items and #class_def.trade_items > 0 then
-				self.nv_trade_items = class_def.trade_items
-			end
 		end,
 
 		get_staticdata = function(self)
-			if self.nv_is_dead then
-				return ""
-			end
-
-			if self.nv_mood_indicator then
-				pcall(function()
-					self.nv_mood_indicator:remove()
-				end)
-				self.nv_mood_indicator = nil
-			end
-
 			local mood_data = nativevillages.mood.get_staticdata_extra(self)
 			return minetest.serialize(mood_data)
 		end,
 
-		on_die = function(self, pos)
-			self.nv_is_dead = true
-
-			if self.nv_mood_indicator then
-				pcall(function()
-					self.nv_mood_indicator:remove()
-				end)
-				self.nv_mood_indicator = nil
-			end
-
-			self.attack = nil
-			self.object = nil
-			self._cmi_components = nil
-		end,
-
-		on_punch = function(self, hitter, tflp, tool_capabilities, dir)
-			if not self.health then return end
-
-			if not self.nv_hp_max then
-				self.nv_hp_max = class_def.hp_max
-			end
-
-			self.nv_recently_damaged = true
-			self.nv_damage_timer = 0
-
-			minetest.after(5, function()
-				if self and self.object then
-					self.nv_recently_damaged = false
-				end
-			end)
-
-			if self.health and self.health > 0 and self.nv_hp_max then
-				local health_percent = (self.health / self.nv_hp_max) * 100
-
-				if health_percent < 30 then
-					self.nv_mood = "sad"
-					self.nv_mood_value = 10
-					self.passive = true
-					self.attack = nil
-					self.state = "runaway"
-				else
-					self.nv_mood = "angry"
-					self.nv_mood_value = 5
-					self.nv_fear = 80
-
-					if class_def.type == "monster" or class_def.attacks_monsters then
-						self.passive = false
-						if hitter and hitter:is_player() then
-							self.attack = hitter
-						end
-					else
-						self.state = "runaway"
-					end
-				end
-			end
-
-			nativevillages.mood.update_indicator(self)
-		end,
-
 		on_rightclick = function(self, clicker)
+
 			nativevillages.mood.on_interact(self, clicker)
 
+			-- feed to heal npc
 			if mobs:feed_tame(self, clicker, 8, true, true) then
 				nativevillages.mood.on_feed(self, clicker)
 				return
 			end
 
+			-- capture npc with net or lasso
 			if mobs:capture_mob(self, clicker, 0, 15, 25, false, nil) then return end
+
+			-- protect npc with mobs:protector
 			if mobs:protect(self, clicker) then return end
 
 			local item = clicker:get_wielded_item()
 			local name = clicker:get_player_name()
 
-			if class_def.trade_items and #class_def.trade_items > 0 then
-				local trade_item = class_def.trade_items[1]
-				if item:get_name() == trade_item then
-					if not mobs.is_creative(name) then
-						item:take_item()
-						clicker:set_wielded_item(item)
-					end
+			-- right clicking with gold lump drops random item from mobs.desertslavetrader_drops
+			if item:get_name() == "default:gold_ingot" then
 
-					local pos = self.object:get_pos()
-					pos.y = pos.y + 0.5
-
-					local drops = class_def.drops
-					if #drops > 0 then
-						minetest.add_item(pos, {
-							name = drops[math.random(1, #drops)]
-						})
-					end
-
-					minetest.chat_send_player(name, S("Villager traded with you!"))
-					nativevillages.mood.on_trade(self, clicker)
-					return
+				if not mobs.is_creative(name) then
+					item:take_item()
+					clicker:set_wielded_item(item)
 				end
+
+				local pos = self.object:get_pos()
+
+				pos.y = pos.y + 0.5
+
+				local drops = self.npc_drops or mobs.desertslavetrader_drops
+
+				minetest.add_item(pos, {
+					name = drops[math.random(1, #drops)]
+				})
+
+				minetest.chat_send_player(name, S("Slave delivered!"))
+
+				nativevillages.mood.on_trade(self, clicker)
+				return
 			end
 
+			-- by right-clicking owner can switch npc between follow and stand
 			if self.owner and self.owner == name then
+
 				if self.order == "follow" then
+
 					self.attack = nil
 					self.order = "stand"
 					self.state = "stand"
 					self:set_animation("stand")
 					self:set_velocity(0)
-					minetest.chat_send_player(name, S("Villager stands still."))
+
+					minetest.chat_send_player(name, S("Slavetrader stands still."))
 				else
 					self.order = "follow"
-					minetest.chat_send_player(name, S("Villager will follow you."))
+
+					minetest.chat_send_player(name, S("Slavetrader will follow you."))
 				end
 			end
 		end,
