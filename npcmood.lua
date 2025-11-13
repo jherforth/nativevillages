@@ -3,7 +3,6 @@ local S = minetest.get_translator("nativevillages")
 nativevillages.mood = {}
 
 nativevillages.mood.trade_items = {}
-nativevillages.mood.indicator_distance = 16
 
 nativevillages.mood.moods = {
 	happy = {texture = "nativevillages_mood_happy.png"},
@@ -108,26 +107,6 @@ function nativevillages.mood.check_nearby_trade_items(self)
 	return false
 end
 
-function nativevillages.mood.is_player_nearby(self)
-	if not self.object then return false end
-
-	local pos = self.object:get_pos()
-	if not pos then return false end
-
-	local players = minetest.get_connected_players()
-	for _, player in ipairs(players) do
-		local player_pos = player:get_pos()
-		if player_pos then
-			local distance = vector.distance(pos, player_pos)
-			if distance <= nativevillages.mood.indicator_distance then
-				return true
-			end
-		end
-	end
-
-	return false
-end
-
 function nativevillages.mood.update_mood(self, dtime)
 	nativevillages.mood.init_npc(self)
 
@@ -201,15 +180,15 @@ end
 function nativevillages.mood.update_indicator(self)
 	if not self.object then return end
 
-	local player_nearby = nativevillages.mood.is_player_nearby(self)
-
-	if not player_nearby then
-		if self.nv_mood_indicator then
-			self.nv_mood_indicator:remove()
-			self.nv_mood_indicator = nil
-		end
-		return
+	if self.nv_mood_indicator then
+		self.nv_mood_indicator:remove()
+		self.nv_mood_indicator = nil
 	end
+
+	local pos = self.object:get_pos()
+	if not pos then return end
+
+	pos.y = pos.y + 2.2
 
 	local mood_data = nativevillages.mood.moods[self.nv_mood] or nativevillages.mood.moods.neutral
 	local desire_data = self.nv_current_desire and nativevillages.mood.desires[self.nv_current_desire]
@@ -219,41 +198,17 @@ function nativevillages.mood.update_indicator(self)
 		texture = desire_data.texture
 	end
 
-	local indicator_valid = false
+	self.nv_mood_indicator = minetest.add_entity(pos, "nativevillages:mood_indicator")
 	if self.nv_mood_indicator then
-		local indicator_obj = self.nv_mood_indicator:get_luaentity()
-		if indicator_obj then
-			indicator_valid = true
-		end
-	end
-
-	if indicator_valid then
+		self.nv_mood_indicator:set_attach(
+			self.object,
+			"",
+			{x=0, y=13, z=0},
+			{x=0, y=0, z=0}
+		)
 		self.nv_mood_indicator:set_properties({
 			textures = {texture},
 		})
-	else
-		if self.nv_mood_indicator then
-			pcall(function() self.nv_mood_indicator:remove() end)
-			self.nv_mood_indicator = nil
-		end
-
-		local pos = self.object:get_pos()
-		if not pos then return end
-
-		pos.y = pos.y + 2.2
-
-		self.nv_mood_indicator = minetest.add_entity(pos, "nativevillages:mood_indicator")
-		if self.nv_mood_indicator then
-			self.nv_mood_indicator:set_attach(
-				self.object,
-				"",
-				{x=0, y=22, z=0},
-				{x=0, y=0, z=0}
-			)
-			self.nv_mood_indicator:set_properties({
-				textures = {texture},
-			})
-		end
 	end
 end
 
@@ -278,26 +233,15 @@ function nativevillages.mood.on_trade(self, clicker)
 end
 
 function nativevillages.mood.get_staticdata_extra(self)
-	local function safe_value(val, default)
-		local vtype = type(val)
-		if vtype == "string" or vtype == "number" or vtype == "boolean" then
-			return val
-		elseif vtype == "nil" then
-			return default
-		else
-			return default
-		end
-	end
-
 	return {
-		nv_mood = safe_value(self.nv_mood, "neutral"),
-		nv_mood_value = safe_value(self.nv_mood_value, 50),
-		nv_hunger = safe_value(self.nv_hunger, 50),
-		nv_loneliness = safe_value(self.nv_loneliness, 0),
-		nv_fear = safe_value(self.nv_fear, 0),
-		nv_last_fed = safe_value(self.nv_last_fed, 0),
-		nv_last_interaction = safe_value(self.nv_last_interaction, 0),
-		nv_current_desire = safe_value(self.nv_current_desire, nil),
+		nv_mood = self.nv_mood,
+		nv_mood_value = self.nv_mood_value,
+		nv_hunger = self.nv_hunger,
+		nv_loneliness = self.nv_loneliness,
+		nv_fear = self.nv_fear,
+		nv_last_fed = self.nv_last_fed,
+		nv_last_interaction = self.nv_last_interaction,
+		nv_current_desire = self.nv_current_desire,
 	}
 end
 
@@ -319,12 +263,12 @@ minetest.register_entity("nativevillages:mood_indicator", {
 		physical = false,
 		collisionbox = {0, 0, 0, 0, 0, 0},
 		visual = "sprite",
-		visual_size = {x=0.5, y=0.5},
+		visual_size = {x=0.25, y=0.25},
 		textures = {"nativevillages_mood_neutral.png"},
 		is_visible = true,
 		pointable = false,
 		static_save = false,
-		glow = 10,
+		glow = 5,
 	},
 
 	on_step = function(self, dtime)
