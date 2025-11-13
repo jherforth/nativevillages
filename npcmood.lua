@@ -177,8 +177,10 @@ function nativevillages.mood.update_indicator(self)
 
 	-- Remove old indicator if it exists
 	if self.nv_mood_indicator_id then
-		local old = minetest.get_objects_by_id(self.nv_mood_indicator_id)[1]
-		if old then old:remove() end
+		local success, old_objects = pcall(minetest.get_objects_by_id, self.nv_mood_indicator_id)
+		if success and old_objects and old_objects[1] then
+			pcall(function() old_objects[1]:remove() end)
+		end
 		self.nv_mood_indicator_id = nil
 	end
 
@@ -195,12 +197,19 @@ function nativevillages.mood.update_indicator(self)
 	end
 
 	-- Spawn the indicator entity
-	local indicator = minetest.add_entity(pos, "nativevillages:mood_indicator")
-	if indicator then
-		indicator:set_attach(self.object, "", {x=0, y=13, z=0}, {x=0, y=0, z=0})
-		indicator:set_properties({textures = {texture}})
-		-- Store **entity ID** (a number) – safe for serialization
-		self.nv_mood_indicator_id = indicator:get_luaentity().id
+	local success, indicator = pcall(minetest.add_entity, pos, "nativevillages:mood_indicator")
+	if success and indicator then
+		local attach_success = pcall(function()
+			indicator:set_attach(self.object, "", {x=0, y=13, z=0}, {x=0, y=0, z=0})
+			indicator:set_properties({textures = {texture}})
+		end)
+
+		if attach_success then
+			local luaent = indicator:get_luaentity()
+			if luaent then
+				self.nv_mood_indicator_id = luaent.id
+			end
+		end
 	end
 end
 
