@@ -1,3 +1,4 @@
+-- npcmood.lua
 local S = minetest.get_translator("nativevillages")
 
 nativevillages.mood = {}
@@ -5,87 +6,86 @@ nativevillages.mood = {}
 nativevillages.mood.trade_items = {}
 
 nativevillages.mood.moods = {
-	happy = {texture = "nativevillages_mood_happy.png"},
+	happy   = {texture = "nativevillages_mood_happy.png"},
 	content = {texture = "nativevillages_mood_content.png"},
 	neutral = {texture = "nativevillages_mood_neutral.png"},
-	sad = {texture = "nativevillages_mood_sad.png"},
-	angry = {texture = "nativevillages_mood_angry.png"},
-	hungry = {texture = "nativevillages_mood_hungry.png"},
-	lonely = {texture = "nativevillages_mood_lonely.png"},
-	scared = {texture = "nativevillages_mood_scared.png"},
+	sad     = {texture = "nativevillages_mood_sad.png"},
+	angry   = {texture = "nativevillages_mood_angry.png"},
+	hungry  = {texture = "nativevillages_mood_hungry.png"},
+	lonely  = {texture = "nativevillages_mood_lonely.png"},
+	scared  = {texture = "nativevillages_mood_scared.png"},
 }
 
 nativevillages.mood.desires = {
-	food = {texture = "nativevillages_desire_food.png", priority = 1},
-	trade = {texture = "nativevillages_desire_trade.png", priority = 2},
+	food          = {texture = "nativevillages_desire_food.png",          priority = 1},
+	trade         = {texture = "nativevillages_desire_trade.png",         priority = 2},
 	companionship = {texture = "nativevillages_desire_companionship.png", priority = 3},
-	safety = {texture = "nativevillages_desire_safety.png", priority = 4},
-	rest = {texture = "nativevillages_desire_rest.png", priority = 5},
+	safety        = {texture = "nativevillages_desire_safety.png",        priority = 4},
+	rest          = {texture = "nativevillages_desire_rest.png",          priority = 5},
 }
 
+--------------------------------------------------------------------
+-- NPC mood initialisation
+--------------------------------------------------------------------
 function nativevillages.mood.init_npc(self)
 	if not self.nv_mood then
-		self.nv_mood = "neutral"
-		self.nv_mood_value = 50
-		self.nv_hunger = 50
-		self.nv_loneliness = 0
-		self.nv_fear = 0
-		self.nv_last_fed = 0
-		self.nv_last_interaction = 0
-		self.nv_current_desire = nil
-		self.nv_mood_timer = 0
+		self.nv_mood               = "neutral"
+		self.nv_mood_value         = 50
+		self.nv_hunger             = 50
+		self.nv_loneliness         = 0
+		self.nv_fear               = 0
+		self.nv_last_fed           = 0
+		self.nv_last_interaction   = 0
+		self.nv_current_desire     = nil
+		self.nv_mood_timer         = 0
+		self.nv_mood_indicator_id  = nil   -- stores the **entity ID**, not the ObjectRef
 	end
 end
 
+--------------------------------------------------------------------
+-- Helper: get mood name from numeric value
+--------------------------------------------------------------------
 function nativevillages.mood.get_mood_from_value(value)
-	if value >= 80 then
-		return "happy"
-	elseif value >= 60 then
-		return "content"
-	elseif value >= 40 then
-		return "neutral"
-	elseif value >= 20 then
-		return "sad"
-	else
-		return "angry"
-	end
+	if value >= 80 then return "happy"
+	elseif value >= 60 then return "content"
+	elseif value >= 40 then return "neutral"
+	elseif value >= 20 then return "sad"
+	else return "angry" end
 end
 
+--------------------------------------------------------------------
+-- Desire calculation
+--------------------------------------------------------------------
 function nativevillages.mood.calculate_desire(self)
 	local desires = {}
 
 	if self.nv_hunger > 70 then
 		table.insert(desires, {name = "food", urgency = self.nv_hunger})
 	end
-
 	if self.nv_loneliness > 60 then
 		table.insert(desires, {name = "companionship", urgency = self.nv_loneliness})
 	end
-
 	if self.nv_fear > 50 then
 		table.insert(desires, {name = "safety", urgency = self.nv_fear})
 	end
-
 	if self.health and self.health < 15 then
 		table.insert(desires, {name = "rest", urgency = 100 - self.health})
 	end
-
 	if self.nv_wants_trade then
 		table.insert(desires, {name = "trade", urgency = 85})
 	end
 
-	if #desires == 0 then
-		return nil
-	end
+	if #desires == 0 then return nil end
 
 	table.sort(desires, function(a, b) return a.urgency > b.urgency end)
 	return desires[1].name
 end
 
+--------------------------------------------------------------------
+-- Check for nearby trade items
+--------------------------------------------------------------------
 function nativevillages.mood.check_nearby_trade_items(self)
-	if not self.object or not self.nv_trade_items then
-		return false
-	end
+	if not self.object or not self.nv_trade_items then return false end
 
 	local pos = self.object:get_pos()
 	if not pos then return false end
@@ -95,11 +95,9 @@ function nativevillages.mood.check_nearby_trade_items(self)
 		if obj:is_player() then
 			local wielded = obj:get_wielded_item()
 			if wielded then
-				local wielded_name = wielded:get_name()
+				local name = wielded:get_name()
 				for _, trade_item in ipairs(self.nv_trade_items) do
-					if wielded_name == trade_item then
-						return true
-					end
+					if name == trade_item then return true end
 				end
 			end
 		end
@@ -107,17 +105,17 @@ function nativevillages.mood.check_nearby_trade_items(self)
 	return false
 end
 
+--------------------------------------------------------------------
+-- Mood update (called from do_custom)
+--------------------------------------------------------------------
 function nativevillages.mood.update_mood(self, dtime)
 	nativevillages.mood.init_npc(self)
 
 	self.nv_mood_timer = (self.nv_mood_timer or 0) + dtime
-
-	if self.nv_mood_timer < 5 then
-		return
-	end
-
+	if self.nv_mood_timer < 5 then return end
 	self.nv_mood_timer = 0
 
+	-- ---- trade interest -------------------------------------------------
 	local player_has_trade_item = nativevillages.mood.check_nearby_trade_items(self)
 	if player_has_trade_item then
 		self.nv_wants_trade = true
@@ -129,9 +127,10 @@ function nativevillages.mood.update_mood(self, dtime)
 		end
 	end
 
+	-- ---- basic needs ---------------------------------------------------
 	local time_factor = 5
-	self.nv_hunger = math.min(100, (self.nv_hunger or 50) + time_factor * 0.5)
-	self.nv_last_fed = (self.nv_last_fed or 0) + time_factor
+	self.nv_hunger           = math.min(100, (self.nv_hunger or 50) + time_factor * 0.5)
+	self.nv_last_fed         = (self.nv_last_fed or 0) + time_factor
 	self.nv_last_interaction = (self.nv_last_interaction or 0) + time_factor
 
 	if self.nv_last_interaction > 120 then
@@ -146,51 +145,48 @@ function nativevillages.mood.update_mood(self, dtime)
 		self.nv_fear = math.max(0, (self.nv_fear or 0) - 5)
 	end
 
+	-- ---- mood value ----------------------------------------------------
 	local mood_value = 50
 	mood_value = mood_value - (self.nv_hunger - 50) * 0.5
 	mood_value = mood_value - (self.nv_loneliness - 30) * 0.3
 	mood_value = mood_value - self.nv_fear * 0.4
 
-	if self.owner and self.owner ~= "" then
-		mood_value = mood_value + 10
-	end
-
-	if self.health then
-		mood_value = mood_value + (self.health - 50) * 0.2
-	end
+	if self.owner and self.owner ~= "" then mood_value = mood_value + 10 end
+	if self.health then mood_value = mood_value + (self.health - 50) * 0.2 end
 
 	self.nv_mood_value = math.max(0, math.min(100, mood_value))
 
+	-- ---- final mood string ---------------------------------------------
 	local old_mood = self.nv_mood
 	self.nv_mood = nativevillages.mood.get_mood_from_value(self.nv_mood_value)
 
-	if self.nv_hunger > 80 then
-		self.nv_mood = "hungry"
-	elseif self.nv_fear > 70 then
-		self.nv_mood = "scared"
-	elseif self.nv_loneliness > 80 then
-		self.nv_mood = "lonely"
-	end
+	if self.nv_hunger > 80 then self.nv_mood = "hungry"
+	elseif self.nv_fear > 70 then self.nv_mood = "scared"
+	elseif self.nv_loneliness > 80 then self.nv_mood = "lonely" end
 
 	self.nv_current_desire = nativevillages.mood.calculate_desire(self)
 
 	nativevillages.mood.update_indicator(self)
 end
 
+--------------------------------------------------------------------
+-- Mood indicator (floating icon above head)
+--------------------------------------------------------------------
 function nativevillages.mood.update_indicator(self)
 	if not self.object then return end
 
-	if self.nv_mood_indicator then
-		self.nv_mood_indicator:remove()
-		self.nv_mood_indicator = nil
+	-- Remove old indicator if it exists
+	if self.nv_mood_indicator_id then
+		local old = minetest.get_objects_by_id(self.nv_mood_indicator_id)[1]
+		if old then old:remove() end
+		self.nv_mood_indicator_id = nil
 	end
 
 	local pos = self.object:get_pos()
 	if not pos then return end
-
 	pos.y = pos.y + 2.2
 
-	local mood_data = nativevillages.mood.moods[self.nv_mood] or nativevillages.mood.moods.neutral
+	local mood_data   = nativevillages.mood.moods[self.nv_mood] or nativevillages.mood.moods.neutral
 	local desire_data = self.nv_current_desire and nativevillages.mood.desires[self.nv_current_desire]
 
 	local texture = mood_data.texture
@@ -198,93 +194,102 @@ function nativevillages.mood.update_indicator(self)
 		texture = desire_data.texture
 	end
 
-	self.nv_mood_indicator = minetest.add_entity(pos, "nativevillages:mood_indicator")
-	if self.nv_mood_indicator then
-		self.nv_mood_indicator:set_attach(
-			self.object,
-			"",
-			{x=0, y=13, z=0},
-			{x=0, y=0, z=0}
-		)
-		self.nv_mood_indicator:set_properties({
-			textures = {texture},
-		})
+	-- Spawn the indicator entity
+	local indicator = minetest.add_entity(pos, "nativevillages:mood_indicator")
+	if indicator then
+		indicator:set_attach(self.object, "", {x=0, y=13, z=0}, {x=0, y=0, z=0})
+		indicator:set_properties({textures = {texture}})
+		-- Store **entity ID** (a number) – safe for serialization
+		self.nv_mood_indicator_id = indicator:get_luaentity().id
 	end
 end
 
+--------------------------------------------------------------------
+-- Interaction callbacks
+--------------------------------------------------------------------
 function nativevillages.mood.on_feed(self, clicker)
-	self.nv_hunger = math.max(0, (self.nv_hunger or 50) - 30)
-	self.nv_last_fed = 0
+	self.nv_hunger           = math.max(0, (self.nv_hunger or 50) - 30)
+	self.nv_last_fed         = 0
 	self.nv_last_interaction = 0
 	nativevillages.mood.update_mood(self, 0)
 end
 
 function nativevillages.mood.on_interact(self, clicker)
 	self.nv_last_interaction = 0
-	self.nv_loneliness = math.max(0, (self.nv_loneliness or 0) - 20)
+	self.nv_loneliness       = math.max(0, (self.nv_loneliness or 0) - 20)
 	nativevillages.mood.update_mood(self, 0)
 end
 
 function nativevillages.mood.on_trade(self, clicker)
 	self.nv_last_interaction = 0
-	self.nv_loneliness = math.max(0, (self.nv_loneliness or 0) - 25)
-	self.nv_hunger = math.max(0, (self.nv_hunger or 50) - 15)
+	self.nv_loneliness       = math.max(0, (self.nv_loneliness or 0) - 25)
+	self.nv_hunger           = math.max(0, (self.nv_hunger or 50) - 15)
 	nativevillages.mood.update_mood(self, 0)
 end
 
+--------------------------------------------------------------------
+-- Serialization (only plain data)
+--------------------------------------------------------------------
 function nativevillages.mood.get_staticdata_extra(self)
 	return {
-		nv_mood = self.nv_mood,
-		nv_mood_value = self.nv_mood_value,
-		nv_hunger = self.nv_hunger,
-		nv_loneliness = self.nv_loneliness,
-		nv_fear = self.nv_fear,
-		nv_last_fed = self.nv_last_fed,
-		nv_last_interaction = self.nv_last_interaction,
-		nv_current_desire = self.nv_current_desire,
+		nv_mood               = self.nv_mood,
+		nv_mood_value         = self.nv_mood_value,
+		nv_hunger             = self.nv_hunger,
+		nv_loneliness         = self.nv_loneliness,
+		nv_fear               = self.nv_fear,
+		nv_last_fed           = self.nv_last_fed,
+		nv_last_interaction   = self.nv_last_interaction,
+		nv_current_desire     = self.nv_current_desire,
+		nv_mood_indicator_id  = self.nv_mood_indicator_id,   -- number, safe
 	}
 end
 
 function nativevillages.mood.on_activate_extra(self, data)
-	if data then
-		self.nv_mood = data.nv_mood or "neutral"
-		self.nv_mood_value = data.nv_mood_value or 50
-		self.nv_hunger = data.nv_hunger or 50
-		self.nv_loneliness = data.nv_loneliness or 0
-		self.nv_fear = data.nv_fear or 0
-		self.nv_last_fed = data.nv_last_fed or 0
-		self.nv_last_interaction = data.nv_last_interaction or 0
-		self.nv_current_desire = data.nv_current_desire
-	end
+	if not data then return end
+	self.nv_mood               = data.nv_mood or "neutral"
+	self.nv_mood_value         = data.nv_mood_value or 50
+	self.nv_hunger             = data.nv_hunger or 50
+	self.nv_loneliness         = data.nv_loneliness or 0
+	self.nv_fear               = data.nv_fear or 0
+	self.nv_last_fed           = data.nv_last_fed or 0
+	self.nv_last_interaction   = data.nv_last_interaction or 0
+	self.nv_current_desire     = data.nv_current_desire
+	self.nv_mood_indicator_id  = data.nv_mood_indicator_id
 end
 
+--------------------------------------------------------------------
+-- Mood-indicator entity (never saves parent ObjectRef)
+--------------------------------------------------------------------
 minetest.register_entity("nativevillages:mood_indicator", {
 	initial_properties = {
-		physical = false,
-		collisionbox = {0, 0, 0, 0, 0, 0},
-		visual = "sprite",
-		visual_size = {x=0.25, y=0.25},
-		textures = {"nativevillages_mood_neutral.png"},
-		is_visible = true,
-		pointable = false,
-		static_save = false,
-		glow = 5,
+		physical      = false,
+		collisionbox  = {0,0,0,0,0,0},
+		visual        = "sprite",
+		visual_size   = {x=0.25, y=0.25},
+		textures      = {"nativevillages_mood_neutral.png"},
+		is_visible    = true,
+		pointable     = false,
+		static_save   = false,
+		glow          = 5,
 	},
 
+	-- Store the parent villager's **entity ID** (number) for safe re-attach
+	parent_id = nil,
+
 	on_step = function(self, dtime)
-		local parent = self.object:get_attach()
-		if not parent then
+		local parent_obj = self.object:get_attach()
+		if not parent_obj then
 			self.object:remove()
+			return
 		end
 	end,
 
 	on_activate = function(self, staticdata)
+		-- staticdata is ignored – we re-attach in the villager's on_activate
+	end,
+
+	-- Called by the villager when it is deactivated
+	on_deactivate = function(self)
+		self.object:remove()
 	end,
 })
-
-
-
-
-
-
-
