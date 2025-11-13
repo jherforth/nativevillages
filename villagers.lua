@@ -1,27 +1,6 @@
 -- villagers.lua
 local S = minetest.get_translator("nativevillages")
 
--- Register a dummy mood_indicator entity to clean up old ones
-minetest.register_entity("nativevillages:mood_indicator", {
-	initial_properties = {
-		physical = false,
-		collisionbox = {0,0,0,0,0,0},
-		visual = "sprite",
-		visual_size = {x=0.01, y=0.01},
-		textures = {"blank.png"},
-		static_save = false,
-	},
-	on_activate = function(self, staticdata)
-		self.object:remove()
-	end,
-	on_step = function(self, dtime)
-		self.object:remove()
-	end,
-	get_staticdata = function(self)
-		return ""
-	end,
-})
-
 --------------------------------------------------------------------
 -- Biome / spawn configuration
 --------------------------------------------------------------------
@@ -293,24 +272,9 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 			die_rotate = true,
 		},
 
-		do_custom = function(self, dtime)
-			-- Mood system temporarily disabled
-			-- nativevillages.mood.update_mood(self, dtime)
-			return true
-		end,
-
-		get_staticdata = function(self)
-			-- Return empty string to prevent userdata serialization errors
-			return ""
-		end,
-
 		on_rightclick = function(self, clicker)
-			-- Mood system temporarily disabled
-			-- nativevillages.mood.on_interact(self, clicker)
-
 			-- feed to heal npc
 			if mobs:feed_tame(self, clicker, 8, true, true) then
-				-- nativevillages.mood.on_feed(self, clicker)
 				return
 			end
 
@@ -339,7 +303,6 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 				})
 
 				minetest.chat_send_player(name, S("Slave delivered!"))
-				-- nativevillages.mood.on_trade(self, clicker)
 				return
 			end
 
