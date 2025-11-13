@@ -506,4 +506,34 @@ end
 -- 	end
 -- end)
 
+--------------------------------------------------------------------
+-- Migration entities for old/renamed mob types
+--------------------------------------------------------------------
+-- Register a dummy entity that self-removes to handle old entity names
+local old_entity_names = {
+	"nativevillages:grassland_friendly",
+	"nativevillages:desert_friendly",
+	"nativevillages:savanna_friendly",
+	"nativevillages:lake_friendly",
+	"nativevillages:ice_friendly",
+}
+
+for _, old_name in ipairs(old_entity_names) do
+	minetest.register_entity(old_name, {
+		initial_properties = {
+			physical = false,
+			collisionbox = {0, 0, 0, 0, 0, 0},
+			visual = "sprite",
+			visual_size = {x=0.01, y=0.01},
+			textures = {"blank.png"},
+			is_visible = false,
+			static_save = false,
+		},
+		on_activate = function(self, staticdata, dtime_s)
+			-- Remove immediately - this is just to prevent errors
+			self.object:remove()
+		end,
+	})
+end
+
 print(S("[MOD] Villagers loaded"))
