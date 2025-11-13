@@ -289,14 +289,6 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 			-- nativevillages.mood.init_npc(self)
 		end,
 
-		-- *** FIXED ***  Safe serialization
-		get_staticdata = function(self)
-			-- Mood system temporarily disabled
-			-- local mood_data = nativevillages.mood.get_staticdata_extra(self) or {}
-			-- return minetest.serialize(strip_userdata(mood_data))
-			return ""
-		end,
-
 		on_deactivate = function(self)
   		  	if self.nv_mood_indicator_id then
    		    	local ind = minetest.get_objects_by_id(self.nv_mood_indicator_id)[1]
