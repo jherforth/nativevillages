@@ -278,7 +278,10 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 			return true
 		end,
 
-		-- on_deactivate removed - mood system disabled
+		get_staticdata = function(self)
+			-- Return empty string to prevent userdata serialization errors
+			return ""
+		end,
 
 		on_rightclick = function(self, clicker)
 			-- Mood system temporarily disabled
