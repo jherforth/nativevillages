@@ -34,14 +34,15 @@ function nativevillages.mood.init_npc(self)
 	if not self.nv_mood then
 		self.nv_mood               = "neutral"
 		self.nv_mood_value         = 50
-		self.nv_hunger             = 50
+		self.nv_hunger             = 30
 		self.nv_loneliness         = 0
 		self.nv_fear               = 0
 		self.nv_last_fed           = 0
 		self.nv_last_interaction   = 0
 		self.nv_current_desire     = nil
 		self.nv_mood_timer         = 0
-		self.nv_mood_indicator_id  = nil   -- stores the **entity ID**, not the ObjectRef
+		self.nv_mood_indicator_id  = nil
+		self.nv_indicator_cycle    = 0
 	end
 end
 
@@ -143,7 +144,7 @@ function nativevillages.mood.update_mood(self, dtime)
 	minetest.log("action", "[nativevillages] update_mood: updating needs")
 	-- ---- basic needs ---------------------------------------------------
 	local time_factor = 5
-	self.nv_hunger           = math.min(100, (self.nv_hunger or 50) + time_factor * 0.5)
+	self.nv_hunger           = math.min(100, (self.nv_hunger or 30) + time_factor * 0.3)
 	self.nv_last_fed         = (self.nv_last_fed or 0) + time_factor
 	self.nv_last_interaction = (self.nv_last_interaction or 0) + time_factor
 
@@ -153,7 +154,11 @@ function nativevillages.mood.update_mood(self, dtime)
 		self.nv_loneliness = math.max(0, (self.nv_loneliness or 0) - 2)
 	end
 
-	if self.state == "attack" or (self.following and self.following ~= self.owner) then
+	if self.state == "attack" then
+		self.nv_fear = math.min(100, (self.nv_fear or 0) + 15)
+	elseif self.attack and self.attack:is_player() then
+		self.nv_fear = math.min(100, (self.nv_fear or 0) + 15)
+	elseif (self.following and self.following ~= self.owner) then
 		self.nv_fear = math.min(100, (self.nv_fear or 0) + 10)
 	else
 		self.nv_fear = math.max(0, (self.nv_fear or 0) - 5)
@@ -175,9 +180,9 @@ function nativevillages.mood.update_mood(self, dtime)
 	local old_mood = self.nv_mood
 	self.nv_mood = nativevillages.mood.get_mood_from_value(self.nv_mood_value)
 
-	if self.nv_hunger > 80 then self.nv_mood = "hungry"
-	elseif self.nv_fear > 70 then self.nv_mood = "scared"
-	elseif self.nv_loneliness > 80 then self.nv_mood = "lonely" end
+	if self.nv_fear > 50 then self.nv_mood = "scared"
+	elseif self.nv_hunger > 70 then self.nv_mood = "hungry"
+	elseif self.nv_loneliness > 70 then self.nv_mood = "lonely" end
 
 	minetest.log("action", "[nativevillages] update_mood: calculating desire")
 	self.nv_current_desire = nativevillages.mood.calculate_desire(self)
@@ -215,10 +220,10 @@ function nativevillages.mood.update_indicator(self)
 	local mood_data   = nativevillages.mood.moods[self.nv_mood] or nativevillages.mood.moods.neutral
 	local desire_data = self.nv_current_desire and nativevillages.mood.desires[self.nv_current_desire]
 
-	local texture = mood_data.texture
-	if desire_data and math.random(100) < 60 then
-		texture = desire_data.texture
-	end
+	self.nv_indicator_cycle = (self.nv_indicator_cycle or 0) + 1
+	local show_desire = desire_data and (self.nv_indicator_cycle % 4 < 2)
+
+	local texture = show_desire and desire_data.texture or mood_data.texture
 
 	-- Remove old indicator if exists
 	if self.nv_mood_indicator_id then
@@ -278,7 +283,8 @@ function nativevillages.mood.get_staticdata_extra(self)
 		nv_last_fed           = self.nv_last_fed,
 		nv_last_interaction   = self.nv_last_interaction,
 		nv_current_desire     = self.nv_current_desire,
-		nv_mood_indicator_id  = self.nv_mood_indicator_id,   -- number, safe
+		nv_mood_indicator_id  = self.nv_mood_indicator_id,
+		nv_indicator_cycle    = self.nv_indicator_cycle,
 	}
 end
 
@@ -286,13 +292,14 @@ function nativevillages.mood.on_activate_extra(self, data)
 	if not data then return end
 	self.nv_mood               = data.nv_mood or "neutral"
 	self.nv_mood_value         = data.nv_mood_value or 50
-	self.nv_hunger             = data.nv_hunger or 50
+	self.nv_hunger             = data.nv_hunger or 30
 	self.nv_loneliness         = data.nv_loneliness or 0
 	self.nv_fear               = data.nv_fear or 0
 	self.nv_last_fed           = data.nv_last_fed or 0
 	self.nv_last_interaction   = data.nv_last_interaction or 0
 	self.nv_current_desire     = data.nv_current_desire
 	self.nv_mood_indicator_id  = data.nv_mood_indicator_id
+	self.nv_indicator_cycle    = data.nv_indicator_cycle or 0
 end
 
 --------------------------------------------------------------------
