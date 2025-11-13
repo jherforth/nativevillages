@@ -293,6 +293,14 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 			return minetest.serialize(strip_userdata(mood_data))
 		end,
 
+		on_deactivate = function(self)
+  		  	if self.nv_mood_indicator_id then
+   		    	local ind = minetest.get_objects_by_id(self.nv_mood_indicator_id)[1]
+     		 	if ind then ind:remove() end
+    		    	self.nv_mood_indicator_id = nil
+  		  		end
+		end,
+
 		on_rightclick = function(self, clicker)
 			nativevillages.mood.on_interact(self, clicker)
 
