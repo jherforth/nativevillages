@@ -379,6 +379,40 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 		end,
 
 		on_rightclick = function(self, clicker)
+			local item = clicker:get_wielded_item()
+			local name = clicker:get_player_name()
+			local item_name = item:get_name()
+
+			-- Feed with bread (reduces hunger and heals)
+			if item_name == "farming:bread" then
+				if nativevillages.mood then
+					nativevillages.mood.on_feed(self, clicker, 40)
+				end
+
+				if not mobs.is_creative(name) then
+					item:take_item()
+					clicker:set_wielded_item(item)
+				end
+
+				minetest.chat_send_player(name, S("Villager fed!"))
+				return
+			end
+
+			-- Feed with apple (reduces hunger less but still heals)
+			if item_name == "default:apple" then
+				if nativevillages.mood then
+					nativevillages.mood.on_feed(self, clicker, 25)
+				end
+
+				if not mobs.is_creative(name) then
+					item:take_item()
+					clicker:set_wielded_item(item)
+				end
+
+				minetest.chat_send_player(name, S("Villager fed!"))
+				return
+			end
+
 			-- feed to heal npc
 			if mobs:feed_tame(self, clicker, 8, true, true) then
 				return
@@ -389,9 +423,6 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 
 			-- protect npc with mobs:protector
 			if mobs:protect(self, clicker) then return end
-
-			local item = clicker:get_wielded_item()
-			local name = clicker:get_player_name()
 
 			-- right clicking with gold ingot drops random item from mobs.desertslavetrader_drops
 			if item:get_name() == "default:gold_ingot" then

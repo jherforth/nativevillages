@@ -189,6 +189,7 @@ function nativevillages.mood.update_mood(self, dtime)
 
 	minetest.log("action", "[nativevillages] update_mood: updating indicator")
 	nativevillages.mood.update_indicator(self)
+	nativevillages.mood.update_nametag(self)
 
 	minetest.log("action", "[nativevillages] update_mood: complete")
 end
@@ -225,35 +226,86 @@ function nativevillages.mood.update_indicator(self)
 
 	local texture = show_desire and desire_data.texture or mood_data.texture
 
-	-- Remove old indicator if exists
+	-- Try to reuse existing indicator
+	local indicator = nil
 	if self.nv_mood_indicator_id then
 		local old_obj = minetest.get_objects_by_id(self.nv_mood_indicator_id)
 		if old_obj and old_obj[1] then
-			old_obj[1]:remove()
+			indicator = old_obj[1]
+			local parent = indicator:get_attach()
+			if parent == self.object then
+				indicator:set_properties({textures = {texture}})
+			else
+				indicator:remove()
+				indicator = nil
+				self.nv_mood_indicator_id = nil
+			end
+		else
+			self.nv_mood_indicator_id = nil
 		end
-		self.nv_mood_indicator_id = nil
 	end
 
-	-- Create new indicator at villager position (attachment handles offset)
-	local indicator = minetest.add_entity(pos, "nativevillages:mood_indicator")
-	if indicator then
-		indicator:set_properties({textures = {texture}})
-		indicator:set_attach(self.object, "", {x=0, y=20, z=0}, {x=0, y=0, z=0})
+	-- Create new indicator if needed
+	if not indicator then
+		indicator = minetest.add_entity(pos, "nativevillages:mood_indicator")
+		if indicator then
+			indicator:set_properties({textures = {texture}})
+			indicator:set_attach(self.object, "", {x=0, y=20, z=0}, {x=0, y=0, z=0})
 
-		local luaent = indicator:get_luaentity()
-		if luaent then
-			self.nv_mood_indicator_id = luaent.id
+			local luaent = indicator:get_luaentity()
+			if luaent then
+				self.nv_mood_indicator_id = luaent.id
+			end
 		end
 	end
 end
 
 --------------------------------------------------------------------
+-- Info display (when player looks at NPC)
+--------------------------------------------------------------------
+function nativevillages.mood.update_nametag(self)
+	if not self.object then return end
+
+	local mood_name = self.nv_mood or "neutral"
+	local hunger = math.floor(self.nv_hunger or 30)
+	local health = math.floor(self.health or 20)
+
+	local mood_emoji = {
+		happy = "😊",
+		content = "🙂",
+		neutral = "😐",
+		sad = "😢",
+		angry = "😠",
+		hungry = "🍞",
+		lonely = "💭",
+		scared = "😨"
+	}
+
+	local info = string.format("%s HP:%d Hunger:%d",
+		mood_emoji[mood_name] or "😐",
+		health,
+		hunger
+	)
+
+	self.object:set_properties({
+		nametag = info,
+		nametag_color = "#FFFFFF"
+	})
+end
+
+--------------------------------------------------------------------
 -- Interaction callbacks
 --------------------------------------------------------------------
-function nativevillages.mood.on_feed(self, clicker)
-	self.nv_hunger           = math.max(0, (self.nv_hunger or 50) - 30)
+function nativevillages.mood.on_feed(self, clicker, food_value)
+	food_value = food_value or 30
+	self.nv_hunger           = math.max(0, (self.nv_hunger or 30) - food_value)
 	self.nv_last_fed         = 0
 	self.nv_last_interaction = 0
+
+	if self.health then
+		self.health = math.min(self.hp_max or 20, self.health + (food_value / 3))
+	end
+
 	nativevillages.mood.update_mood(self, 0)
 end
 
