@@ -385,8 +385,13 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 
 			-- Feed with bread (reduces hunger and heals)
 			if item_name == "farming:bread" then
+				minetest.log("action", "[nativevillages] Bread feeding triggered")
+
 				if nativevillages.mood then
+					minetest.log("action", "[nativevillages] mood module exists, calling on_feed")
 					nativevillages.mood.on_feed(self, clicker, 40)
+				else
+					minetest.log("error", "[nativevillages] mood module is nil!")
 				end
 
 				if not mobs.is_creative(name) then
@@ -400,8 +405,13 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 
 			-- Feed with apple (reduces hunger less but still heals)
 			if item_name == "default:apple" then
+				minetest.log("action", "[nativevillages] Apple feeding triggered")
+
 				if nativevillages.mood then
+					minetest.log("action", "[nativevillages] mood module exists, calling on_feed")
 					nativevillages.mood.on_feed(self, clicker, 25)
+				else
+					minetest.log("error", "[nativevillages] mood module is nil!")
 				end
 
 				if not mobs.is_creative(name) then
