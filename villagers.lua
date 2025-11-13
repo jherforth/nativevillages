@@ -259,6 +259,11 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 		},
 
 		get_staticdata = function(self)
+			-- Prevent death entity issues
+			if self.state == "die" or self.dead then
+				return ""
+			end
+
 			-- Create a clean tmp table with only serializable data
 			local tmp = {}
 
@@ -275,6 +280,14 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 			end
 
 			return minetest.serialize(tmp)
+		end,
+
+		on_die = function(self, pos)
+			-- Clean up entity immediately on death to prevent serialization issues
+			if self.object then
+				self.object:remove()
+			end
+			return true
 		end,
 
 		on_rightclick = function(self, clicker)

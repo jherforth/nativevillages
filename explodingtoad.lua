@@ -61,6 +61,9 @@ sounds = {
 	follow = {"fishing:bait:worm", "ethereal:worm", "animalworld:ant", "animalworld:termite"},
 	view_range = 13,
 	get_staticdata = function(self)
+		if self.state == "die" or self.dead then
+			return ""
+		end
 		local tmp = {}
 		for tag, stat in pairs(self) do
 			local tstat = type(stat)
@@ -72,6 +75,12 @@ sounds = {
 			end
 		end
 		return minetest.serialize(tmp)
+	end,
+	on_die = function(self, pos)
+		if self.object then
+			self.object:remove()
+		end
+		return true
 	end,
 	on_rightclick = function(self, clicker)
 
