@@ -4,7 +4,7 @@ local S = minetest.get_translator("nativevillages")
 nativevillages.mood = {}
 
 -- Enable/disable visual mood indicators (set to true to show sprites)
-nativevillages.mood.enable_visual_indicators = false
+nativevillages.mood.enable_visual_indicators = true
 
 nativevillages.mood.trade_items = {}
 
@@ -328,3 +328,4 @@ minetest.register_entity("nativevillages:mood_indicator", {
 	on_activate = function(self, staticdata)
 	end,
 })
+
