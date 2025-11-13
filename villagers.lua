@@ -462,6 +462,67 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 			local item = clicker:get_wielded_item()
 			local name = clicker:get_player_name()
 			local item_name = item:get_name()
+			local is_sneaking = clicker:get_player_control().sneak
+
+			-- SNEAK + RIGHT-CLICK: Trading
+			if is_sneaking and self.nv_trade_items then
+				local wants_this_item = false
+				for _, trade_item in ipairs(self.nv_trade_items) do
+					if item_name == trade_item then
+						wants_this_item = true
+						break
+					end
+				end
+
+				if wants_this_item and self.nv_wants_trade then
+					-- Take the item from player (if not creative)
+					if not mobs.is_creative(name) then
+						item:take_item()
+						clicker:set_wielded_item(item)
+					end
+
+					-- Drop a random item from the villager's drop table
+					local pos = self.object:get_pos()
+					if pos and self.drops then
+						pos.y = pos.y + 0.5
+						local drop_list = {}
+
+						-- Build list of possible drops based on chance
+						for _, drop_def in ipairs(self.drops) do
+							if math.random(1, drop_def.chance) == 1 then
+								local count = math.random(drop_def.min, drop_def.max)
+								if count > 0 then
+									table.insert(drop_list, {name = drop_def.name, count = count})
+								end
+							end
+						end
+
+						-- Drop the items
+						if #drop_list > 0 then
+							for _, drop in ipairs(drop_list) do
+								minetest.add_item(pos, {name = drop.name, count = drop.count})
+							end
+							minetest.chat_send_player(name, S("Trade successful!"))
+						else
+							minetest.chat_send_player(name, S("Villager has nothing to trade right now."))
+						end
+					end
+
+					-- Reset trade interest after successful trade
+					self.nv_wants_trade = false
+					self.nv_trade_interest_timer = 0
+
+					-- Update mood for positive interaction
+					if nativevillages.mood then
+						nativevillages.mood.on_interact(self, clicker)
+					end
+
+					return
+				elseif wants_this_item and not self.nv_wants_trade then
+					minetest.chat_send_player(name, S("Villager is not interested in trading right now."))
+					return
+				end
+			end
 
 			-- Feed with bread (reduces hunger and heals)
 			if item_name == "farming:bread" then
