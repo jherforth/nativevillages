@@ -722,4 +722,4 @@ for _, old_name in ipairs(old_entity_names) do
 	})
 end
 
-print(S("[MOD] Villagers loaded"))
+print(S("[MOD] Luanti Villagers - Villagers loaded"))

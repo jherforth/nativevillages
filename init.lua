@@ -66,4 +66,4 @@ end
 
 
 
-print (S("[MOD] Native Villages loaded"))
+print (S("[MOD] Luanti Villagers loaded"))
