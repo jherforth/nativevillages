@@ -7,7 +7,7 @@ nativevillages.mood = {}
 nativevillages.mood.enable_visual_indicators = true
 
 -- Sound repeat delay in seconds (how often sounds can play for each NPC in seconds)
-nativevillages.mood.sound_repeat_delay = 30
+nativevillages.mood.sound_repeat_delay = 10
 
 nativevillages.mood.trade_items = {}
 
@@ -434,6 +434,7 @@ minetest.register_entity("nativevillages:mood_indicator", {
 	on_activate = function(self, staticdata)
 	end,
 })
+
 
 
 
