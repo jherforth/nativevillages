@@ -23,8 +23,8 @@ nativevillages.mood.sound_volume = 0.5
 -- sound_max_distance: Maximum distance player can hear NPC sounds
 -- sound_fade_distance: Distance where sounds start to fade out
 -- NPCs beyond max_distance won't be heard at all
-nativevillages.mood.sound_max_distance = 16      -- Can hear up to 16 blocks away
-nativevillages.mood.sound_fade_distance = 8      -- Starts fading at 8 blocks
+nativevillages.mood.sound_max_distance = 8       -- Can hear up to 8 blocks away
+nativevillages.mood.sound_fade_distance = 4      -- Starts fading at 4 blocks
 
 --------------------------------------------------------------------
 
@@ -162,9 +162,10 @@ function nativevillages.mood.play_sound_if_nearby(self, dtime)
 				end
 
 				if sound_to_play then
-					-- Calculate distance-based volume falloff
+					-- Calculate distance-based volume falloff with steeper curve
 					local distance_ratio = math.min(1, distance / nativevillages.mood.sound_fade_distance)
-					local distance_gain = 1.0 - (distance_ratio * 0.7)  -- Fade to 30% at fade distance
+					-- Use exponential falloff for more rapid sound decay
+					local distance_gain = math.max(0, 1.0 - (distance_ratio * distance_ratio * 0.95))
 					local final_gain = nativevillages.mood.sound_volume * distance_gain
 
 					minetest.sound_play(sound_to_play, {
