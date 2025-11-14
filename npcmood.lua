@@ -109,6 +109,43 @@ function nativevillages.mood.check_nearby_trade_items(self)
 end
 
 --------------------------------------------------------------------
+-- Play mood sound if player is nearby
+--------------------------------------------------------------------
+function nativevillages.mood.play_sound_if_nearby(self)
+	if not self.object then return end
+	local pos = self.object:get_pos()
+	if not pos then return end
+
+	local nearby_players = minetest.get_connected_players()
+	for _, player in ipairs(nearby_players) do
+		local player_pos = player:get_pos()
+		if player_pos then
+			local distance = vector.distance(pos, player_pos)
+			if distance <= 3 then
+				local sound_to_play = nil
+
+				if self.nv_wants_trade then
+					sound_to_play = "trade"
+				elseif self.nv_current_desire == "rest" then
+					sound_to_play = "rest"
+				elseif self.nv_mood then
+					sound_to_play = self.nv_mood
+				end
+
+				if sound_to_play then
+					minetest.sound_play(sound_to_play, {
+						pos = pos,
+						max_hear_distance = 5,
+						gain = 0.5,
+					})
+				end
+				break
+			end
+		end
+	end
+end
+
+--------------------------------------------------------------------
 -- Mood update (called from do_custom)
 --------------------------------------------------------------------
 function nativevillages.mood.update_mood(self, dtime)
@@ -179,6 +216,7 @@ function nativevillages.mood.update_mood(self, dtime)
 
 	self.nv_current_desire = nativevillages.mood.calculate_desire(self)
 	nativevillages.mood.update_indicator(self)
+	nativevillages.mood.play_sound_if_nearby(self)
 end
 
 --------------------------------------------------------------------
@@ -253,6 +291,17 @@ function nativevillages.mood.on_feed(self, clicker, food_value)
 
 	minetest.log("action", "[nativevillages] on_feed - After: hunger=" .. tostring(self.nv_hunger) .. " health=" .. tostring(self.health))
 
+	if self.object then
+		local pos = self.object:get_pos()
+		if pos then
+			minetest.sound_play("villager_fed", {
+				pos = pos,
+				max_hear_distance = 5,
+				gain = 0.7,
+			})
+		end
+	end
+
 	nativevillages.mood.update_mood(self, 0)
 
 	minetest.log("action", "[nativevillages] on_feed - After update_mood: hunger=" .. tostring(self.nv_hunger) .. " health=" .. tostring(self.health))
@@ -268,6 +317,18 @@ function nativevillages.mood.on_trade(self, clicker)
 	self.nv_last_interaction = 0
 	self.nv_loneliness       = math.max(0, (self.nv_loneliness or 0) - 25)
 	self.nv_hunger           = math.max(0, (self.nv_hunger or 50) - 15)
+
+	if self.object then
+		local pos = self.object:get_pos()
+		if pos then
+			minetest.sound_play("trade", {
+				pos = pos,
+				max_hear_distance = 5,
+				gain = 0.7,
+			})
+		end
+	end
+
 	nativevillages.mood.update_mood(self, 0)
 end
 
