@@ -167,6 +167,9 @@ function nativevillages.mood.update_mood(self, dtime)
 		self.nv_fully_activated = true
 	end
 
+	-- Sound timer runs every frame
+	nativevillages.mood.play_sound_if_nearby(self, dtime)
+
 	self.nv_mood_timer = (self.nv_mood_timer or 0) + dtime
 	if self.nv_mood_timer < 5 then return end
 	self.nv_mood_timer = 0
@@ -226,7 +229,6 @@ function nativevillages.mood.update_mood(self, dtime)
 
 	self.nv_current_desire = nativevillages.mood.calculate_desire(self)
 	nativevillages.mood.update_indicator(self)
-	nativevillages.mood.play_sound_if_nearby(self, dtime)
 end
 
 --------------------------------------------------------------------
