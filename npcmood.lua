@@ -3,11 +3,30 @@ local S = minetest.get_translator("nativevillages")
 
 nativevillages.mood = {}
 
--- Enable/disable visual mood indicators (set to true to show sprites)
+--------------------------------------------------------------------
+-- CONFIGURATION SETTINGS
+--------------------------------------------------------------------
+
+-- Visual mood indicators (set to true to show sprites above NPCs)
 nativevillages.mood.enable_visual_indicators = true
 
--- Sound repeat delay in seconds (how often sounds can play for each NPC in seconds)
+-- Sound timing (seconds between sounds for each NPC)
+-- Lower = more frequent sounds, Higher = less frequent sounds
 nativevillages.mood.sound_repeat_delay = 10
+
+-- Sound volume settings
+-- sound_volume: Master volume for mood sounds (0.0 = silent, 1.0 = full volume)
+-- Recommended range: 0.3 to 0.7 for ambient NPC sounds
+nativevillages.mood.sound_volume = 0.5
+
+-- Sound distance settings (in nodes/blocks)
+-- sound_max_distance: Maximum distance player can hear NPC sounds
+-- sound_fade_distance: Distance where sounds start to fade out
+-- NPCs beyond max_distance won't be heard at all
+nativevillages.mood.sound_max_distance = 16      -- Can hear up to 16 blocks away
+nativevillages.mood.sound_fade_distance = 8      -- Starts fading at 8 blocks
+
+--------------------------------------------------------------------
 
 nativevillages.mood.trade_items = {}
 
@@ -113,7 +132,7 @@ function nativevillages.mood.check_nearby_trade_items(self)
 end
 
 --------------------------------------------------------------------
--- Play mood sound if player is nearby
+-- Play mood sound if player is nearby (with 3D positional audio)
 --------------------------------------------------------------------
 function nativevillages.mood.play_sound_if_nearby(self, dtime)
 	if not self.object then return end
@@ -130,7 +149,8 @@ function nativevillages.mood.play_sound_if_nearby(self, dtime)
 		local player_pos = player:get_pos()
 		if player_pos then
 			local distance = vector.distance(pos, player_pos)
-			if distance <= 3 then
+			-- Only play if within max hearing distance
+			if distance <= nativevillages.mood.sound_max_distance then
 				local sound_to_play = nil
 
 				if self.nv_wants_trade then
@@ -142,11 +162,18 @@ function nativevillages.mood.play_sound_if_nearby(self, dtime)
 				end
 
 				if sound_to_play then
+					-- Calculate distance-based volume falloff
+					local distance_ratio = math.min(1, distance / nativevillages.mood.sound_fade_distance)
+					local distance_gain = 1.0 - (distance_ratio * 0.7)  -- Fade to 30% at fade distance
+					local final_gain = nativevillages.mood.sound_volume * distance_gain
+
 					minetest.sound_play(sound_to_play, {
 						pos = pos,
-						max_hear_distance = 5,
-						gain = 0.5,
-					})
+						max_hear_distance = nativevillages.mood.sound_max_distance,
+						gain = final_gain,
+						pitch = 1.0,
+						loop = false,
+					}, true)  -- true = ephemeral (3D positional audio)
 					self.nv_sound_timer = 0
 				end
 				break
@@ -306,11 +333,14 @@ function nativevillages.mood.on_feed(self, clicker, food_value)
 	if self.object then
 		local pos = self.object:get_pos()
 		if pos then
+			-- Use higher volume for feeding sound since it's an action feedback
 			minetest.sound_play("villager_fed", {
 				pos = pos,
-				max_hear_distance = 5,
-				gain = 0.7,
-			})
+				max_hear_distance = nativevillages.mood.sound_max_distance,
+				gain = nativevillages.mood.sound_volume * 1.4,  -- 40% louder than mood sounds
+				pitch = 1.0,
+				loop = false,
+			}, true)  -- true = ephemeral (3D positional audio)
 		end
 	end
 
