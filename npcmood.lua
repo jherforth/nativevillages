@@ -12,12 +12,12 @@ nativevillages.mood.enable_visual_indicators = true
 
 -- Sound timing (seconds between sounds for each NPC)
 -- Lower = more frequent sounds, Higher = less frequent sounds
-nativevillages.mood.sound_repeat_delay = 10
+nativevillages.mood.sound_repeat_delay = 14
 
 -- Sound volume settings
 -- sound_volume: Master volume for mood sounds (0.0 = silent, 1.0 = full volume)
 -- Recommended range: 0.3 to 0.7 for ambient NPC sounds
-nativevillages.mood.sound_volume = 0.5
+nativevillages.mood.sound_volume = 0.3
 
 -- Sound distance settings (in nodes/blocks)
 -- sound_max_distance: Maximum distance player can hear NPC sounds
@@ -467,6 +467,7 @@ minetest.register_entity("nativevillages:mood_indicator", {
 	on_activate = function(self, staticdata)
 	end,
 })
+
 
 
 
