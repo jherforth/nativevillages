@@ -6,6 +6,9 @@ nativevillages.mood = {}
 -- Enable/disable visual mood indicators (set to true to show sprites)
 nativevillages.mood.enable_visual_indicators = true
 
+-- Sound repeat delay in seconds (how often sounds can play for each NPC)
+nativevillages.mood.sound_repeat_delay = 10
+
 nativevillages.mood.trade_items = {}
 
 nativevillages.mood.moods = {
@@ -42,6 +45,7 @@ function nativevillages.mood.init_npc(self)
 		self.nv_current_desire     = nil
 		self.nv_mood_timer         = 0
 		self.nv_mood_indicator     = nil
+		self.nv_sound_timer        = 0
 	end
 end
 
@@ -111,10 +115,15 @@ end
 --------------------------------------------------------------------
 -- Play mood sound if player is nearby
 --------------------------------------------------------------------
-function nativevillages.mood.play_sound_if_nearby(self)
+function nativevillages.mood.play_sound_if_nearby(self, dtime)
 	if not self.object then return end
 	local pos = self.object:get_pos()
 	if not pos then return end
+
+	self.nv_sound_timer = (self.nv_sound_timer or 0) + dtime
+	if self.nv_sound_timer < nativevillages.mood.sound_repeat_delay then
+		return
+	end
 
 	local nearby_players = minetest.get_connected_players()
 	for _, player in ipairs(nearby_players) do
@@ -138,6 +147,7 @@ function nativevillages.mood.play_sound_if_nearby(self)
 						max_hear_distance = 5,
 						gain = 0.5,
 					})
+					self.nv_sound_timer = 0
 				end
 				break
 			end
@@ -216,7 +226,7 @@ function nativevillages.mood.update_mood(self, dtime)
 
 	self.nv_current_desire = nativevillages.mood.calculate_desire(self)
 	nativevillages.mood.update_indicator(self)
-	nativevillages.mood.play_sound_if_nearby(self)
+	nativevillages.mood.play_sound_if_nearby(self, dtime)
 end
 
 --------------------------------------------------------------------
@@ -345,6 +355,7 @@ function nativevillages.mood.get_staticdata_extra(self)
 		nv_last_fed           = self.nv_last_fed,
 		nv_last_interaction   = self.nv_last_interaction,
 		nv_current_desire     = self.nv_current_desire,
+		nv_sound_timer        = self.nv_sound_timer,
 	}
 end
 
@@ -358,6 +369,7 @@ function nativevillages.mood.on_activate_extra(self, data)
 	self.nv_last_fed           = data.nv_last_fed or 0
 	self.nv_last_interaction   = data.nv_last_interaction or 0
 	self.nv_current_desire     = data.nv_current_desire
+	self.nv_sound_timer        = data.nv_sound_timer or 0
 end
 
 --------------------------------------------------------------------
