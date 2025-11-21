@@ -1,17 +1,25 @@
 local S = minetest.get_translator("nativevillages")
 
+-- Savanna Village Buildings
+-- Schematic naming format: structurename_X_Y_Z.mts
+-- X = width, Y = height (informational), Z = depth
+-- All structures use place_offset_y = -1 for ground-level placement
+-- Terrain validation: spawn_by + num_spawn_by ensures 75% of footprint is flat ground
+
 minetest.register_decoration({
     name = "nativevillages:savannahouse1",
     deco_type = "schematic",
     place_on = {"default:dry_dirt_with_dry_grass"},
-    place_offset_y = -29,
-    sidelen = 4,
-    fill_ratio = 0.00001,
+    spawn_by = {"default:dry_dirt_with_dry_grass", "default:dry_dirt"},
+    num_spawn_by = 36,
+    place_offset_y = -1,
+    sidelen = 8,
+    fill_ratio = 0.000015,
     biomes = {"savanna"},
     y_max = 15.5,
     y_min = 10.5,
-    schematic = minetest.get_modpath("nativevillages").."/schematics/savannahouse1_30_0.mts",
-    flags = "force_placement",
+    schematic = minetest.get_modpath("nativevillages").."/schematics/savannahouse1_7_9_7.mts",
+    flags = "place_center_x, place_center_z, force_placement",
     rotation = "random",
 })
 
@@ -19,14 +27,16 @@ minetest.register_decoration({
     name = "nativevillages:savannahouse2",
     deco_type = "schematic",
     place_on = {"default:dry_dirt_with_dry_grass"},
-    place_offset_y = -29,
-    sidelen = 4,
-    fill_ratio = 0.00001,
+    spawn_by = {"default:dry_dirt_with_dry_grass", "default:dry_dirt"},
+    num_spawn_by = 61,
+    place_offset_y = -1,
+    sidelen = 8,
+    fill_ratio = 0.000015,
     biomes = {"savanna"},
     y_max = 15.5,
     y_min = 10.5,
-    schematic = minetest.get_modpath("nativevillages").."/schematics/savannahouse2_30_0.mts",
-    flags = "force_placement",
+    schematic = minetest.get_modpath("nativevillages").."/schematics/savannahouse2_9_8_9.mts",
+    flags = "place_center_x, place_center_z, force_placement",
     rotation = "random",
 })
 
@@ -34,44 +44,84 @@ minetest.register_decoration({
     name = "nativevillages:savannahouse3",
     deco_type = "schematic",
     place_on = {"default:dry_dirt_with_dry_grass"},
-    place_offset_y = -29,
-    sidelen = 4,
-    fill_ratio = 0.00001,
+    spawn_by = {"default:dry_dirt_with_dry_grass", "default:dry_dirt"},
+    num_spawn_by = 42,
+    place_offset_y = -1,
+    sidelen = 8,
+    fill_ratio = 0.000015,
     biomes = {"savanna"},
     y_max = 15.5,
     y_min = 10.5,
-    schematic = minetest.get_modpath("nativevillages").."/schematics/savannahouse3_30_0.mts",
-    flags = "force_placement",
+    schematic = minetest.get_modpath("nativevillages").."/schematics/savannahouse3_7_5_8.mts",
+    flags = "place_center_x, place_center_z, force_placement",
     rotation = "random",
 })
 
 minetest.register_decoration({
-    name = "nativevillages:savannawitchhouse",
+    name = "nativevillages:savannahouse4",
     deco_type = "schematic",
     place_on = {"default:dry_dirt_with_dry_grass"},
-    place_offset_y = -29,
-    sidelen = 4,
-    fill_ratio = 0.000002,
+    spawn_by = {"default:dry_dirt_with_dry_grass", "default:dry_dirt"},
+    num_spawn_by = 47,
+    place_offset_y = -1,
+    sidelen = 8,
+    fill_ratio = 0.000015,
     biomes = {"savanna"},
     y_max = 15.5,
     y_min = 10.5,
-    schematic = minetest.get_modpath("nativevillages").."/schematics/savannawitchhouse_30_0.mts",
-    flags = "force_placement",
+    schematic = minetest.get_modpath("nativevillages").."/schematics/savannahouse4_7_9_9.mts",
+    flags = "place_center_x, place_center_z, force_placement",
     rotation = "random",
 })
 
 minetest.register_decoration({
-    name = "nativevillages:savannawell",
+    name = "nativevillages:savannahouse5",
     deco_type = "schematic",
     place_on = {"default:dry_dirt_with_dry_grass"},
-    place_offset_y = -29,
-    sidelen = 4,
-    fill_ratio = 0.000002,
+    spawn_by = {"default:dry_dirt_with_dry_grass", "default:dry_dirt"},
+    num_spawn_by = 36,
+    place_offset_y = -1,
+    sidelen = 8,
+    fill_ratio = 0.000015,
     biomes = {"savanna"},
     y_max = 15.5,
     y_min = 10.5,
-    schematic = minetest.get_modpath("nativevillages").."/schematics/savannawell_30_180.mts",
-    flags = "force_placement",
+    schematic = minetest.get_modpath("nativevillages").."/schematics/savannahouse5_7_6_7.mts",
+    flags = "place_center_x, place_center_z, force_placement",
+    rotation = "random",
+})
+
+minetest.register_decoration({
+    name = "nativevillages:savannachurch",
+    deco_type = "schematic",
+    place_on = {"default:dry_dirt_with_dry_grass"},
+    spawn_by = {"default:dry_dirt_with_dry_grass", "default:dry_dirt"},
+    num_spawn_by = 72,
+    place_offset_y = -1,
+    sidelen = 16,
+    fill_ratio = 0.000008,
+    biomes = {"savanna"},
+    y_max = 15.5,
+    y_min = 10.5,
+    schematic = minetest.get_modpath("nativevillages").."/schematics/savannachurch_8_11_12.mts",
+    flags = "place_center_x, place_center_z, force_placement",
+    rotation = "random",
+})
+
+minetest.register_decoration({
+    name = "nativevillages:savannamarket",
+    deco_type = "schematic",
+    place_on = {"default:dry_dirt_with_dry_grass"},
+    spawn_by = {"default:dry_dirt_with_dry_grass", "default:dry_dirt"},
+    num_spawn_by = 68,
+    place_offset_y = -1,
+    sidelen = 16,
+    fill_ratio = 0.000012,
+    biomes = {"savanna"},
+    y_max = 15.5,
+    y_min = 10.5,
+    schematic = minetest.get_modpath("nativevillages").."/schematics/savannamarket_10_5_9.mts",
+    flags = "place_center_x, place_center_z, force_placement",
     rotation = "random",
 })
 
@@ -79,51 +129,15 @@ minetest.register_decoration({
     name = "nativevillages:savannastable",
     deco_type = "schematic",
     place_on = {"default:dry_dirt_with_dry_grass"},
-    place_offset_y = -29,
-    sidelen = 4,
-    fill_ratio = 0.000002,
+    spawn_by = {"default:dry_dirt_with_dry_grass", "default:dry_dirt"},
+    num_spawn_by = 180,
+    place_offset_y = -1,
+    sidelen = 32,
+    fill_ratio = 0.000010,
     biomes = {"savanna"},
     y_max = 15.5,
     y_min = 10.5,
-    schematic = minetest.get_modpath("nativevillages").."/schematics/savannastable_30_180.mts",
-    flags = "force_placement",
+    schematic = minetest.get_modpath("nativevillages").."/schematics/savannastable_15_7_16.mts",
+    flags = "place_center_x, place_center_z, force_placement",
     rotation = "random",
 })
-
-minetest.register_decoration({
-    name = "nativevillages:savannapond",
-    deco_type = "schematic",
-    place_on = {"default:dry_dirt_with_dry_grass"},
-    place_offset_y = -29,
-    sidelen = 4,
-    fill_ratio = 0.000002,
-    biomes = {"savanna"},
-    y_max = 15.5,
-    y_min = 10.5,
-    schematic = minetest.get_modpath("nativevillages").."/schematics/savannapond_30_180.mts",
-    flags = "force_placement",
-    rotation = "random",
-})
-
-minetest.register_decoration({
-    name = "nativevillages:savannalogs",
-    deco_type = "schematic",
-    place_on = {"default:dry_dirt_with_dry_grass"},
-    place_offset_y = -29,
-    sidelen = 4,
-    fill_ratio = 0.000002,
-    biomes = {"savanna"},
-    y_max = 15.5,
-    y_min = 10.5,
-    schematic = minetest.get_modpath("nativevillages").."/schematics/savannalogs_30_180.mts",
-    flags = "force_placement",
-    rotation = "random",
-})
-
-
-
-
-
-
-
-
