@@ -4,14 +4,14 @@ local S = minetest.get_translator("nativevillages")
 -- Schematic naming format: structurename_X_Y_Z.mts
 -- X = width, Y = height (informational), Z = depth
 -- Lake structures use place_offset_y = 0 for water-level placement (different from ground biomes)
--- Terrain validation: spawn_by + num_spawn_by ensures 75% of footprint is flat ground
+-- Terrain validation: spawn_by + num_spawn_by ensures ~50% of footprint is flat ground
 
 minetest.register_decoration({
     name = "nativevillages:lakehouse1",
     deco_type = "schematic",
     place_on = {"default:dirt", "default:sand"},
     spawn_by = {"default:dirt", "default:sand"},
-    num_spawn_by = 135,
+    num_spawn_by = 34,
     place_offset_y = 0,
     sidelen = 16,
     fill_ratio = 0.000015,
@@ -28,7 +28,7 @@ minetest.register_decoration({
     deco_type = "schematic",
     place_on = {"default:dirt", "default:sand"},
     spawn_by = {"default:dirt", "default:sand"},
-    num_spawn_by = 36,
+    num_spawn_by = 18,
     place_offset_y = 0,
     sidelen = 8,
     fill_ratio = 0.000015,
@@ -45,7 +45,7 @@ minetest.register_decoration({
     deco_type = "schematic",
     place_on = {"default:dirt", "default:sand"},
     spawn_by = {"default:dirt", "default:sand"},
-    num_spawn_by = 34,
+    num_spawn_by = 17,
     place_offset_y = 0,
     sidelen = 8,
     fill_ratio = 0.000015,
@@ -62,7 +62,7 @@ minetest.register_decoration({
     deco_type = "schematic",
     place_on = {"default:dirt", "default:sand"},
     spawn_by = {"default:dirt", "default:sand"},
-    num_spawn_by = 34,
+    num_spawn_by = 17,
     place_offset_y = 0,
     sidelen = 8,
     fill_ratio = 0.000015,
@@ -79,7 +79,7 @@ minetest.register_decoration({
     deco_type = "schematic",
     place_on = {"default:dirt", "default:sand"},
     spawn_by = {"default:dirt", "default:sand"},
-    num_spawn_by = 45,
+    num_spawn_by = 23,
     place_offset_y = 0,
     sidelen = 8,
     fill_ratio = 0.000015,
@@ -96,7 +96,7 @@ minetest.register_decoration({
     deco_type = "schematic",
     place_on = {"default:dirt", "default:sand"},
     spawn_by = {"default:dirt", "default:sand"},
-    num_spawn_by = 88,
+    num_spawn_by = 44,
     place_offset_y = 0,
     sidelen = 16,
     fill_ratio = 0.000008,
@@ -113,7 +113,7 @@ minetest.register_decoration({
     deco_type = "schematic",
     place_on = {"default:dirt", "default:sand"},
     spawn_by = {"default:dirt", "default:sand"},
-    num_spawn_by = 53,
+    num_spawn_by = 27,
     place_offset_y = 0,
     sidelen = 16,
     fill_ratio = 0.000012,
