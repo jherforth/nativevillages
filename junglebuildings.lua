@@ -7,8 +7,8 @@ local S = minetest.get_translator("nativevillages")
 
 local jungle_village_noise = {
     offset = 0.0,
-    scale = 0.05,                  -- High density BUT only in tiny zones
-    spread = {x = 80, y = 80, z = 80},   -- Tiny clusters → 3–10 buildings max
+    scale = 0.005,                  -- High density BUT only in tiny zones
+    spread = {x = 180, y = 180, z = 180},   -- Tiny clusters → 3–10 buildings max
     seed = 48192756,               -- Unique seed (you'll remember this one)
     octaves = 4,
     persistence = 0.4,
@@ -55,8 +55,8 @@ register_jungle_building({ name = "junglestable", file = "junglestable_7_25_7.mt
 -- ===================================================================
 
 local jungle_central_noise = table.copy(jungle_village_noise)
-jungle_central_noise.scale = 0.02   -- Extremely rare
-jungle_central_noise.spread = {x = 100, y = 100, z = 100}
+jungle_central_noise.scale = 0.0003   -- Extremely rare
+jungle_central_noise.spread = {x = 180, y = 180, z = 180}
 
 local function register_jungle_central(params)
     local np = table.copy(jungle_central_noise)
@@ -80,4 +80,5 @@ end
 
 register_jungle_central({ name = "junglechurch", file = "junglechurch_7_28_7.mts", seed_offset = 6001, sidelen = 16 })
 register_jungle_central({ name = "junglemarket", file = "junglemarket_9_32_9.mts", seed_offset = 6002, sidelen = 16 })
+
 
