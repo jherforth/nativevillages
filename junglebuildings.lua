@@ -99,7 +99,7 @@ minetest.register_decoration({
     num_spawn_by = 8,
     place_offset_y = 1,
     sidelen = 16,
-    fill_ratio = 0.0001,
+    fill_ratio = 0.0002,
     biomes = {"rainforest"},
     y_max = 50,
     y_min = 1,
@@ -116,7 +116,7 @@ minetest.register_decoration({
     num_spawn_by = 12,
     place_offset_y = 1,
     sidelen = 16,
-    fill_ratio = 0.00015,
+    fill_ratio = 0.0002,
     biomes = {"rainforest"},
     y_max = 50,
     y_min = 1,
@@ -133,7 +133,7 @@ minetest.register_decoration({
     num_spawn_by = 8,
     place_offset_y = 1,
     sidelen = 16,
-    fill_ratio = 0.00012,
+    fill_ratio = 0.0002,
     biomes = {"rainforest"},
     y_max = 50,
     y_min = 1,
@@ -141,4 +141,5 @@ minetest.register_decoration({
     flags = "place_center_x, place_center_z, force_placement",
     rotation = "random",
 })
+
 
