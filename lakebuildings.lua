@@ -3,7 +3,7 @@ local S = minetest.get_translator("nativevillages")
 -- Lake Village Buildings
 -- Schematic naming format: structurename_X_Y_Z.mts
 -- X = width, Y = height (informational), Z = depth
--- Lake structures use place_offset_y = 0 for water-level placement (different from ground biomes)
+-- Lake structures use place_offset_y = 2 for water-level placement (different from ground biomes)
 -- Terrain validation: spawn_by + num_spawn_by ensures ~50% of footprint is flat ground
 
 minetest.register_decoration({
@@ -12,7 +12,7 @@ minetest.register_decoration({
     place_on = {"default:dirt", "default:sand"},
     spawn_by = {"default:dirt", "default:sand"},
     num_spawn_by = 12,
-    place_offset_y = 0,
+    place_offset_y = 2,
     sidelen = 16,
     fill_ratio = 0.0002,
     biomes = {"deciduous_forest_ocean", "deciduous_forest_shore", "coniferous_forest_ocean"},
@@ -29,7 +29,7 @@ minetest.register_decoration({
     place_on = {"default:dirt", "default:sand"},
     spawn_by = {"default:dirt", "default:sand"},
     num_spawn_by = 8,
-    place_offset_y = 0,
+    place_offset_y = 2,
     sidelen = 8,
     fill_ratio = 0.0002,
     biomes = {"deciduous_forest_ocean", "deciduous_forest_shore", "coniferous_forest_ocean"},
@@ -46,7 +46,7 @@ minetest.register_decoration({
     place_on = {"default:dirt", "default:sand"},
     spawn_by = {"default:dirt", "default:sand"},
     num_spawn_by = 6,
-    place_offset_y = 0,
+    place_offset_y = 2,
     sidelen = 8,
     fill_ratio = 0.0002,
     biomes = {"deciduous_forest_ocean", "deciduous_forest_shore", "coniferous_forest_ocean"},
@@ -63,7 +63,7 @@ minetest.register_decoration({
     place_on = {"default:dirt", "default:sand"},
     spawn_by = {"default:dirt", "default:sand"},
     num_spawn_by = 6,
-    place_offset_y = 0,
+    place_offset_y = 2,
     sidelen = 8,
     fill_ratio = 0.0002,
     biomes = {"deciduous_forest_ocean", "deciduous_forest_shore", "coniferous_forest_ocean"},
@@ -80,7 +80,7 @@ minetest.register_decoration({
     place_on = {"default:dirt", "default:sand"},
     spawn_by = {"default:dirt", "default:sand"},
     num_spawn_by = 10,
-    place_offset_y = 0,
+    place_offset_y = 2,
     sidelen = 8,
     fill_ratio = 0.0002,
     biomes = {"deciduous_forest_ocean", "deciduous_forest_shore", "coniferous_forest_ocean"},
@@ -97,7 +97,7 @@ minetest.register_decoration({
     place_on = {"default:dirt", "default:sand"},
     spawn_by = {"default:dirt", "default:sand"},
     num_spawn_by = 18,
-    place_offset_y = 0,
+    place_offset_y = 2,
     sidelen = 16,
     fill_ratio = 0.0001,
     biomes = {"deciduous_forest_ocean", "deciduous_forest_shore", "coniferous_forest_ocean"},
@@ -114,7 +114,7 @@ minetest.register_decoration({
     place_on = {"default:dirt", "default:sand"},
     spawn_by = {"default:dirt", "default:sand"},
     num_spawn_by = 10,
-    place_offset_y = 0,
+    place_offset_y = 2,
     sidelen = 16,
     fill_ratio = 0.00015,
     biomes = {"deciduous_forest_ocean", "deciduous_forest_shore", "coniferous_forest_ocean"},
@@ -131,7 +131,7 @@ minetest.register_decoration({
     place_on = {"default:dirt", "default:sand"},
     spawn_by = {"default:dirt", "default:sand"},
     num_spawn_by = 25,
-    place_offset_y = 0,
+    place_offset_y = 2,
     sidelen = 16,
     fill_ratio = 0.00012,
     biomes = {"deciduous_forest_ocean", "deciduous_forest_shore", "coniferous_forest_ocean"},
@@ -141,3 +141,4 @@ minetest.register_decoration({
     flags = "place_center_x, place_center_z, force_placement",
     rotation = "random",
 })
+
