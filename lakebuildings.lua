@@ -1,148 +1,81 @@
 local S = minetest.get_translator("nativevillages")
 
--- Lake Village Buildings
--- Schematic naming format: structurename_X_Y_Z.mts
--- X = width, Y = height (informational), Z = depth
--- All structures use place_offset_y to adjust groud level spawning mechanic. Can be adjusted.
--- Terrain validation: spawn_by + num_spawn_by ensures ~50% of footprint is flat ground
+-- ===================================================================
+-- LAKE / STILT VILLAGE NOISE
+-- Elongated clusters that naturally follow coastlines
+-- ===================================================================
 
-minetest.register_decoration({
-    name = "nativevillages:lakehouse1",
-    deco_type = "schematic",
-    place_on = {"default:dirt", "default:sand"},
-    spawn_by = {"default:dirt", "default:sand"},
-    num_spawn_by = 12,
-    place_offset_y = 2,
-    sidelen = 16,
-    fill_ratio = 0.0002,
-    biomes = {"deciduous_forest_ocean", "deciduous_forest_shore", "coniferous_forest_ocean"},
-    y_max = 2,
-    y_min = -1,
-    schematic = minetest.get_modpath("nativevillages").."/schematics/lakehouse1_12_11_15.mts",
-    flags = "place_center_x, place_center_z, force_placement",
-    rotation = "random",
-})
+local lake_village_noise = {
+    offset = 0.0,
+    scale = 0.22,                  -- High density inside village zones
+    spread = {x = 280, y = 120, z = 280},  -- LONG in X/Z, narrow in Y → hugs shores
+    seed = 57192034,               -- Unique seed
+    octaves = 4,
+    persistence = 0.45,
+    lacunarity = 2.3,
+    flags = "defaults",
+}
 
-minetest.register_decoration({
-    name = "nativevillages:lakehouse2",
-    deco_type = "schematic",
-    place_on = {"default:dirt", "default:sand"},
-    spawn_by = {"default:dirt", "default:sand"},
-    num_spawn_by = 12,
-    place_offset_y = 2,
-    sidelen = 8,
-    fill_ratio = 0.0002,
-    biomes = {"deciduous_forest_ocean", "deciduous_forest_shore", "coniferous_forest_ocean"},
-    y_max = 2,
-    y_min = -1,
-    schematic = minetest.get_modpath("nativevillages").."/schematics/lakehouse2_6_8_8.mts",
-    flags = "place_center_x, place_center_z, force_placement",
-    rotation = "random",
-})
+-- ===================================================================
+-- Helper: regular lake houses
+-- ===================================================================
 
-minetest.register_decoration({
-    name = "nativevillages:lakehouse3",
-    deco_type = "schematic",
-    place_on = {"default:dirt", "default:sand"},
-    spawn_by = {"default:dirt", "default:sand"},
-    num_spawn_by = 12,
-    place_offset_y = 2,
-    sidelen = 8,
-    fill_ratio = 0.0002,
-    biomes = {"deciduous_forest_ocean", "deciduous_forest_shore", "coniferous_forest_ocean"},
-    y_max = 2,
-    y_min = -1,
-    schematic = minetest.get_modpath("nativevillages").."/schematics/lakehouse3_5_9_9.mts",
-    flags = "place_center_x, place_center_z, force_placement",
-    rotation = "random",
-})
+local function register_lake_building(params)
+    minetest.register_decoration({
+        name = "nativevillages:" .. params.name,
+        deco_type = "schematic",
+        place_on = {"default:dirt", "default:sand"},
+        sidelen = params.sidelen or 16,
+        noise_params = lake_village_noise,
+        biomes = {"deciduous_forest_ocean", "deciduous_forest_shore", "coniferous_forest_ocean"},
+        y_min = 0,
+        y_max = 3,                     -- Must be right at water level
+        height = 1,                    -- Extremely flat only (stilt houses!)
+        place_offset_y = params.offset_y or 1,  -- Most lake schematics have stilts
+        schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
+        flags = "place_center_x, place_center_z, force_placement",
+        rotation = "random",
+    })
+end
 
-minetest.register_decoration({
-    name = "nativevillages:lakehouse4",
-    deco_type = "schematic",
-    place_on = {"default:dirt", "default:sand"},
-    spawn_by = {"default:dirt", "default:sand"},
-    num_spawn_by = 12,
-    place_offset_y = 2,
-    sidelen = 8,
-    fill_ratio = 0.0002,
-    biomes = {"deciduous_forest_ocean", "deciduous_forest_shore", "coniferous_forest_ocean"},
-    y_max = 2,
-    y_min = -1,
-    schematic = minetest.get_modpath("nativevillages").."/schematics/lakehouse4_5_9_9.mts",
-    flags = "place_center_x, place_center_z, force_placement",
-    rotation = "random",
-})
+-- ===================================================================
+-- REGISTER ALL LAKE HOUSES
+-- ===================================================================
 
-minetest.register_decoration({
-    name = "nativevillages:lakehouse5",
-    deco_type = "schematic",
-    place_on = {"default:dirt", "default:sand"},
-    spawn_by = {"default:dirt", "default:sand"},
-    num_spawn_by = 12,
-    place_offset_y = 2,
-    sidelen = 8,
-    fill_ratio = 0.0002,
-    biomes = {"deciduous_forest_ocean", "deciduous_forest_shore", "coniferous_forest_ocean"},
-    y_max = 2,
-    y_min = -1,
-    schematic = minetest.get_modpath("nativevillages").."/schematics/lakehouse5_6_11_10.mts",
-    flags = "place_center_x, place_center_z, force_placement",
-    rotation = "random",
-})
+register_lake_building({ name = "lakehouse1", file = "lakehouse1_12_11_15.mts", sidelen = 16, offset_y = 2 })
+register_lake_building({ name = "lakehouse2", file = "lakehouse2_6_8_8.mts",     sidelen = 8,  offset_y = 2 })
+register_lake_building({ name = "lakehouse3", file = "lakehouse3_5_9_9.mts",     sidelen = 8,  offset_y = 2 })
+register_lake_building({ name = "lakehouse4", file = "lakehouse4_5_9_9.mts",     sidelen = 8,  offset_y = 2 })
+register_lake_building({ name = "lakehouse5", file = "lakehouse5_6_11_10.mts",   sidelen = 8,  offset_y = 2 })
 
-minetest.register_decoration({
-    name = "nativevillages:lakechurch",
-    deco_type = "schematic",
-    place_on = {"default:dirt", "default:sand"},
-    spawn_by = {"default:dirt", "default:sand"},
-    num_spawn_by = 12,
-    place_offset_y = 2,
-    sidelen = 16,
-    fill_ratio = 0.0002,
-    biomes = {"deciduous_forest_ocean", "deciduous_forest_shore", "coniferous_forest_ocean"},
-    y_max = 2,
-    y_min = -1,
-    schematic = minetest.get_modpath("nativevillages").."/schematics/lakechurch_9_13_13.mts",
-    flags = "place_center_x, place_center_z, force_placement",
-    rotation = "random",
-})
+-- ===================================================================
+-- CENTRAL / RARER BUILDINGS (church, market, stable)
+-- Lower density + offset seeds → appear at the "heart" of each hamlet
+-- ===================================================================
 
-minetest.register_decoration({
-    name = "nativevillages:lakemarket",
-    deco_type = "schematic",
-    place_on = {"default:dirt", "default:sand"},
-    spawn_by = {"default:dirt", "default:sand"},
-    num_spawn_by = 12,
-    place_offset_y = 2,
-    sidelen = 16,
-    fill_ratio = 0.00015,
-    biomes = {"deciduous_forest_ocean", "deciduous_forest_shore", "coniferous_forest_ocean"},
-    y_max = 2,
-    y_min = -1,
-    schematic = minetest.get_modpath("nativevillages").."/schematics/lakemarket_7_6_10.mts",
-    flags = "place_center_x, place_center_z, force_placement",
-    rotation = "random",
-})
+local lake_central_noise = table.copy(lake_village_noise)
+lake_central_noise.scale = 0.09   -- Rarer than houses
 
-minetest.register_decoration({
-    name = "nativevillages:lakestable",
-    deco_type = "schematic",
-    place_on = {"default:dirt", "default:sand"},
-    spawn_by = {"default:dirt", "default:sand"},
-    num_spawn_by = 12,
-    place_offset_y = 2,
-    sidelen = 16,
-    fill_ratio = 0.00015,
-    biomes = {"deciduous_forest_ocean", "deciduous_forest_shore", "coniferous_forest_ocean"},
-    y_max = 2,
-    y_min = -1,
-    schematic = minetest.get_modpath("nativevillages").."/schematics/lakestable_7_7_13.mts",
-    flags = "place_center_x, place_center_z, force_placement",
-    rotation = "random",
-})
+local function register_lake_central(params)
+    local np = table.copy(lake_central_noise)
+    np.seed = np.seed + params.seed_offset
+    minetest.register_decoration({
+        name = "nativevillages:" .. params.name,
+        deco_type = "schematic",
+        place_on = {"default:dirt", "default:sand"},
+        sidelen = params.sidelen or 16,
+        noise_params = np,
+        biomes = {"deciduous_forest_ocean", "deciduous_forest_shore", "coniferous_forest_ocean"},
+        y_min = 0,
+        y_max = 3,
+        height = 1,
+        place_offset_y = params.offset_y or 1,
+        schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
+        flags = "place_center_x, place_center_z, force_placement",
+        rotation = "random",
+    })
+end
 
-
-
-
-
+register_lake_central({ name = "lakechurch",  file = "lakechurch_9_13_13.mts",   seed_offset = 4001, sidelen = 16, offset_y = 2 })
+register_lake_central({ name = "lakemarket",  file = "lakemarket_7_6_10.mts",    seed_offset = 4002, sidelen = 16, offset_y = 1 })
+register_lake_central({ name = "lakestable",  file = "lakestable_7_7_13.mts",    seed_offset = 4003, sidelen = 16, offset_y = 1 })
