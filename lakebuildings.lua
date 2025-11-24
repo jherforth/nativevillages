@@ -7,8 +7,8 @@ local S = minetest.get_translator("nativevillages")
 
 local lake_village_noise = {
     offset = 0.0,
-    scale = 0.22,                  -- High density inside village zones
-    spread = {x = 280, y = 120, z = 280},  -- LONG in X/Z, narrow in Y → hugs shores
+    scale = 0.005,                  -- High density inside village zones
+    spread = {x = 180, y = 180, z = 180},  -- LONG in X/Z, narrow in Y → hugs shores
     seed = 57192034,               -- Unique seed
     octaves = 4,
     persistence = 0.45,
@@ -54,7 +54,7 @@ register_lake_building({ name = "lakehouse5", file = "lakehouse5_6_11_10.mts",  
 -- ===================================================================
 
 local lake_central_noise = table.copy(lake_village_noise)
-lake_central_noise.scale = 0.09   -- Rarer than houses
+lake_central_noise.scale = 0.0003   -- Rarer than houses
 
 local function register_lake_central(params)
     local np = table.copy(lake_central_noise)
@@ -79,3 +79,4 @@ end
 register_lake_central({ name = "lakechurch",  file = "lakechurch_9_13_13.mts",   seed_offset = 4001, sidelen = 16, offset_y = 2 })
 register_lake_central({ name = "lakemarket",  file = "lakemarket_7_6_10.mts",    seed_offset = 4002, sidelen = 16, offset_y = 1 })
 register_lake_central({ name = "lakestable",  file = "lakestable_7_7_13.mts",    seed_offset = 4003, sidelen = 16, offset_y = 1 })
+
