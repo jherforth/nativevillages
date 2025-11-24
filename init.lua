@@ -67,4 +67,4 @@ end
 
 
 
-print (S("[MOD] Luanti Villagers loaded"))
+print (S("[MOD] Luanti Villagers init initialized successfully"))
