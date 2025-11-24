@@ -138,48 +138,79 @@ end
 
 -- Scan for houses in newly generated chunks
 minetest.register_on_generated(function(minp, maxp, blockseed)
-	-- Only scan occasionally to reduce lag (1 in 3 chunks)
-	if math.random(1, 3) ~= 1 then
-		return
-	end
+	-- Delay the scan to let decorations finish placing
+	minetest.after(3, function()
+		-- Look for village-specific marker blocks that only appear in buildings
+		local village_markers = {
+			grassland = {"nativevillages:grasslandbarrel", "nativevillages:grasslandaltar"},
+			desert = {"nativevillages:hookah", "nativevillages:desertcarpet", "nativevillages:desertcage"},
+			ice = {"nativevillages:sledge"},
+			lake = {"nativevillages:fishtrap", "nativevillages:hangingfish"},
+			savanna = {"nativevillages:savannashrine", "nativevillages:savannathrone", "nativevillages:savannavessels"},
+			cannibal = {"nativevillages:cannibalshrine", "nativevillages:driedpeople"}
+		}
 
-	-- Delay the scan slightly to let decorations finish placing
-	minetest.after(2, function()
-		-- Look for biome-specific marker blocks that indicate villages
-		for _, house_type in ipairs(house_types) do
-			local markers = {}
+		-- Search near surface level only (y between -5 and 60)
+		local surface_min = {x=minp.x, y=math.max(minp.y, -5), z=minp.z}
+		local surface_max = {x=maxp.x, y=math.min(maxp.y, 60), z=maxp.z}
 
-			-- Define markers based on biome
-			if house_type.biome == "grassland" then
-				markers = {"default:cobble", "default:wood"}
-			elseif house_type.biome == "desert" then
-				markers = {"group:wool", "default:sandstone"}
-			elseif house_type.biome == "ice" then
-				markers = {"default:ice", "default:snowblock"}
-			elseif house_type.biome == "lake" then
-				markers = {"default:wood", "default:dirt"}
-			elseif house_type.biome == "savanna" then
-				markers = {"default:acacia_wood", "default:dry_dirt"}
-			elseif house_type.biome == "cannibal" then
-				markers = {"default:junglewood", "default:jungletree"}
-			end
+		-- Check each biome's markers
+		for biome_name, markers in pairs(village_markers) do
+			local found_markers = minetest.find_nodes_in_area(surface_min, surface_max, markers)
 
-			-- Search for potential house locations
-			local found_nodes = minetest.find_nodes_in_area(
-				{x=minp.x, y=minp.y, z=minp.z},
-				{x=maxp.x, y=maxp.y, z=maxp.z},
-				markers
-			)
+			-- For each marker found, spawn a villager nearby
+			for _, marker_pos in ipairs(found_markers) do
+				local house_key = get_house_key(marker_pos)
 
-			-- If we found structure blocks, check for houses
-			if #found_nodes > 100 then  -- Threshold indicates a structure exists
-				-- Sample a few positions to check for houses
-				for i = 1, math.min(5, #found_nodes), 20 do
-					local check_pos = found_nodes[i]
+				-- Don't spawn if already spawned near this marker
+				if not houses_with_villagers[house_key] then
+					-- Find a good spawn position near the marker
+					local spawn_pos = nil
 
-					if is_house_position(check_pos, house_type) then
-						-- Found a house! Spawn a villager
-						spawn_villager_in_house(check_pos, house_type.biome)
+					-- Search for air block with floor nearby
+					for radius = 1, 8 do
+						for dx = -radius, radius do
+							for dz = -radius, radius do
+								for dy = -2, 3 do
+									local check_pos = {
+										x = marker_pos.x + dx,
+										y = marker_pos.y + dy,
+										z = marker_pos.z + dz
+									}
+
+									local node = minetest.get_node(check_pos)
+									local below = minetest.get_node({x=check_pos.x, y=check_pos.y-1, z=check_pos.z})
+
+									-- Found air with solid floor
+									if node.name == "air" and below.name ~= "air" then
+										spawn_pos = check_pos
+										break
+									end
+								end
+								if spawn_pos then break end
+							end
+							if spawn_pos then break end
+						end
+						if spawn_pos then break end
+					end
+
+					-- Spawn villager if we found a position
+					if spawn_pos then
+						local class_name = friendly_classes[math.random(1, #friendly_classes)]
+						local mob_name = "nativevillages:" .. biome_name .. "_" .. class_name
+
+						local entity = minetest.add_entity(spawn_pos, mob_name)
+
+						if entity then
+							local luaentity = entity:get_luaentity()
+							if luaentity then
+								luaentity.nv_house_pos = marker_pos
+								luaentity.nv_home_radius = 20
+								minetest.log("action", "[nativevillages] Spawned " .. class_name .. " in " .. biome_name .. " house at " .. minetest.pos_to_string(spawn_pos))
+							end
+
+							houses_with_villagers[house_key] = true
+						end
 					end
 				end
 			end
