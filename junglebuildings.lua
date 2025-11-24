@@ -1,145 +1,82 @@
 local S = minetest.get_translator("nativevillages")
 
--- Jungle Village Buildings
--- Schematic naming format: structurename_X_Y_Z.mts
--- X = width, Y = height (informational), Z = depth
--- All structures use place_offset_y to adjust groud level spawning mechanic. Can be adjusted.
--- Terrain validation: spawn_by + num_spawn_by ensures ~50% of footprint is flat ground
+-- ===================================================================
+-- JUNGLE TREEHOUSE VILLAGE NOISE
+-- Very rare, very small, perfectly flat clearings only
+-- ===================================================================
 
-minetest.register_decoration({
-    name = "nativevillages:junglehouse1",
-    deco_type = "schematic",
-    place_on = {"default:dirt_with_rainforest_litter"},
-    spawn_by = {"default:dirt_with_rainforest_litter", "default:dirt"},
-    num_spawn_by = 8,
-    place_offset_y = 1,
-    sidelen = 8,
-    fill_ratio = 0.0002,
-    biomes = {"rainforest"},
-    y_max = 50,
-    y_min = 1,
-    schematic = minetest.get_modpath("nativevillages").."/schematics/junglehouse1_7_26_7.mts",
-    flags = "place_center_x, place_center_z, force_placement",
-    rotation = "random",
-})
+local jungle_village_noise = {
+    offset = 0.0,
+    scale = 0.28,                  -- High density BUT only in tiny zones
+    spread = {x = 90, y = 90, z = 90},   -- Tiny clusters → 3–10 buildings max
+    seed = 48192756,               -- Unique seed (you'll remember this one)
+    octaves = 4,
+    persistence = 0.4,
+    lacunarity = 2.4,
+    flags = "defaults",
+}
 
-minetest.register_decoration({
-    name = "nativevillages:junglehouse2",
-    deco_type = "schematic",
-    place_on = {"default:dirt_with_rainforest_litter"},
-    spawn_by = {"default:dirt_with_rainforest_litter", "default:dirt"},
-    num_spawn_by = 8,
-    place_offset_y = 1,
-    sidelen = 8,
-    fill_ratio = 0.0002,
-    biomes = {"rainforest"},
-    y_max = 50,
-    y_min = 1,
-    schematic = minetest.get_modpath("nativevillages").."/schematics/junglehouse2_7_25_7.mts",
-    flags = "place_center_x, place_center_z, force_placement",
-    rotation = "random",
-})
+-- ===================================================================
+-- Helper: regular jungle treehouses
+-- ===================================================================
 
-minetest.register_decoration({
-    name = "nativevillages:junglehouse3",
-    deco_type = "schematic",
-    place_on = {"default:dirt_with_rainforest_litter"},
-    spawn_by = {"default:dirt_with_rainforest_litter", "default:dirt"},
-    num_spawn_by = 8,
-    place_offset_y = 1,
-    sidelen = 8,
-    fill_ratio = 0.0002,
-    biomes = {"rainforest"},
-    y_max = 50,
-    y_min = 1,
-    schematic = minetest.get_modpath("nativevillages").."/schematics/junglehouse3_7_25_7.mts",
-    flags = "place_center_x, place_center_z, force_placement",
-    rotation = "random",
-})
+local function register_jungle_building(params)
+    minetest.register_decoration({
+        name = "nativevillages:" .. params.name,
+        deco_type = "schematic",
+        place_on = {"default:dirt_with_rainforest_litter"},
+        sidelen = params.sidelen or 8,
+        noise_params = jungle_village_noise,
+        biomes = {"rainforest"},
+        y_min = 4,
+        y_max = 80,                    -- Jungles are tall!
+        height = 1,                    -- ONLY perfectly flat clearings (absolutely required)
+        place_offset_y = params.offset_y or 0,  -- Your treehouses already have massive stilts
+        schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
+        flags = "place_center_x, place_center_z, force_placement",
+        rotation = "random",
+    })
+end
 
-minetest.register_decoration({
-    name = "nativevillages:junglehouse4",
-    deco_type = "schematic",
-    place_on = {"default:dirt_with_rainforest_litter"},
-    spawn_by = {"default:dirt_with_rainforest_litter", "default:dirt"},
-    num_spawn_by = 8,
-    place_offset_y = 1,
-    sidelen = 8,
-    fill_ratio = 0.0002,
-    biomes = {"rainforest"},
-    y_max = 50,
-    y_min = 1,
-    schematic = minetest.get_modpath("nativevillages").."/schematics/junglehouse4_7_26_7.mts",
-    flags = "place_center_x, place_center_z, force_placement",
-    rotation = "random",
-})
+-- ===================================================================
+-- REGISTER ALL JUNGLE TREEHOUSES
+-- ===================================================================
 
-minetest.register_decoration({
-    name = "nativevillages:junglehouse5",
-    deco_type = "schematic",
-    place_on = {"default:dirt_with_rainforest_litter"},
-    spawn_by = {"default:dirt_with_rainforest_litter", "default:dirt"},
-    num_spawn_by = 8,
-    place_offset_y = 1,
-    sidelen = 8,
-    fill_ratio = 0.0002,
-    biomes = {"rainforest"},
-    y_max = 50,
-    y_min = 1,
-    schematic = minetest.get_modpath("nativevillages").."/schematics/junglehouse5_7_28_7.mts",
-    flags = "place_center_x, place_center_z, force_placement",
-    rotation = "random",
-})
+register_jungle_building({ name = "junglehouse1", file = "junglehouse1_7_26_7.mts",   offset_y = 0 })
+register_jungle_building({ name = "junglehouse2", file = "junglehouse2_7_25_7.mts",   offset_y = 0 })
+register_jungle_building({ name = "junglehouse3", file = "junglehouse3_7_25_7.mts",   offset_y = 0 })
+register_jungle_building({ name = "junglehouse4", file = "junglehouse4_7_26_7.mts",   offset_y = 0 })
+register_jungle_building({ name = "junglehouse5", file = "junglehouse5_7_28_7.mts",   offset_y = 0 })
+register_jungle_building({ name = "junglestable", file = "junglestable_7_25_7.mts",   offset_y = 0 })
 
-minetest.register_decoration({
-    name = "nativevillages:junglechurch",
-    deco_type = "schematic",
-    place_on = {"default:dirt_with_rainforest_litter"},
-    spawn_by = {"default:dirt_with_rainforest_litter", "default:dirt"},
-    num_spawn_by = 8,
-    place_offset_y = 1,
-    sidelen = 16,
-    fill_ratio = 0.0002,
-    biomes = {"rainforest"},
-    y_max = 50,
-    y_min = 1,
-    schematic = minetest.get_modpath("nativevillages").."/schematics/junglechurch_7_28_7.mts",
-    flags = "place_center_x, place_center_z, force_placement",
-    rotation = "random",
-})
+-- ===================================================================
+-- CENTRAL / RARER BUILDINGS
+-- Even rarer — these are legendary lost temples in the jungle
+-- ===================================================================
 
-minetest.register_decoration({
-    name = "nativevillages:junglemarket",
-    deco_type = "schematic",
-    place_on = {"default:dirt_with_rainforest_litter"},
-    spawn_by = {"default:dirt_with_rainforest_litter", "default:dirt"},
-    num_spawn_by = 12,
-    place_offset_y = 1,
-    sidelen = 16,
-    fill_ratio = 0.0002,
-    biomes = {"rainforest"},
-    y_max = 50,
-    y_min = 1,
-    schematic = minetest.get_modpath("nativevillages").."/schematics/junglemarket_9_32_9.mts",
-    flags = "place_center_x, place_center_z, force_placement",
-    rotation = "random",
-})
+local jungle_central_noise = table.copy(jungle_village_noise)
+jungle_central_noise.scale = 0.11   -- Extremely rare
+jungle_central_noise.spread = {x = 110, y = 110, z = 110}
 
-minetest.register_decoration({
-    name = "nativevillages:junglestable",
-    deco_type = "schematic",
-    place_on = {"default:dirt_with_rainforest_litter"},
-    spawn_by = {"default:dirt_with_rainforest_litter", "default:dirt"},
-    num_spawn_by = 8,
-    place_offset_y = 1,
-    sidelen = 16,
-    fill_ratio = 0.0002,
-    biomes = {"rainforest"},
-    y_max = 50,
-    y_min = 1,
-    schematic = minetest.get_modpath("nativevillages").."/schematics/junglestable_7_25_7.mts",
-    flags = "place_center_x, place_center_z, force_placement",
-    rotation = "random",
-})
+local function register_jungle_central(params)
+    local np = table.copy(jungle_central_noise)
+    np.seed = np.seed + params.seed_offset
+    minetest.register_decoration({
+        name = "nativevillages:" .. params.name,
+        deco_type = "schematic",
+        place_on = {"default:dirt_with_rainforest_litter"},
+        sidelen = params.sidelen or 16,
+        noise_params = np,
+        biomes = {"rainforest"},
+        y_min = 4,
+        y_max = 80,
+        height = 1,
+        place_offset_y = params.offset_y or 0,
+        schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
+        flags = "place_center_x, place_center_z, force_placement",
+        rotation = "random",
+    })
+end
 
-
+register_jungle_central({ name = "junglechurch", file = "junglechurch_7_28_7.mts", seed_offset = 6001, sidelen = 16 })
+register_jungle_central({ name = "junglemarket", file = "junglemarket_9_32_9.mts", seed_offset = 6002, sidelen = 16 })
