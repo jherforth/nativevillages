@@ -3,7 +3,7 @@ local S = minetest.get_translator("nativevillages")
 -- Savanna Village Buildings
 -- Schematic naming format: structurename_X_Y_Z.mts
 -- X = width, Y = height (informational), Z = depth
--- All structures use place_offset_y = 0 for ground-level placement and can be changed if necessary
+-- All structures use place_offset_y to adjust groud level spawning mechanic. Can be adjusted.
 -- Terrain validation: spawn_by + num_spawn_by ensures ~50% of footprint is flat ground
 
 minetest.register_decoration({
@@ -12,7 +12,7 @@ minetest.register_decoration({
     place_on = {"default:dry_dirt_with_dry_grass"},
     spawn_by = {"default:dry_dirt_with_dry_grass", "default:dry_dirt"},
     num_spawn_by = 8,
-    place_offset_y = 0,
+    place_offset_y = 1,
     sidelen = 8,
     fill_ratio = 0.0002,
     biomes = {"savanna"},
@@ -29,7 +29,7 @@ minetest.register_decoration({
     place_on = {"default:dry_dirt_with_dry_grass"},
     spawn_by = {"default:dry_dirt_with_dry_grass", "default:dry_dirt"},
     num_spawn_by = 12,
-    place_offset_y = 0,
+    place_offset_y = 1,
     sidelen = 8,
     fill_ratio = 0.0002,
     biomes = {"savanna"},
@@ -46,7 +46,7 @@ minetest.register_decoration({
     place_on = {"default:dry_dirt_with_dry_grass"},
     spawn_by = {"default:dry_dirt_with_dry_grass", "default:dry_dirt"},
     num_spawn_by = 8,
-    place_offset_y = 0,
+    place_offset_y = 1,
     sidelen = 8,
     fill_ratio = 0.0002,
     biomes = {"savanna"},
@@ -63,7 +63,7 @@ minetest.register_decoration({
     place_on = {"default:dry_dirt_with_dry_grass"},
     spawn_by = {"default:dry_dirt_with_dry_grass", "default:dry_dirt"},
     num_spawn_by = 10,
-    place_offset_y = 0,
+    place_offset_y = 1,
     sidelen = 8,
     fill_ratio = 0.0002,
     biomes = {"savanna"},
@@ -80,7 +80,7 @@ minetest.register_decoration({
     place_on = {"default:dry_dirt_with_dry_grass"},
     spawn_by = {"default:dry_dirt_with_dry_grass", "default:dry_dirt"},
     num_spawn_by = 8,
-    place_offset_y = 0,
+    place_offset_y = 1,
     sidelen = 8,
     fill_ratio = 0.0002,
     biomes = {"savanna"},
@@ -97,7 +97,7 @@ minetest.register_decoration({
     place_on = {"default:dry_dirt_with_dry_grass"},
     spawn_by = {"default:dry_dirt_with_dry_grass", "default:dry_dirt"},
     num_spawn_by = 15,
-    place_offset_y = 0,
+    place_offset_y = 1,
     sidelen = 16,
     fill_ratio = 0.0001,
     biomes = {"savanna"},
@@ -114,7 +114,7 @@ minetest.register_decoration({
     place_on = {"default:dry_dirt_with_dry_grass"},
     spawn_by = {"default:dry_dirt_with_dry_grass", "default:dry_dirt"},
     num_spawn_by = 12,
-    place_offset_y = 0,
+    place_offset_y = 1,
     sidelen = 16,
     fill_ratio = 0.00015,
     biomes = {"savanna"},
@@ -131,7 +131,7 @@ minetest.register_decoration({
     place_on = {"default:dry_dirt_with_dry_grass"},
     spawn_by = {"default:dry_dirt_with_dry_grass", "default:dry_dirt"},
     num_spawn_by = 35,
-    place_offset_y = 0,
+    place_offset_y = 1,
     sidelen = 32,
     fill_ratio = 0.00012,
     biomes = {"savanna"},
@@ -141,4 +141,5 @@ minetest.register_decoration({
     flags = "place_center_x, place_center_z, force_placement",
     rotation = "random",
 })
+
 
