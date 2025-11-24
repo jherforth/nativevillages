@@ -7,8 +7,8 @@ local S = minetest.get_translator("nativevillages")
 
 local desert_village_noise = {
     offset = 0.0,
-    scale = 0.035,          -- Controls village density inside clusters
-    spread = {x = 140, y = 140, z = 140},  -- Village size & spacing
+    scale = 0.005,          -- Controls village density inside clusters
+    spread = {x = 180, y = 180, z = 180},  -- Village size & spacing
     seed = 22847392,        -- Change this number if you want different layout
     octaves = 3,
     persistence = 0.55,
@@ -82,7 +82,7 @@ register_desert_building({
 
 -- Larger/rarer central buildings — slightly lower density by reducing scale just for them
 local central_noise = table.copy(desert_village_noise)
-central_noise.scale = 0.015  -- about half as common as houses
+central_noise.scale = 0.0003  -- about half as common as houses
 
 local function register_central_building(params)
     local np = table.copy(central_noise)
@@ -123,4 +123,5 @@ register_central_building({
     file = "desertstable_13_6_9.mts",
     seed_offset = 1003,
 })
+
 
