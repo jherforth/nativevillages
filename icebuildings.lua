@@ -7,8 +7,8 @@ local S = minetest.get_translator("nativevillages")
 
 local ice_village_noise = {
     offset = 0.0,
-    scale = 0.18,               -- High density inside villages (ice villages are compact)
-    spread = {x = 160, y = 160, z = 160},  -- Smaller village footprint than grassland
+    scale = 0.06,               -- High density inside villages (ice villages are compact)
+    spread = {x = 100, y = 100, z = 100},  -- Smaller village footprint than grassland
     seed = 91927465,            -- Unique seed
     octaves = 3,
     persistence = 0.5,
@@ -54,7 +54,7 @@ register_ice_building({ name = "icehouse5", file = "icehouse5_7_4_7.mts",   side
 -- ===================================================================
 
 local ice_central_noise = table.copy(ice_village_noise)
-ice_central_noise.scale = 0.08  -- ~half as common
+ice_central_noise.scale = 0.025  -- ~half as common
 
 local function register_ice_central(params)
     local np = table.copy(ice_central_noise)
@@ -79,3 +79,4 @@ end
 register_ice_central({ name = "icechurch",  file = "icechurch_7_11_10.mts",  seed_offset = 3001, sidelen = 16 })
 register_ice_central({ name = "icemarket",  file = "icemarket_10_5_9.mts",   seed_offset = 3002, sidelen = 16 })
 register_ice_central({ name = "icestable",  file = "icestable_9_5_7.mts",    seed_offset = 3003, sidelen = 16 })
+
