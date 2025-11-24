@@ -1,149 +1,81 @@
 local S = minetest.get_translator("nativevillages")
 
--- Ice Village Buildings
--- Schematic naming format: structurename_X_Y_Z.mts
--- X = width, Y = height (informational), Z = depth
--- All structures use place_offset_y to adjust groud level spawning mechanic. Can be adjusted.
--- Terrain validation: spawn_by + num_spawn_by ensures ~50% of footprint is flat ground
+-- ===================================================================
+-- ICE VILLAGE CLUSTERING NOISE
+-- Tighter, more frequent villages than grassland — fits arctic theme
+-- ===================================================================
 
-minetest.register_decoration({
-    name = "nativevillages:icehouse1",
-    deco_type = "schematic",
-    place_on = {"default:snowblock", "default:ice"},
-    spawn_by = {"default:snowblock", "default:ice"},
-    num_spawn_by = 12,
-    place_offset_y = 1,
-    sidelen = 8,
-    fill_ratio = 0.0002,
-    biomes = {"icesheet", "icesheet_ocean"},
-    y_max = 30,
-    y_min = -1,
-    schematic = minetest.get_modpath("nativevillages").."/schematics/icehouse1_7_9_7.mts",
-    flags = "place_center_x, place_center_z, force_placement",
-    rotation = "random",
-})
+local ice_village_noise = {
+    offset = 0.0,
+    scale = 0.18,               -- High density inside villages (ice villages are compact)
+    spread = {x = 160, y = 160, z = 160},  -- Smaller village footprint than grassland
+    seed = 91927465,            -- Unique seed
+    octaves = 3,
+    persistence = 0.5,
+    lacunarity = 2.0,
+    flags = "defaults",
+}
 
-minetest.register_decoration({
-    name = "nativevillages:icehouse2",
-    deco_type = "schematic",
-    place_on = {"default:snowblock", "default:ice"},
-    spawn_by = {"default:snowblock", "default:ice"},
-    num_spawn_by = 12,
-    place_offset_y = 1,
-    sidelen = 8,
-    fill_ratio = 0.0002,
-    biomes = {"icesheet", "icesheet_ocean"},
-    y_max = 30,
-    y_min = -1,
-    schematic = minetest.get_modpath("nativevillages").."/schematics/icehouse2_7_7_9.mts",
-    flags = "place_center_x, place_center_z, force_placement",
-    rotation = "random",
-})
+-- ===================================================================
+-- Helper: regular ice houses
+-- ===================================================================
 
-minetest.register_decoration({
-    name = "nativevillages:icehouse3",
-    deco_type = "schematic",
-    place_on = {"default:snowblock", "default:ice"},
-    spawn_by = {"default:snowblock", "default:ice"},
-    num_spawn_by = 12,
-    place_offset_y = 1,
-    sidelen = 8,
-    fill_ratio = 0.0002,
-    biomes = {"icesheet", "icesheet_ocean"},
-    y_max = 30,
-    y_min = -1,
-    schematic = minetest.get_modpath("nativevillages").."/schematics/icehouse3_6_6_6.mts",
-    flags = "place_center_x, place_center_z, force_placement",
-    rotation = "random",
-})
+local function register_ice_building(params)
+    minetest.register_decoration({
+        name = "nativevillages:" .. params.name,
+        deco_type = "schematic",
+        place_on = {"default:snowblock", "default:ice"},
+        sidelen = params.sidelen or 8,
+        noise_params = ice_village_noise,
+        biomes = {"icesheet", "icesheet_ocean"},
+        y_min = -10,        -- Allow slight underwater ice shelf placement
+        y_max = 40,
+        height = 1,         -- Ice is perfectly flat → demand perfection
+        place_offset_y = params.offset_y or 0,  -- Most ice schematics sit directly on surface
+        schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
+        flags = "place_center_x, place_center_z, force_placement",
+        rotation = "random",
+    })
+end
 
-minetest.register_decoration({
-    name = "nativevillages:icehouse4",
-    deco_type = "schematic",
-    place_on = {"default:snowblock", "default:ice"},
-    spawn_by = {"default:snowblock", "default:ice"},
-    num_spawn_by = 12,
-    place_offset_y = 1,
-    sidelen = 8,
-    fill_ratio = 0.0002,
-    biomes = {"icesheet", "icesheet_ocean"},
-    y_max = 30,
-    y_min = -1,
-    schematic = minetest.get_modpath("nativevillages").."/schematics/icehouse4_6_7_7.mts",
-    flags = "place_center_x, place_center_z, force_placement",
-    rotation = "random",
-})
+-- ===================================================================
+-- REGISTER ALL ICE HOUSES
+-- ===================================================================
 
-minetest.register_decoration({
-    name = "nativevillages:icehouse5",
-    deco_type = "schematic",
-    place_on = {"default:snowblock", "default:ice"},
-    spawn_by = {"default:snowblock", "default:ice"},
-    num_spawn_by = 12,
-    place_offset_y = 1,
-    sidelen = 8,
-    fill_ratio = 0.0002,
-    biomes = {"icesheet", "icesheet_ocean"},
-    y_max = 30,
-    y_min = -1,
-    schematic = minetest.get_modpath("nativevillages").."/schematics/icehouse5_7_4_7.mts",
-    flags = "place_center_x, place_center_z, force_placement",
-    rotation = "random",
-})
+register_ice_building({ name = "icehouse1", file = "icehouse1_7_9_7.mts",   sidelen = 8, offset_y = 0 })
+register_ice_building({ name = "icehouse2", file = "icehouse2_7_7_9.mts",   sidelen = 8 })
+register_ice_building({ name = "icehouse3", file = "icehouse3_6_6_6.mts",   sidelen = 8 })
+register_ice_building({ name = "icehouse4", file = "icehouse4_6_7_7.mts",   sidelen = 8 })
+register_ice_building({ name = "icehouse5", file = "icehouse5_7_4_7.mts",   sidelen = 8 })
 
-minetest.register_decoration({
-    name = "nativevillages:icechurch",
-    deco_type = "schematic",
-    place_on = {"default:snowblock", "default:ice"},
-    spawn_by = {"default:snowblock", "default:ice"},
-    num_spawn_by = 12,
-    place_offset_y = 1,
-    sidelen = 16,
-    fill_ratio = 0.0002,
-    biomes = {"icesheet", "icesheet_ocean"},
-    y_max = 30,
-    y_min = -1,
-    schematic = minetest.get_modpath("nativevillages").."/schematics/icechurch_7_11_10.mts",
-    flags = "place_center_x, place_center_z, force_placement",
-    rotation = "random",
-})
+-- ===================================================================
+-- CENTRAL / RARER BUILDINGS (church, market, stable)
+-- Slightly lower density + offset seeds → appear near village centers
+-- ===================================================================
 
-minetest.register_decoration({
-    name = "nativevillages:icemarket",
-    deco_type = "schematic",
-    place_on = {"default:snowblock", "default:ice"},
-    spawn_by = {"default:snowblock", "default:ice"},
-    num_spawn_by = 12,
-    place_offset_y = 1,
-    sidelen = 16,
-    fill_ratio = 0.0002,
-    biomes = {"icesheet", "icesheet_ocean"},
-    y_max = 30,
-    y_min = -1,
-    schematic = minetest.get_modpath("nativevillages").."/schematics/icemarket_10_5_9.mts",
-    flags = "place_center_x, place_center_z, force_placement",
-    rotation = "random",
-})
+local ice_central_noise = table.copy(ice_village_noise)
+ice_central_noise.scale = 0.08  -- ~half as common
 
-minetest.register_decoration({
-    name = "nativevillages:icestable",
-    deco_type = "schematic",
-    place_on = {"default:snowblock", "default:ice"},
-    spawn_by = {"default:snowblock", "default:ice"},
-    num_spawn_by = 12,
-    place_offset_y = 1,
-    sidelen = 16,
-    fill_ratio = 0.0002,
-    biomes = {"icesheet", "icesheet_ocean"},
-    y_max = 30,
-    y_min = -1,
-    schematic = minetest.get_modpath("nativevillages").."/schematics/icestable_9_5_7.mts",
-    flags = "place_center_x, place_center_z, force_placement",
-    rotation = "random",
-})
+local function register_ice_central(params)
+    local np = table.copy(ice_central_noise)
+    np.seed = np.seed + params.seed_offset
+    minetest.register_decoration({
+        name = "nativevillages:" .. params.name,
+        deco_type = "schematic",
+        place_on = {"default:snowblock", "default:ice"},
+        sidelen = params.sidelen or 16,
+        noise_params = np,
+        biomes = {"icesheet", "icesheet_ocean"},
+        y_min = -10,
+        y_max = 40,
+        height = 1,
+        place_offset_y = params.offset_y or 0,
+        schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
+        flags = "place_center_x, place_center_z, force_placement",
+        rotation = "random",
+    })
+end
 
-
-
-
-
-
+register_ice_central({ name = "icechurch",  file = "icechurch_7_11_10.mts",  seed_offset = 3001, sidelen = 16 })
+register_ice_central({ name = "icemarket",  file = "icemarket_10_5_9.mts",   seed_offset = 3002, sidelen = 16 })
+register_ice_central({ name = "icestable",  file = "icestable_9_5_7.mts",    seed_offset = 3003, sidelen = 16 })
