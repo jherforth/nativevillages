@@ -7,7 +7,7 @@ local S = minetest.get_translator("nativevillages")
 
 local savanna_village_noise = {
     offset = 0.0,
-    scale = 0.04,                 -- Perfect balance: common enough, never overcrowded
+    scale = 0.005,                 -- Perfect balance: common enough, never overcrowded
     spread = {x = 180, y = 180, z = 180},  -- Big, impressive villages
     seed = 67239184,               -- Unique seed
     octaves = 3,
@@ -54,7 +54,7 @@ register_savanna_building({ name = "savannahouse5", file = "savannahouse5_7_6_7.
 -- ===================================================================
 
 local savanna_central_noise = table.copy(savanna_village_noise)
-savanna_central_noise.scale = 0.018  -- Rarer, more majestic
+savanna_central_noise.scale = 0.0003  -- Rarer, more majestic
 
 local function register_savanna_central(params)
     local np = table.copy(savanna_central_noise)
@@ -79,4 +79,5 @@ end
 register_savanna_central({ name = "savannachurch",  file = "savannachurch_8_11_12.mts",   seed_offset = 5001, sidelen = 16 })
 register_savanna_central({ name = "savannamarket",  file = "savannamarket_10_5_9.mts",    seed_offset = 5002, sidelen = 16 })
 register_savanna_central({ name = "savannastable",  file = "savannastable_15_7_16.mts",  seed_offset = 5003, sidelen = 32, offset_y = -1 })
+
 
