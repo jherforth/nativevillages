@@ -7,8 +7,8 @@ local S = minetest.get_translator("nativevillages")
 
 local grassland_village_noise = {
     offset = 0.0,
-    scale = 0.12,            -- Slightly higher than desert = more houses per village
-    spread = {x = 250, y = 250, z = 250},  -- Bigger villages than desert
+    scale = 0.045,            -- Slightly higher than desert = more houses per village
+    spread = {x = 160, y = 160, z = 160},  -- Bigger villages than desert
     seed = 3546891,          -- Unique seed (different from desert!)
     octaves = 3,
     persistence = 0.6,
@@ -54,7 +54,7 @@ register_grassland_building({ name = "grasslandhouse5", file = "grasslandhouse5_
 -- ===================================================================
 
 local central_noise = table.copy(grassland_village_noise)
-central_noise.scale = 0.055  -- ~half as common as regular houses
+central_noise.scale = 0.02  -- ~half as common as regular houses
 
 local function register_central_grassland(params)
     local np = table.copy(central_noise)
@@ -98,3 +98,4 @@ register_central_grassland({
     seed_offset = 2003,
     offset_y = -1,
 })
+
