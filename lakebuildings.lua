@@ -3,7 +3,7 @@ local S = minetest.get_translator("nativevillages")
 -- Lake Village Buildings
 -- Schematic naming format: structurename_X_Y_Z.mts
 -- X = width, Y = height (informational), Z = depth
--- Lake structures use place_offset_y = 2 for water-level placement (different from ground biomes)
+-- All structures use place_offset_y to adjust groud level spawning mechanic. Can be adjusted.
 -- Terrain validation: spawn_by + num_spawn_by ensures ~50% of footprint is flat ground
 
 minetest.register_decoration({
@@ -17,7 +17,7 @@ minetest.register_decoration({
     fill_ratio = 0.0002,
     biomes = {"deciduous_forest_ocean", "deciduous_forest_shore", "coniferous_forest_ocean"},
     y_max = 2,
-    y_min = -3,
+    y_min = -1,
     schematic = minetest.get_modpath("nativevillages").."/schematics/lakehouse1_12_11_15.mts",
     flags = "place_center_x, place_center_z, force_placement",
     rotation = "random",
@@ -34,7 +34,7 @@ minetest.register_decoration({
     fill_ratio = 0.0002,
     biomes = {"deciduous_forest_ocean", "deciduous_forest_shore", "coniferous_forest_ocean"},
     y_max = 2,
-    y_min = -3,
+    y_min = -1,
     schematic = minetest.get_modpath("nativevillages").."/schematics/lakehouse2_6_8_8.mts",
     flags = "place_center_x, place_center_z, force_placement",
     rotation = "random",
@@ -51,7 +51,7 @@ minetest.register_decoration({
     fill_ratio = 0.0002,
     biomes = {"deciduous_forest_ocean", "deciduous_forest_shore", "coniferous_forest_ocean"},
     y_max = 2,
-    y_min = -3,
+    y_min = -1,
     schematic = minetest.get_modpath("nativevillages").."/schematics/lakehouse3_5_9_9.mts",
     flags = "place_center_x, place_center_z, force_placement",
     rotation = "random",
@@ -68,7 +68,7 @@ minetest.register_decoration({
     fill_ratio = 0.0002,
     biomes = {"deciduous_forest_ocean", "deciduous_forest_shore", "coniferous_forest_ocean"},
     y_max = 2,
-    y_min = -3,
+    y_min = -1,
     schematic = minetest.get_modpath("nativevillages").."/schematics/lakehouse4_5_9_9.mts",
     flags = "place_center_x, place_center_z, force_placement",
     rotation = "random",
@@ -85,7 +85,7 @@ minetest.register_decoration({
     fill_ratio = 0.0002,
     biomes = {"deciduous_forest_ocean", "deciduous_forest_shore", "coniferous_forest_ocean"},
     y_max = 2,
-    y_min = -3,
+    y_min = -1,
     schematic = minetest.get_modpath("nativevillages").."/schematics/lakehouse5_6_11_10.mts",
     flags = "place_center_x, place_center_z, force_placement",
     rotation = "random",
@@ -102,7 +102,7 @@ minetest.register_decoration({
     fill_ratio = 0.0001,
     biomes = {"deciduous_forest_ocean", "deciduous_forest_shore", "coniferous_forest_ocean"},
     y_max = 2,
-    y_min = -3,
+    y_min = -1,
     schematic = minetest.get_modpath("nativevillages").."/schematics/lakechurch_9_13_13.mts",
     flags = "place_center_x, place_center_z, force_placement",
     rotation = "random",
@@ -119,7 +119,7 @@ minetest.register_decoration({
     fill_ratio = 0.00015,
     biomes = {"deciduous_forest_ocean", "deciduous_forest_shore", "coniferous_forest_ocean"},
     y_max = 2,
-    y_min = -3,
+    y_min = -1,
     schematic = minetest.get_modpath("nativevillages").."/schematics/lakemarket_7_6_10.mts",
     flags = "place_center_x, place_center_z, force_placement",
     rotation = "random",
@@ -136,9 +136,10 @@ minetest.register_decoration({
     fill_ratio = 0.00012,
     biomes = {"deciduous_forest_ocean", "deciduous_forest_shore", "coniferous_forest_ocean"},
     y_max = 2,
-    y_min = -3,
+    y_min = -1,
     schematic = minetest.get_modpath("nativevillages").."/schematics/lakestable_7_7_13.mts",
     flags = "place_center_x, place_center_z, force_placement",
     rotation = "random",
 })
+
 
