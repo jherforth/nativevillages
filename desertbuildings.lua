@@ -7,8 +7,8 @@ local S = minetest.get_translator("nativevillages")
 
 local desert_village_noise = {
     offset = 0.0,
-    scale = 0.005,          -- Controls village density inside clusters
-    spread = {x = 180, y = 180, z = 180},  -- Village size & spacing
+    scale = 0.025,          -- Controls village density inside clusters
+    spread = {x = 80, y = 80, z = 80},  -- Village size & spacing
     seed = 22847392,        -- Change this number if you want different layout
     octaves = 3,
     persistence = 0.55,
@@ -59,25 +59,25 @@ register_desert_building({
 register_desert_building({
     name = "deserthouse2",
     file = "deserthouse2_8_7_8.mts",
-    sidelen = 8,
+    sidelen = 16,
 })
 
 register_desert_building({
     name = "deserthouse3",
     file = "deserthouse3_8_10_8.mts",
-    sidelen = 8,
+    sidelen = 16,
 })
 
 register_desert_building({
     name = "deserthouse4",
     file = "deserthouse4_10_8_7.mts",
-    sidelen = 8,
+    sidelen = 16,
 })
 
 register_desert_building({
     name = "deserthouse5",
     file = "deserthouse5_10_6_8.mts",
-    sidelen = 8,
+    sidelen = 16,
 })
 
 -- Larger/rarer central buildings — slightly lower density by reducing scale just for them
@@ -91,7 +91,7 @@ local function register_central_building(params)
         name = "nativevillages:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:desert_sand", "default:sand"},
-        sidelen = 16,
+        sidelen = 32,
         noise_params = np,
         biomes = {"desert", "sandstone_desert"},
         y_min = 1,
@@ -123,5 +123,6 @@ register_central_building({
     file = "desertstable_13_6_9.mts",
     seed_offset = 1003,
 })
+
 
 
