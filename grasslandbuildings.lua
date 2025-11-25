@@ -7,8 +7,8 @@ local S = minetest.get_translator("nativevillages")
 
 local grassland_village_noise = {
     offset = 0.0,
-    scale = 0.005,            -- Slightly higher than desert = more houses per village
-    spread = {x = 180, y = 180, z = 180},  -- Bigger villages than desert
+    scale = 0.025,            -- Slightly higher than desert = more houses per village
+    spread = {x = 80, y = 80, z = 80},  -- Bigger villages than desert
     seed = 3546891,          -- Unique seed (different from desert!)
     octaves = 3,
     persistence = 0.6,
@@ -42,11 +42,11 @@ end
 -- REGISTER ALL GRASSLAND HOUSES
 -- ===================================================================
 
-register_grassland_building({ name = "grasslandhouse1", file = "grasslandhouse1_7_9_7.mts",   sidelen = 8 })
-register_grassland_building({ name = "grasslandhouse2", file = "grasslandhouse2_6_7_7.mts",   sidelen = 8 })
+register_grassland_building({ name = "grasslandhouse1", file = "grasslandhouse1_7_9_7.mts",   sidelen = 16 })
+register_grassland_building({ name = "grasslandhouse2", file = "grasslandhouse2_6_7_7.mts",   sidelen = 16 })
 register_grassland_building({ name = "grasslandhouse3", file = "grasslandhouse3_10_10_9.mts", sidelen = 16 })
-register_grassland_building({ name = "grasslandhouse4", file = "grasslandhouse4_7_7_9.mts",   sidelen = 8 })
-register_grassland_building({ name = "grasslandhouse5", file = "grasslandhouse5_6_6_6.mts",   sidelen = 8 })
+register_grassland_building({ name = "grasslandhouse4", file = "grasslandhouse4_7_7_9.mts",   sidelen = 16 })
+register_grassland_building({ name = "grasslandhouse5", file = "grasslandhouse5_6_6_6.mts",   sidelen = 16 })
 
 -- ===================================================================
 -- CENTRAL / RARER BUILDINGS (church, market, stable)
@@ -98,5 +98,6 @@ register_central_grassland({
     seed_offset = 2003,
     offset_y = -1,
 })
+
 
 
