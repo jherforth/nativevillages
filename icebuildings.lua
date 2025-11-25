@@ -42,11 +42,11 @@ end
 -- REGISTER ALL ICE HOUSES
 -- ===================================================================
 
-register_ice_building({ name = "icehouse1", file = "icehouse1_7_9_7.mts",   sidelen = 8, offset_y = 0 })
-register_ice_building({ name = "icehouse2", file = "icehouse2_7_7_9.mts",   sidelen = 8 })
-register_ice_building({ name = "icehouse3", file = "icehouse3_6_6_6.mts",   sidelen = 8 })
-register_ice_building({ name = "icehouse4", file = "icehouse4_6_7_7.mts",   sidelen = 8 })
-register_ice_building({ name = "icehouse5", file = "icehouse5_7_4_7.mts",   sidelen = 8 })
+register_ice_building({ name = "icehouse1", file = "icehouse1_7_9_7.mts",   sidelen = 16, offset_y = 0 })
+register_ice_building({ name = "icehouse2", file = "icehouse2_7_7_9.mts",   sidelen = 16 })
+register_ice_building({ name = "icehouse3", file = "icehouse3_6_6_6.mts",   sidelen = 16 })
+register_ice_building({ name = "icehouse4", file = "icehouse4_6_7_7.mts",   sidelen = 16 })
+register_ice_building({ name = "icehouse5", file = "icehouse5_7_4_7.mts",   sidelen = 16 })
 
 -- ===================================================================
 -- CENTRAL / RARER BUILDINGS (church, market, stable)
@@ -63,7 +63,7 @@ local function register_ice_central(params)
         name = "nativevillages:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:snowblock", "default:ice"},
-        sidelen = params.sidelen or 16,
+        sidelen = params.sidelen or 32,
         noise_params = np,
         biomes = {"icesheet", "icesheet_ocean"},
         y_min = 0,
@@ -79,6 +79,7 @@ end
 register_ice_central({ name = "icechurch",  file = "icechurch_7_11_10.mts",  seed_offset = 3001, sidelen = 16 })
 register_ice_central({ name = "icemarket",  file = "icemarket_10_5_9.mts",   seed_offset = 3002, sidelen = 16 })
 register_ice_central({ name = "icestable",  file = "icestable_9_5_7.mts",    seed_offset = 3003, sidelen = 16 })
+
 
 
 
