@@ -7,8 +7,8 @@ local S = minetest.get_translator("nativevillages")
 
 local ice_village_noise = {
     offset = 0.0,
-    scale = 0.005,               -- High density inside villages (ice villages are compact)
-    spread = {x = 180, y = 180, z = 180},  -- Smaller village footprint than grassland
+    scale = 0.025,               -- High density inside villages (ice villages are compact)
+    spread = {x = 80, y = 80, z = 80},  -- Smaller village footprint than grassland
     seed = 91927465,            -- Unique seed
     octaves = 3,
     persistence = 0.5,
@@ -28,7 +28,7 @@ local function register_ice_building(params)
         sidelen = params.sidelen or 8,
         noise_params = ice_village_noise,
         biomes = {"icesheet", "icesheet_ocean"},
-        y_min = -10,        -- Allow slight underwater ice shelf placement
+        y_min = 0,        -- Allow slight underwater ice shelf placement
         y_max = 40,
         height = 1,         -- Ice is perfectly flat → demand perfection
         place_offset_y = params.offset_y or 0,  -- Most ice schematics sit directly on surface
@@ -54,7 +54,7 @@ register_ice_building({ name = "icehouse5", file = "icehouse5_7_4_7.mts",   side
 -- ===================================================================
 
 local ice_central_noise = table.copy(ice_village_noise)
-ice_central_noise.scale = 0.0003  -- ~half as common
+ice_central_noise.scale = 0.01  -- ~half as common
 
 local function register_ice_central(params)
     local np = table.copy(ice_central_noise)
@@ -66,7 +66,7 @@ local function register_ice_central(params)
         sidelen = params.sidelen or 16,
         noise_params = np,
         biomes = {"icesheet", "icesheet_ocean"},
-        y_min = -10,
+        y_min = 0,
         y_max = 40,
         height = 1,
         place_offset_y = params.offset_y or 0,
@@ -79,5 +79,6 @@ end
 register_ice_central({ name = "icechurch",  file = "icechurch_7_11_10.mts",  seed_offset = 3001, sidelen = 16 })
 register_ice_central({ name = "icemarket",  file = "icemarket_10_5_9.mts",   seed_offset = 3002, sidelen = 16 })
 register_ice_central({ name = "icestable",  file = "icestable_9_5_7.mts",    seed_offset = 3003, sidelen = 16 })
+
 
 
