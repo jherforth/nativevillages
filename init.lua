@@ -1,70 +1,77 @@
+-- init.lua
+-- NativeVillages — Final perfected version
 
-nativevillages = {}
+local modname = minetest.get_current_modname()
+local modpath = minetest.get_modpath(modname)
 
--- Load support for intllib.
-local path = minetest.get_modpath(minetest.get_current_modname()) .. "/"
-
-local S = minetest.get_translator and minetest.get_translator("nativevillages") or
-		dofile(path .. "intllib.lua")
-
+-- Internationalization
+local S
+if minetest.get_translator then
+    S = minetest.get_translator("nativevillages")
+else
+    S = dofile(modpath .. "/intllib.lua")
+end
 mobs.intllib = S
 
--- Global fix for serialization errors - override minetest.serialize to handle userdata gracefully
+-- Global serialization safety net (keeps your world from corrupting on rare bugs)
 local original_serialize = minetest.serialize
 minetest.serialize = function(data)
-	-- Wrap in pcall to catch any serialization errors
-	local success, result = pcall(function()
-		return original_serialize(data)
-	end)
-
-	if success then
-		return result
-	else
-		-- If serialization fails, log and return empty table serialization
-		minetest.log("warning", "[nativevillages] Serialization failed, returning empty data")
-		return original_serialize({})
-	end
+    local success, result = pcall(original_serialize, data)
+    if success then
+        return result
+    else
+        minetest.log("error", "[nativevillages] Serialization failed: " .. result)
+        return original_serialize({})
+    end
 end
 
-
--- Check for custom mob spawn file
-local input = io.open(path .. "spawn.lua", "r")
-
-if input then
-	mobs.custom_spawn_nativevillages = true
-	input:close()
-	input = nil
+-- Check for custom spawn file
+local spawn_file = io.open(modpath .. "/spawn.lua", "r")
+if spawn_file then
+    mobs.custom_spawn_nativevillages = true
+    spawn_file:close()
 end
 
+-- ===================================================================
+-- LOAD ORDER (critical for dependencies and noise sharing)
+-- ===================================================================
 
--- Buildings
+-- 1. Nodes & blocks (must come first)
+dofile(modpath .. "/cannibalblocks.lua")
+dofile(modpath .. "/savannablocks.lua")
+dofile(modpath .. "/arcticblocks.lua")
+dofile(modpath .. "/grasslandblocks.lua")
+dofile(modpath .. "/lakeblocks.lua")
+dofile(modpath .. "/desertblocks.lua")
 
+-- 2. Buildings (they use the noise tables from above)
+dofile(modpath .. "/junglebuildings.lua")
+dofile(modpath .. "/icebuildings.lua")
+dofile(modpath .. "/grasslandbuildings.lua")
+dofile(modpath .. "/lakebuildings.lua")
+dofile(modpath .. "/desertbuildings.lua")
+dofile(modpath .. "/savannabuildings.lua")
 
-dofile(path .. "cannibalblocks.lua") --
-dofile(path .. "savannablocks.lua") --
-dofile(path .. "arcticblocks.lua") --
-dofile(path .. "grasslandblocks.lua") --
-dofile(path .. "lakeblocks.lua") --
-dofile(path .. "desertblocks.lua") --
-dofile(path .. "junglebuildings.lua") --
-dofile(path .. "icebuildings.lua") --
-dofile(path .. "grasslandbuildings.lua") --
-dofile(path .. "lakebuildings.lua") --
-dofile(path .. "desertbuildings.lua") --
-dofile(path .. "savannabuildings.lua") --
-dofile(path .. "npcmood.lua") --
-dofile(path .. "villagers.lua") --
-dofile(path .. "house_spawning.lua") --
--- dofile(path .. "buyablestuff.lua") --
-dofile(path .. "explodingtoad.lua") --
-dofile(path .. "hunger.lua") --
+-- 3. Systems (villagers, mood, spawning, paths)
+dofile(modpath .. "/npcmood.lua")
+dofile(modpath .. "/villagers.lua")
+dofile(modpath .. "/house_spawning.lua")
+dofile(modpath .. "/paths.lua")         -- ← uses noise from building files → must come after
 
+-- 4. Optional/fun extras
+-- dofile(modpath .. "/buyablestuff.lua")
+dofile(modpath .. "/explodingtoad.lua")
+dofile(modpath .. "/hunger.lua")
 
--- Load custom spawning
+-- 5. Custom mob spawning (if exists)
 if mobs.custom_spawn_nativevillages then
-	dofile(path .. "spawn.lua")
+    dofile(modpath .. "/spawn.lua")
 end
 
+-- ===================================================================
+-- Final message
+-- ===================================================================
 
-
-print (S("[MOD] Luanti Villagers init initialized successfully"))
+minetest.log("action", "[nativevillages] Successfully loaded — " ..
+    "6 biomes | perfect villages | villagers | paths | exploding toads")
+print(S("[MOD] NativeVillages loaded — a living world awaits you"))
