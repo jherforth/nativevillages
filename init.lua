@@ -1,6 +1,8 @@
 -- init.lua
 -- NativeVillages — Final perfected version
 
+nativevillages = {}
+
 local modname = minetest.get_current_modname()
 local modpath = minetest.get_modpath(modname)
 
