@@ -8,7 +8,7 @@ local S = minetest.get_translator("nativevillages")
 local lake_village_noise = {
     offset = 0.0,
     scale = 0.005,                  -- High density inside village zones
-    spread = {x = 180, y = 180, z = 180},  -- LONG in X/Z, narrow in Y → hugs shores
+    spread = {x = 80, y = 80, z = 80},  -- LONG in X/Z, narrow in Y → hugs shores
     seed = 57192034,               -- Unique seed
     octaves = 4,
     persistence = 0.45,
@@ -28,7 +28,7 @@ local function register_lake_building(params)
         sidelen = params.sidelen or 16,
         noise_params = lake_village_noise,
         biomes = {"deciduous_forest_ocean", "deciduous_forest_shore", "coniferous_forest_ocean"},
-        y_min = 0,
+        y_min = -1,
         y_max = 3,                     -- Must be right at water level
         height = 1,                    -- Extremely flat only (stilt houses!)
         place_offset_y = params.offset_y or 1,  -- Most lake schematics have stilts
@@ -43,10 +43,10 @@ end
 -- ===================================================================
 
 register_lake_building({ name = "lakehouse1", file = "lakehouse1_12_11_15.mts", sidelen = 16, offset_y = 2 })
-register_lake_building({ name = "lakehouse2", file = "lakehouse2_6_8_8.mts",     sidelen = 8,  offset_y = 2 })
-register_lake_building({ name = "lakehouse3", file = "lakehouse3_5_9_9.mts",     sidelen = 8,  offset_y = 2 })
-register_lake_building({ name = "lakehouse4", file = "lakehouse4_5_9_9.mts",     sidelen = 8,  offset_y = 2 })
-register_lake_building({ name = "lakehouse5", file = "lakehouse5_6_11_10.mts",   sidelen = 8,  offset_y = 2 })
+register_lake_building({ name = "lakehouse2", file = "lakehouse2_6_8_8.mts",     sidelen = 16,  offset_y = 2 })
+register_lake_building({ name = "lakehouse3", file = "lakehouse3_5_9_9.mts",     sidelen = 16,  offset_y = 2 })
+register_lake_building({ name = "lakehouse4", file = "lakehouse4_5_9_9.mts",     sidelen = 16,  offset_y = 2 })
+register_lake_building({ name = "lakehouse5", file = "lakehouse5_6_11_10.mts",   sidelen = 16,  offset_y = 2 })
 
 -- ===================================================================
 -- CENTRAL / RARER BUILDINGS (church, market, stable)
@@ -66,7 +66,7 @@ local function register_lake_central(params)
         sidelen = params.sidelen or 16,
         noise_params = np,
         biomes = {"deciduous_forest_ocean", "deciduous_forest_shore", "coniferous_forest_ocean"},
-        y_min = 0,
+        y_min = -1,
         y_max = 3,
         height = 1,
         place_offset_y = params.offset_y or 1,
@@ -79,4 +79,5 @@ end
 register_lake_central({ name = "lakechurch",  file = "lakechurch_9_13_13.mts",   seed_offset = 4001, sidelen = 16, offset_y = 2 })
 register_lake_central({ name = "lakemarket",  file = "lakemarket_7_6_10.mts",    seed_offset = 4002, sidelen = 16, offset_y = 1 })
 register_lake_central({ name = "lakestable",  file = "lakestable_7_7_13.mts",    seed_offset = 4003, sidelen = 16, offset_y = 1 })
+
 
