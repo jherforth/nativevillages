@@ -7,8 +7,8 @@ local S = minetest.get_translator("nativevillages")
 
 local savanna_village_noise = {
     offset = 0.0,
-    scale = 0.005,                 -- Perfect balance: common enough, never overcrowded
-    spread = {x = 180, y = 180, z = 180},  -- Big, impressive villages
+    scale = 0.025,                 -- Perfect balance: common enough, never overcrowded
+    spread = {x = 80, y = 80, z = 80},  -- Big, impressive villages
     seed = 67239184,               -- Unique seed
     octaves = 3,
     persistence = 0.62,
@@ -42,11 +42,11 @@ end
 -- REGISTER ALL SAVANNA HOUSES
 -- ===================================================================
 
-register_savanna_building({ name = "savannahouse1", file = "savannahouse1_7_9_7.mts",   sidelen = 8 })
-register_savanna_building({ name = "savannahouse2", file = "savannahouse2_9_8_9.mts",   sidelen = 8 })
-register_savanna_building({ name = "savannahouse3", file = "savannahouse3_7_5_8.mts",   sidelen = 8 })
-register_savanna_building({ name = "savannahouse4", file = "savannahouse4_7_9_9.mts",   sidelen = 8 })
-register_savanna_building({ name = "savannahouse5", file = "savannahouse5_7_6_7.mts",   sidelen = 8 })
+register_savanna_building({ name = "savannahouse1", file = "savannahouse1_7_9_7.mts",   sidelen = 16 })
+register_savanna_building({ name = "savannahouse2", file = "savannahouse2_9_8_9.mts",   sidelen = 16 })
+register_savanna_building({ name = "savannahouse3", file = "savannahouse3_7_5_8.mts",   sidelen = 16 })
+register_savanna_building({ name = "savannahouse4", file = "savannahouse4_7_9_9.mts",   sidelen = 16 })
+register_savanna_building({ name = "savannahouse5", file = "savannahouse5_7_6_7.mts",   sidelen = 16 })
 
 -- ===================================================================
 -- CENTRAL / RARER BUILDINGS (church, market, stable)
@@ -79,5 +79,6 @@ end
 register_savanna_central({ name = "savannachurch",  file = "savannachurch_8_11_12.mts",   seed_offset = 5001, sidelen = 16 })
 register_savanna_central({ name = "savannamarket",  file = "savannamarket_10_5_9.mts",    seed_offset = 5002, sidelen = 16 })
 register_savanna_central({ name = "savannastable",  file = "savannastable_15_7_16.mts",  seed_offset = 5003, sidelen = 32, offset_y = -1 })
+
 
 
