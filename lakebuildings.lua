@@ -29,7 +29,7 @@ local function register_lake_building(params)
         height_max = 3,
         place_offset_y = params.offset_y or 1,  -- Most lake schematics have stilts
         schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
-        flags = "place_center_x, place_center_z,
+        flags = "place_center_x, place_center_z",
         rotation = "random",
         on_placed = function(pos)
             nativevillages.fill_under_house(pos, params.file)
@@ -66,7 +66,7 @@ local function register_lake_central(params)
         height_max = 3,
         place_offset_y = params.offset_y or 1,
         schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
-        flags = "place_center_x, place_center_z,
+        flags = "place_center_x, place_center_z",
         rotation = "random",
         on_placed = function(pos)
             nativevillages.fill_under_house(pos, params.file)
@@ -77,6 +77,7 @@ end
 register_lake_central({ name = "lakechurch",  file = "lakechurch_9_13_13.mts", offset_y = 2 })
 register_lake_central({ name = "lakemarket",  file = "lakemarket_7_6_10.mts",  offset_y = 1 })
 register_lake_central({ name = "lakestable",  file = "lakestable_7_7_13.mts",  offset_y = 1 })
+
 
 
 
