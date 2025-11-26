@@ -17,12 +17,13 @@ local function register_lake_building(params)
         name = "nativevillages:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:dirt", "default:sand"},
-        sidelen = 16,
+        sidelen = 32,
         noise_params = village_noise,
         biomes = {"deciduous_forest_ocean", "deciduous_forest_shore", "coniferous_forest_ocean"},
         y_min = -1,
         y_max = 3,                     -- Must be right at water level
         height = 1,                    -- Extremely flat only (stilt houses!)
+        height_max = 1,
         place_offset_y = params.offset_y or 1,  -- Most lake schematics have stilts
         schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
         flags = "place_center_x, place_center_z, force_placement",
@@ -50,12 +51,13 @@ local function register_lake_central(params)
         name = "nativevillages:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:dirt", "default:sand"},
-        sidelen = 32,
+        sidelen = 40,
         noise_params = central_noise,
         biomes = {"deciduous_forest_ocean", "deciduous_forest_shore", "coniferous_forest_ocean"},
         y_min = -1,
         y_max = 3,
         height = 1,
+        height_max = 1,
         place_offset_y = params.offset_y or 1,
         schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
         flags = "place_center_x, place_center_z, force_placement",
@@ -66,6 +68,7 @@ end
 register_lake_central({ name = "lakechurch",  file = "lakechurch_9_13_13.mts", offset_y = 2 })
 register_lake_central({ name = "lakemarket",  file = "lakemarket_7_6_10.mts",  offset_y = 1 })
 register_lake_central({ name = "lakestable",  file = "lakestable_7_7_13.mts",  offset_y = 1 })
+
 
 
 
