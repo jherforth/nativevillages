@@ -33,7 +33,8 @@ local function register_desert_building(params)
         rotation = "random",
         on_placed = function(pos)
             nativevillages.fill_under_house(pos, params.file)
-        end
+        end,
+    })
 end
 
 -- ===================================================================
@@ -68,13 +69,14 @@ local function register_desert_central(params)
         rotation = "random",
         on_placed = function(pos)
             nativevillages.fill_under_house(pos, params.file)
-        end
+        end,
     })
 end
 
 register_desert_central({name = "desertchurch", file = "desertchurch_9_12_16.mts", offset_y = 0})
 register_desert_central({name = "desertmarket", file = "desertmarket_12_16_13.mts", offset_y = 0})
 register_desert_central({name = "desertstable",file = "desertstable_13_6_9.mts", offset_y = 0})
+
 
 
 
