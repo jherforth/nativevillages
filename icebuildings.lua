@@ -20,9 +20,10 @@ local function register_ice_building(params)
         sidelen = 16,
         noise_params = village_noise,
         biomes = {"icesheet", "icesheet_ocean"},
-        y_min = 1,        -- Allow slight underwater ice shelf placement
+        y_min = 0,
         y_max = 40,
-        height = 1,         -- Ice is perfectly flat → demand perfection
+        height = 1,
+        height_max = 0,
         place_offset_y = params.offset_y or 0,  -- Most ice schematics sit directly on surface
         schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
         flags = "place_center_x, place_center_z, force_placement",
@@ -55,6 +56,7 @@ local function register_ice_central(params)
         y_min = 0,
         y_max = 40,
         height = 1,
+        height_max = 0,
         place_offset_y = params.offset_y or 0,
         schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
         flags = "place_center_x, place_center_z, force_placement",
@@ -65,6 +67,7 @@ end
 register_ice_central({ name = "icechurch",  file = "icechurch_7_11_10.mts"})
 register_ice_central({ name = "icemarket",  file = "icemarket_10_5_9.mts"})
 register_ice_central({ name = "icestable",  file = "icestable_9_5_7.mts"})
+
 
 
 
