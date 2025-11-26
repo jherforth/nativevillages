@@ -29,7 +29,7 @@ local function register_grassland_building(params)
         height_max = 3,
         place_offset_y = params.offset_y or 0,
         schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
-        flags = "place_center_x, place_center_z,
+        flags = "place_center_x, place_center_z",
         rotation = "random",
         on_placed = function(pos)
             nativevillages.fill_under_house(pos, params.file)
@@ -65,7 +65,7 @@ local function register_grassland_central(params)
         height_max = 3,
         place_offset_y = params.offset_y or 0,
         schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
-        flags = "place_center_x, place_center_z,
+        flags = "place_center_x, place_center_z",
         rotation = "random",
         on_placed = function(pos)
             nativevillages.fill_under_house(pos, params.file)
@@ -77,6 +77,7 @@ register_grassland_central({name = "grasslandchurch", file = "grasslandchurch_11
 register_grassland_central({name = "grasslandmarket",file = "grasslandmarket_9_5_9.mts", offset_y = 0})
 register_grassland_central({name = "grasslandstable", file = "grasslandstable_15_8_16.mts", offset_y = 0})
 register_grassland_central({name = "grasslandhouse3", file = "grasslandhouse3_10_10_9.mts", offset_y = 0})
+
 
 
 
