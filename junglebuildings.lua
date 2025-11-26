@@ -25,7 +25,7 @@ local function register_jungle_building(params)
         height = 1,                    -- ONLY perfectly flat clearings (absolutely required)
         place_offset_y = params.offset_y or 0,  -- Your treehouses already have massive stilts
         schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
-        flags = "place_center_x, place_center_z,
+        flags = "place_center_x, place_center_z",
         rotation = "random",
         on_placed = function(pos)
             nativevillages.fill_under_house(pos, params.file)
@@ -62,7 +62,7 @@ local function register_jungle_central(params)
         height = 1,
         place_offset_y = params.offset_y or 0,
         schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
-        flags = "place_center_x, place_center_z,
+        flags = "place_center_x, place_center_z",
         rotation = "random",
         on_placed = function(pos)
             nativevillages.fill_under_house(pos, params.file)
@@ -72,6 +72,7 @@ end
 
 register_jungle_central({ name = "junglechurch", file = "junglechurch_7_28_7.mts", seed_offset = 6001, sidelen = 16 })
 register_jungle_central({ name = "junglemarket", file = "junglemarket_9_32_9.mts", seed_offset = 6002, sidelen = 16 })
+
 
 
 
