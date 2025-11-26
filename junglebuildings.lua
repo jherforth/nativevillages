@@ -29,7 +29,7 @@ local function register_jungle_building(params)
         rotation = "random",
         on_placed = function(pos)
             nativevillages.fill_under_house(pos, params.file)
-        end
+        end,
     })
 end
 
@@ -66,12 +66,13 @@ local function register_jungle_central(params)
         rotation = "random",
         on_placed = function(pos)
             nativevillages.fill_under_house(pos, params.file)
-        end
+        end,
     })
 end
 
 register_jungle_central({ name = "junglechurch", file = "junglechurch_7_28_7.mts", seed_offset = 6001, sidelen = 16 })
 register_jungle_central({ name = "junglemarket", file = "junglemarket_9_32_9.mts", seed_offset = 6002, sidelen = 16 })
+
 
 
 
