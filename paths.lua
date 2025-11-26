@@ -53,7 +53,7 @@ minetest.register_decoration({
 
                         -- Very small random chance per block so paths are sparse but connected
                         if math.random() < 0.08 then
-                            local schematic_name =  = {
+                            local schematic_name = {
                                 grassland = modpath.."/schematics/grass_dirt_path_5x1.mts",
                                 ice       = modpath.."/schematics/snow_dirt_path_5x1.mts",
                                 desert    = modpath.."/schematics/desert_path_5x1.mts",
