@@ -33,7 +33,7 @@ local function register_savanna_building(params)
         rotation = "random",
         on_placed = function(pos)
             nativevillages.fill_under_house(pos, params.file)
-        end,
+        end
     })
 end
 
@@ -70,13 +70,14 @@ local function register_savanna_central(params)
         rotation = "random",
         on_placed = function(pos)
             nativevillages.fill_under_house(pos, params.file)
-        end,
+        end
     })
 end
 
 register_savanna_central({ name = "savannachurch",  file = "savannachurch_8_11_12.mts"})
 register_savanna_central({ name = "savannamarket",  file = "savannamarket_10_5_9.mts"})
 register_savanna_central({ name = "savannastable",  file = "savannastable_15_7_16.mts", offset_y = -1 })
+
 
 
 
