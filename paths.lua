@@ -10,8 +10,8 @@ local function register_paths_for_biome(biome_name, place_on_nodes, path_prefix,
         return
     end
 
-    local path_noise = table.copy(source_noise)
-    path_noise.scale = path_noise.scale * 28   -- very dense inside village area
+    local path_noise = table.copy(nativevillages.global_village_noise)
+    path_noise.scale = path_noise.scale * 38   -- dense paths inside the rare village
     path_noise.spread = {x = 160, y = 160, z = 160}
 
     local schematics = {
