@@ -47,6 +47,7 @@ dofile(modpath .. "/lakeblocks.lua")
 dofile(modpath .. "/desertblocks.lua")
 
 -- 2. Buildings (they use the noise tables from above)
+dofile(modpath .. "/village_noise.lua")
 dofile(modpath .. "/junglebuildings.lua")
 dofile(modpath .. "/icebuildings.lua")
 dofile(modpath .. "/grasslandbuildings.lua")
