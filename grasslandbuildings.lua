@@ -45,7 +45,7 @@ register_grassland_building({ name = "grasslandhouse5", file = "grasslandhouse5_
 -- Use slightly lower density and offset seeds so they appear near village centers
 -- ===================================================================
 
-local function register_central_grassland(params)
+local function register_grassland_central(params)
     minetest.register_decoration({
         name = "nativevillages:" .. params.name,
         deco_type = "schematic",
@@ -66,6 +66,7 @@ end
 register_central_grassland({name = "grasslandchurch", file = "grasslandchurch_11_17_21.mts", offset_y = 0})
 register_central_grassland({name = "grasslandmarket",file = "grasslandmarket_9_5_9.mts", offset_y = 0})
 register_central_grassland({name = "grasslandstable", file = "grasslandstable_15_8_16.mts", offset_y = 0})
+
 
 
 
