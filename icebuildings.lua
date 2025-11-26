@@ -20,7 +20,7 @@ local function register_ice_building(params)
         sidelen = 16,
         noise_params = village_noise,
         biomes = {"icesheet", "icesheet_ocean"},
-        y_min = 0,        -- Allow slight underwater ice shelf placement
+        y_min = 1,        -- Allow slight underwater ice shelf placement
         y_max = 40,
         height = 1,         -- Ice is perfectly flat → demand perfection
         place_offset_y = params.offset_y or 0,  -- Most ice schematics sit directly on surface
@@ -65,6 +65,7 @@ end
 register_ice_central({ name = "icechurch",  file = "icechurch_7_11_10.mts"})
 register_ice_central({ name = "icemarket",  file = "icemarket_10_5_9.mts"})
 register_ice_central({ name = "icestable",  file = "icestable_9_5_7.mts"})
+
 
 
 
