@@ -1,5 +1,8 @@
 local S = minetest.get_translator("nativevillages")
 
+-- Load the shared fill-under function map gen helper
+dofile(minetest.get_modpath("nativevillages") .. "/utils.lua")
+
 -- ===================================================================
 -- LAKE / STILT VILLAGE NOISE
 -- Elongated clusters that naturally follow coastlines
@@ -28,6 +31,7 @@ local function register_lake_building(params)
         schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
         flags = "place_center_x, place_center_z, force_placement",
         rotation = "random",
+        on_placed = nativevillages.fill_under_house,
     })
 end
 
@@ -62,12 +66,14 @@ local function register_lake_central(params)
         schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
         flags = "place_center_x, place_center_z, force_placement",
         rotation = "random",
+        on_placed = nativevillages.fill_under_house,
     })
 end
 
 register_lake_central({ name = "lakechurch",  file = "lakechurch_9_13_13.mts", offset_y = 2 })
 register_lake_central({ name = "lakemarket",  file = "lakemarket_7_6_10.mts",  offset_y = 1 })
 register_lake_central({ name = "lakestable",  file = "lakestable_7_7_13.mts",  offset_y = 1 })
+
 
 
 
