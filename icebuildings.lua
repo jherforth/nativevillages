@@ -19,7 +19,7 @@ local function register_ice_building(params)
         place_on = {"default:snowblock", "default:ice"},
         sidelen = 32,
         noise_params = village_noise,
-        biomes = {"icesheet", "icesheet_ocean"},
+        biomes = {"icesheet"},
         y_min = 0,
         y_max = 40,
         height = 1,
@@ -52,7 +52,7 @@ local function register_ice_central(params)
         place_on = {"default:snowblock", "default:ice"},
         sidelen = 40,
         noise_params = central_noise,
-        biomes = {"icesheet", "icesheet_ocean"},
+        biomes = {"icesheet"},
         y_min = 0,
         y_max = 40,
         height = 1,
@@ -67,6 +67,7 @@ end
 register_ice_central({ name = "icechurch", file = "icechurch_7_11_10.mts" })
 register_ice_central({ name = "icemarket", file = "icemarket_10_5_9.mts" })
 register_ice_central({ name = "icestable", file = "icestable_9_5_7.mts" })
+
 
 
 
