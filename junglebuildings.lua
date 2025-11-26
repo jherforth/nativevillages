@@ -17,7 +17,7 @@ local function register_jungle_building(params)
         name = "nativevillages:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:dirt_with_rainforest_litter"},
-        sidelen = 16,
+        sidelen = 32,
         noise_params = village_noise,
         biomes = {"rainforest"},
         y_min = 4,
@@ -51,7 +51,7 @@ local function register_jungle_central(params)
         name = "nativevillages:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:dirt_with_rainforest_litter"},
-        sidelen = 16,
+        sidelen = 32,
         noise_params = central_noise,
         biomes = {"rainforest"},
         y_min = 4,
@@ -66,6 +66,7 @@ end
 
 register_jungle_central({ name = "junglechurch", file = "junglechurch_7_28_7.mts", seed_offset = 6001, sidelen = 16 })
 register_jungle_central({ name = "junglemarket", file = "junglemarket_9_32_9.mts", seed_offset = 6002, sidelen = 16 })
+
 
 
 
