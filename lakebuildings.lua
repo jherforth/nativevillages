@@ -5,16 +5,8 @@ local S = minetest.get_translator("nativevillages")
 -- Elongated clusters that naturally follow coastlines
 -- ===================================================================
 
-local lake_village_noise = {
-    offset = 0.0,
-    scale = 0.005,                  -- High density inside village zones
-    spread = {x = 80, y = 80, z = 80},  -- LONG in X/Z, narrow in Y → hugs shores
-    seed = 57192034,               -- Unique seed
-    octaves = 4,
-    persistence = 0.45,
-    lacunarity = 2.3,
-    flags = "defaults",
-}
+local village_noise = nativevillages.global_village_noise
+local central_noise = nativevillages.global_central_noise
 
 -- ===================================================================
 -- Helper: regular lake houses
@@ -26,7 +18,7 @@ local function register_lake_building(params)
         deco_type = "schematic",
         place_on = {"default:dirt", "default:sand"},
         sidelen = params.sidelen or 16,
-        noise_params = lake_village_noise,
+        noise_params = village_noise,
         biomes = {"deciduous_forest_ocean", "deciduous_forest_shore", "coniferous_forest_ocean"},
         y_min = -1,
         y_max = 3,                     -- Must be right at water level
@@ -64,7 +56,7 @@ local function register_lake_central(params)
         deco_type = "schematic",
         place_on = {"default:dirt", "default:sand"},
         sidelen = params.sidelen or 16,
-        noise_params = np,
+        noise_params = central_noise,
         biomes = {"deciduous_forest_ocean", "deciduous_forest_shore", "coniferous_forest_ocean"},
         y_min = -1,
         y_max = 3,
@@ -79,5 +71,6 @@ end
 register_lake_central({ name = "lakechurch",  file = "lakechurch_9_13_13.mts",   seed_offset = 4001, sidelen = 16, offset_y = 2 })
 register_lake_central({ name = "lakemarket",  file = "lakemarket_7_6_10.mts",    seed_offset = 4002, sidelen = 16, offset_y = 1 })
 register_lake_central({ name = "lakestable",  file = "lakestable_7_7_13.mts",    seed_offset = 4003, sidelen = 16, offset_y = 1 })
+
 
 
