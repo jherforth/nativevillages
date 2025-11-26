@@ -17,12 +17,13 @@ local function register_savanna_building(params)
         name = "nativevillages:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:dry_dirt_with_dry_grass"},
-        sidelen = 16,
+        sidelen = 32,
         noise_params = village_noise,
         biomes = {"savanna"},
         y_min = 1,
         y_max = 120,                   -- Savanna can go high
-        height = 2,                    -- Allows gentle savanna hills
+        height = 1,                    -- Allows gentle savanna hills
+        height_max = 1,
         place_offset_y = params.offset_y or 0,
         schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
         flags = "place_center_x, place_center_z, force_placement",
@@ -50,12 +51,13 @@ local function register_savanna_central(params)
         name = "nativevillages:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:dry_dirt_with_dry_grass"},
-        sidelen = 32,
+        sidelen = 40,
         noise_params = central_noise,
         biomes = {"savanna"},
         y_min = 1,
         y_max = 120,
-        height = 2,
+        height = 1,
+        height_max = 1,
         place_offset_y = params.offset_y or -1,
         schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
         flags = "place_center_x, place_center_z, force_placement",
@@ -66,6 +68,7 @@ end
 register_savanna_central({ name = "savannachurch",  file = "savannachurch_8_11_12.mts"})
 register_savanna_central({ name = "savannamarket",  file = "savannamarket_10_5_9.mts"})
 register_savanna_central({ name = "savannastable",  file = "savannastable_15_7_16.mts", offset_y = -1 })
+
 
 
 
