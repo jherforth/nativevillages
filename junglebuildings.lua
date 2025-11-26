@@ -5,16 +5,8 @@ local S = minetest.get_translator("nativevillages")
 -- Very rare, very small, perfectly flat clearings only
 -- ===================================================================
 
-local jungle_village_noise = {
-    offset = 0.0,
-    scale = 0.005,                  -- High density BUT only in tiny zones
-    spread = {x = 180, y = 180, z = 180},   -- Tiny clusters → 3–10 buildings max
-    seed = 48192756,               -- Unique seed (you'll remember this one)
-    octaves = 4,
-    persistence = 0.4,
-    lacunarity = 2.4,
-    flags = "defaults",
-}
+local village_noise = nativevillages.global_village_noise
+local central_noise = nativevillages.global_central_noise
 
 -- ===================================================================
 -- Helper: regular jungle treehouses
@@ -26,7 +18,7 @@ local function register_jungle_building(params)
         deco_type = "schematic",
         place_on = {"default:dirt_with_rainforest_litter"},
         sidelen = params.sidelen or 8,
-        noise_params = jungle_village_noise,
+        noise_params = village_noise,
         biomes = {"rainforest"},
         y_min = 4,
         y_max = 80,                    -- Jungles are tall!
@@ -66,7 +58,7 @@ local function register_jungle_central(params)
         deco_type = "schematic",
         place_on = {"default:dirt_with_rainforest_litter"},
         sidelen = params.sidelen or 16,
-        noise_params = np,
+        noise_params = central_noise,
         biomes = {"rainforest"},
         y_min = 4,
         y_max = 80,
@@ -80,5 +72,6 @@ end
 
 register_jungle_central({ name = "junglechurch", file = "junglechurch_7_28_7.mts", seed_offset = 6001, sidelen = 16 })
 register_jungle_central({ name = "junglemarket", file = "junglemarket_9_32_9.mts", seed_offset = 6002, sidelen = 16 })
+
 
 
