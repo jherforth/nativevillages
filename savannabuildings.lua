@@ -26,10 +26,10 @@ local function register_savanna_building(params)
         y_min = 1,
         y_max = 120,                   -- Savanna can go high
         height = 1,                    -- Allows gentle savanna hills
-        height_max = 1,
+        height_max = 3,
         place_offset_y = params.offset_y or 0,
         schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
-        flags = "place_center_x, place_center_z, force_placement",
+        flags = "place_center_x, place_center_z,
         rotation = "random",
         on_placed = function(pos)
             nativevillages.fill_under_house(pos, params.file)
@@ -63,10 +63,10 @@ local function register_savanna_central(params)
         y_min = 1,
         y_max = 120,
         height = 1,
-        height_max = 1,
+        height_max = 3,
         place_offset_y = params.offset_y or -1,
         schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
-        flags = "place_center_x, place_center_z, force_placement",
+        flags = "place_center_x, place_center_z,
         rotation = "random",
         on_placed = function(pos)
             nativevillages.fill_under_house(pos, params.file)
@@ -77,6 +77,7 @@ end
 register_savanna_central({ name = "savannachurch",  file = "savannachurch_8_11_12.mts"})
 register_savanna_central({ name = "savannamarket",  file = "savannamarket_10_5_9.mts"})
 register_savanna_central({ name = "savannastable",  file = "savannastable_15_7_16.mts", offset_y = -1 })
+
 
 
 
