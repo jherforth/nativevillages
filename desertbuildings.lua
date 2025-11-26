@@ -34,7 +34,7 @@ end
 -- REGISTER ALL DESERT BUILDINGS
 -- ===================================================================
 
-register_desert_building({name = "deserthouse1", file = "deserthouse1_12_14_9.mts", offset_y = -1,})
+register_desert_building({name = "deserthouse1", file = "deserthouse1_12_14_9.mts", offset_y = -1})
 register_desert_building({name = "deserthouse2", file = "deserthouse2_8_7_8.mts"})
 register_desert_building({name = "deserthouse3", file = "deserthouse3_8_10_8.mts"})
 register_desert_building({name = "deserthouse4", file = "deserthouse4_10_8_7.mts"})
@@ -68,7 +68,8 @@ end
 
 register_central_building({name = "desertchurch", file = "desertchurch_9_12_16.mts", offset_y = 0})
 register_central_building({name = "desertmarket", file = "desertmarket_12_16_13.mts", offset_y = 0})
-register_central_building({name = "desertstable",file = "desertstable_13_6_9.mts", offset_y 0})
+register_central_building({name = "desertstable",file = "desertstable_13_6_9.mts", offset_y = 0})
+
 
 
 
