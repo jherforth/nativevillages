@@ -22,7 +22,7 @@ nativevillages.global_central_noise.scale = 0.003   -- appear in ~1 out of 8 vil
 -- Third noise just for paths that is very strongly correlated but not identical
 nativevillages.global_path_noise = {
     offset = 0,
-    scale = 0.001,          -- same rarity as houses
+    scale = 0.00001,          -- same rarity as houses
     spread = {x = 80, y = 80, z = 80},
     seed = 987654321 + 12345,   -- ← different seed so paths are offset a few meters from houses
     octaves = 3,
