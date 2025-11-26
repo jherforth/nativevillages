@@ -17,7 +17,7 @@ nativevillages.global_village_noise = {
 
 -- Rarer central buildings (church/market/stable)
 nativevillages.global_central_noise = table.copy(nativevillages.global_village_noise)
-nativevillages.global_central_noise.scale = 0.003   -- appear in ~1 out of 8 villages
+nativevillages.global_central_noise.scale = 0.00003   -- appear in ~1 out of 8 villages
 
 -- Third noise just for paths that is very strongly correlated but not identical
 nativevillages.global_path_noise = {
