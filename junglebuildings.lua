@@ -17,7 +17,7 @@ local function register_jungle_building(params)
         name = "nativevillages:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:dirt_with_rainforest_litter"},
-        sidelen = params.sidelen or 8,
+        sidelen = 16,
         noise_params = village_noise,
         biomes = {"rainforest"},
         y_min = 4,
@@ -34,12 +34,12 @@ end
 -- REGISTER ALL JUNGLE TREEHOUSES
 -- ===================================================================
 
-register_jungle_building({ name = "junglehouse1", file = "junglehouse1_7_26_7.mts",   offset_y = 0 })
-register_jungle_building({ name = "junglehouse2", file = "junglehouse2_7_25_7.mts",   offset_y = 0 })
-register_jungle_building({ name = "junglehouse3", file = "junglehouse3_7_25_7.mts",   offset_y = 0 })
-register_jungle_building({ name = "junglehouse4", file = "junglehouse4_7_26_7.mts",   offset_y = 0 })
-register_jungle_building({ name = "junglehouse5", file = "junglehouse5_7_28_7.mts",   offset_y = 0 })
-register_jungle_building({ name = "junglestable", file = "junglestable_7_25_7.mts",   offset_y = 0 })
+register_jungle_building({ name = "junglehouse1", file = "junglehouse1_7_26_7.mts", offset_y = 0 })
+register_jungle_building({ name = "junglehouse2", file = "junglehouse2_7_25_7.mts"})
+register_jungle_building({ name = "junglehouse3", file = "junglehouse3_7_25_7.mts"})
+register_jungle_building({ name = "junglehouse4", file = "junglehouse4_7_26_7.mts"})
+register_jungle_building({ name = "junglehouse5", file = "junglehouse5_7_28_7.mts"})
+register_jungle_building({ name = "junglestable", file = "junglestable_7_25_7.mts"})
 
 -- ===================================================================
 -- CENTRAL / RARER BUILDINGS
@@ -51,13 +51,11 @@ jungle_central_noise.scale = 0.0003   -- Extremely rare
 jungle_central_noise.spread = {x = 180, y = 180, z = 180}
 
 local function register_jungle_central(params)
-    local np = table.copy(jungle_central_noise)
-    np.seed = np.seed + params.seed_offset
     minetest.register_decoration({
         name = "nativevillages:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:dirt_with_rainforest_litter"},
-        sidelen = params.sidelen or 16,
+        sidelen = 16,
         noise_params = central_noise,
         biomes = {"rainforest"},
         y_min = 4,
@@ -72,6 +70,7 @@ end
 
 register_jungle_central({ name = "junglechurch", file = "junglechurch_7_28_7.mts", seed_offset = 6001, sidelen = 16 })
 register_jungle_central({ name = "junglemarket", file = "junglemarket_9_32_9.mts", seed_offset = 6002, sidelen = 16 })
+
 
 
 
