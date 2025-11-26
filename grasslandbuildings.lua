@@ -5,16 +5,8 @@ local S = minetest.get_translator("nativevillages")
 -- Same noise for all houses → perfect village grouping
 -- ===================================================================
 
-local grassland_village_noise = {
-    offset = 0.0,
-    scale = 0.025,            -- Slightly higher than desert = more houses per village
-    spread = {x = 80, y = 80, z = 80},  -- Bigger villages than desert
-    seed = 3546891,          -- Unique seed (different from desert!)
-    octaves = 3,
-    persistence = 0.6,
-    lacunarity = 2.0,
-    flags = "defaults",
-}
+local village_noise = nativevillages.global_village_noise
+local central_noise = nativevillages.global_central_noise
 
 -- ===================================================================
 -- Helper function (DRY — don't repeat yourself)
@@ -26,7 +18,7 @@ local function register_grassland_building(params)
         deco_type = "schematic",
         place_on = {"default:dirt_with_grass", "default:dirt_with_coniferous_litter"},
         sidelen = params.sidelen or 16,
-        noise_params = grassland_village_noise,
+        noise_params = village_noise,
         biomes = {"grassland", "snowy_grassland", "coniferous_forest", "deciduous_forest"},
         y_min = 1,
         y_max = 110,                    -- Higher than desert — forests go up to ~100
@@ -64,7 +56,7 @@ local function register_central_grassland(params)
         deco_type = "schematic",
         place_on = {"default:dirt_with_grass", "default:dirt_with_coniferous_litter"},
         sidelen = params.sidelen or 32,
-        noise_params = np,
+        noise_params = central_noise,
         biomes = {"grassland", "snowy_grassland", "coniferous_forest", "deciduous_forest"},
         y_min = 1,
         y_max = 110,
@@ -98,6 +90,7 @@ register_central_grassland({
     seed_offset = 2003,
     offset_y = -1,
 })
+
 
 
 
