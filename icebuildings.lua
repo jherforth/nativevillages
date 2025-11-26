@@ -1,5 +1,8 @@
 local S = minetest.get_translator("nativevillages")
 
+-- Load the shared fill-under function map gen helper
+dofile(minetest.get_modpath("nativevillages") .. "/utils.lua")
+
 -- ===================================================================
 -- ICE VILLAGE CLUSTERING NOISE
 -- Tighter, more frequent villages than grassland — fits arctic theme
@@ -28,6 +31,7 @@ local function register_ice_building(params)
         schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
         flags = "place_center_x, place_center_z, force_placement",
         rotation = "random",
+        on_placed = nativevillages.fill_under_house,
     })
 end
 
@@ -61,12 +65,14 @@ local function register_ice_central(params)
         schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
         flags = "place_center_x, place_center_z, force_placement",
         rotation = "random",
+        on_placed = nativevillages.fill_under_house,
     })
 end
 
 register_ice_central({ name = "icechurch", file = "icechurch_7_11_10.mts" })
 register_ice_central({ name = "icemarket", file = "icemarket_10_5_9.mts" })
 register_ice_central({ name = "icestable", file = "icestable_9_5_7.mts" })
+
 
 
 
