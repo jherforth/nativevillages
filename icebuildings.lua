@@ -17,12 +17,12 @@ local function register_ice_building(params)
         name = "nativevillages:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:snowblock", "default:ice"},
-        sidelen = 16,
+        sidelen = 24,
         noise_params = village_noise,
         biomes = {"icesheet", "icesheet_ocean"},
         y_min = 0,
         y_max = 40,
-        height = 1,
+        height = 0,
         height_max = 0,
         place_offset_y = params.offset_y or 0,  -- Most ice schematics sit directly on surface
         schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
@@ -55,7 +55,7 @@ local function register_ice_central(params)
         biomes = {"icesheet", "icesheet_ocean"},
         y_min = 0,
         y_max = 40,
-        height = 1,
+        height = 0,
         height_max = 0,
         place_offset_y = params.offset_y or 0,
         schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
@@ -67,6 +67,7 @@ end
 register_ice_central({ name = "icechurch", file = "icechurch_7_11_10.mts" })
 register_ice_central({ name = "icemarket", file = "icemarket_10_5_9.mts" })
 register_ice_central({ name = "icestable", file = "icestable_9_5_7.mts" })
+
 
 
 
