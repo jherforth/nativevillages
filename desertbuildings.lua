@@ -66,9 +66,10 @@ local function register_desert_central(params)
     })
 end
 
-register_central_building({name = "desertchurch", file = "desertchurch_9_12_16.mts", offset_y = 0})
-register_central_building({name = "desertmarket", file = "desertmarket_12_16_13.mts", offset_y = 0})
-register_central_building({name = "desertstable",file = "desertstable_13_6_9.mts", offset_y = 0})
+register_desert_central({name = "desertchurch", file = "desertchurch_9_12_16.mts", offset_y = 0})
+register_desert_central({name = "desertmarket", file = "desertmarket_12_16_13.mts", offset_y = 0})
+register_desert_central({name = "desertstable",file = "desertstable_13_6_9.mts", offset_y = 0})
+
 
 
 
