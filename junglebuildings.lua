@@ -46,10 +46,6 @@ register_jungle_building({ name = "junglestable", file = "junglestable_7_25_7.mt
 -- Even rarer — these are legendary lost temples in the jungle
 -- ===================================================================
 
-local jungle_central_noise = table.copy(jungle_village_noise)
-jungle_central_noise.scale = 0.0003   -- Extremely rare
-jungle_central_noise.spread = {x = 180, y = 180, z = 180}
-
 local function register_jungle_central(params)
     minetest.register_decoration({
         name = "nativevillages:" .. params.name,
@@ -70,6 +66,7 @@ end
 
 register_jungle_central({ name = "junglechurch", file = "junglechurch_7_28_7.mts", seed_offset = 6001, sidelen = 16 })
 register_jungle_central({ name = "junglemarket", file = "junglemarket_9_32_9.mts", seed_offset = 6002, sidelen = 16 })
+
 
 
 
