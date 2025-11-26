@@ -1,32 +1,33 @@
 local S = minetest.get_translator("nativevillages")
 
--- ===================================================================
--- JUNGLE TREEHOUSE VILLAGE NOISE
--- Very rare, very small, perfectly flat clearings only
--- ===================================================================
+-- utils.lua loaded in init.lua only → clean & safe
 
 local village_noise = nativevillages.global_village_noise
 local central_noise = nativevillages.global_central_noise
 
 -- ===================================================================
--- Helper: regular jungle treehouses
+-- Regular jungle treehouses (stilts already built into schematic)
 -- ===================================================================
-
 local function register_jungle_building(params)
     minetest.register_decoration({
         name = "nativevillages:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:dirt_with_rainforest_litter"},
-        sidelen = 32,
+        sidelen = 48,                          -- jungle clearings are rare → give more space to find flat ones
         noise_params = village_noise,
-        biomes = {"rainforest"},
+        biomes = {"rainforest", "rainforest_swamp"},
         y_min = 4,
-        y_max = 80,                    -- Jungles are tall!
-        height = 1,                    -- ONLY perfectly flat clearings (absolutely required)
-        place_offset_y = params.offset_y or 0,  -- Your treehouses already have massive stilts
+        y_max = 100,                           -- jungles go high!
+
+        -- THE THREE MAGIC LINES — jungle edition
+        place_offset_y = 1,                    -- bottom of stilts sits perfectly on ground
+        flags = "place_center_x, place_center_z",  -- NO force_placement → only real clearings
+        height = 1,
+        height_max = 2,                        -- jungle must be VERY flat (treehouses hate slopes)
+
         schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
-        flags = "place_center_x, place_center_z",
         rotation = "random",
+
         on_placed = function(pos)
             nativevillages.fill_under_house(pos, params.file)
         end,
@@ -34,52 +35,45 @@ local function register_jungle_building(params)
 end
 
 -- ===================================================================
--- REGISTER ALL JUNGLE TREEHOUSES
+-- Central / legendary jungle buildings (temples, big platforms, etc.)
 -- ===================================================================
-
-register_jungle_building({ name = "junglehouse1", file = "junglehouse1_7_26_7.mts", offset_y = 0 })
-register_jungle_building({ name = "junglehouse2", file = "junglehouse2_7_25_7.mts"})
-register_jungle_building({ name = "junglehouse3", file = "junglehouse3_7_25_7.mts"})
-register_jungle_building({ name = "junglehouse4", file = "junglehouse4_7_26_7.mts"})
-register_jungle_building({ name = "junglehouse5", file = "junglehouse5_7_28_7.mts"})
-register_jungle_building({ name = "junglestable", file = "junglestable_7_25_7.mts"})
-
--- ===================================================================
--- CENTRAL / RARER BUILDINGS
--- Even rarer — these are legendary lost temples in the jungle
--- ===================================================================
-
 local function register_jungle_central(params)
     minetest.register_decoration({
         name = "nativevillages:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:dirt_with_rainforest_litter"},
-        sidelen = 32,
+        sidelen = 64,                          -- ultra-rare legendary structures
         noise_params = central_noise,
-        biomes = {"rainforest"},
+        biomes = {"rainforest", "rainforest_swamp"},
         y_min = 4,
-        y_max = 80,
-        height = 1,
-        place_offset_y = params.offset_y or 0,
-        schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
+        y_max = 100,
+
+        place_offset_y = 1,
         flags = "place_center_x, place_center_z",
+        height = 1,
+        height_max = 2,                        -- must be perfectly flat clearing
+
+        schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
         rotation = "random",
+
         on_placed = function(pos)
             nativevillages.fill_under_house(pos, params.file)
         end,
     })
 end
 
-register_jungle_central({ name = "junglechurch", file = "junglechurch_7_28_7.mts", seed_offset = 6001, sidelen = 16 })
-register_jungle_central({ name = "junglemarket", file = "junglemarket_9_32_9.mts", seed_offset = 6002, sidelen = 16 })
+-- ===================================================================
+-- REGISTER ALL JUNGLE STRUCTURES
+-- ===================================================================
 
+-- Regular treehouses (all have built-in stilts → no offset needed)
+register_jungle_building({name = "junglehouse1",   file = "junglehouse1_7_26_7.mts"})
+register_jungle_building({name = "junglehouse2",   file = "junglehouse2_7_25_7.mts"})
+register_jungle_building({name = "junglehouse3",   file = "junglehouse3_7_25_7.mts"})
+register_jungle_building({name = "junglehouse4",   file = "junglehouse4_7_26_7.mts"})
+register_jungle_building({name = "junglehouse5",   file = "junglehouse5_7_28_7.mts"})
+register_jungle_building({name = "junglestable",   file = "junglestable_7_25_7.mts"})
 
-
-
-
-
-
-
-
-
-
+-- Legendary central structures
+register_jungle_central({name = "junglechurch",    file = "junglechurch_7_28_7.mts"})
+register_jungle_central({name = "junglemarket",    file = "junglemarket_9_32_9.mts"})
