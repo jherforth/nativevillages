@@ -33,7 +33,7 @@ local function register_ice_building(params)
         rotation = "random",
         on_placed = function(pos)
             nativevillages.fill_under_house(pos, params.file)
-        end
+        end,
     })
 end
 
@@ -69,13 +69,14 @@ local function register_ice_central(params)
         rotation = "random",
         on_placed = function(pos)
             nativevillages.fill_under_house(pos, params.file)
-        end
+        end,
     })
 end
 
 register_ice_central({ name = "icechurch", file = "icechurch_7_11_10.mts" })
 register_ice_central({ name = "icemarket", file = "icemarket_10_5_9.mts" })
 register_ice_central({ name = "icestable", file = "icestable_9_5_7.mts" })
+
 
 
 
