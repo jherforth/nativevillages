@@ -43,7 +43,6 @@ end
 
 register_grassland_building({ name = "grasslandhouse1", file = "grasslandhouse1_7_9_7.mts"})
 register_grassland_building({ name = "grasslandhouse2", file = "grasslandhouse2_6_7_7.mts"})
-register_grassland_building({ name = "grasslandhouse3", file = "grasslandhouse3_10_10_9.mts"})
 register_grassland_building({ name = "grasslandhouse4", file = "grasslandhouse4_7_7_9.mts"})
 register_grassland_building({ name = "grasslandhouse5", file = "grasslandhouse5_6_6_6.mts"})
 
@@ -77,6 +76,8 @@ end
 register_grassland_central({name = "grasslandchurch", file = "grasslandchurch_11_17_21.mts", offset_y = 0})
 register_grassland_central({name = "grasslandmarket",file = "grasslandmarket_9_5_9.mts", offset_y = 0})
 register_grassland_central({name = "grasslandstable", file = "grasslandstable_15_8_16.mts", offset_y = 0})
+register_grassland_central({name = "grasslandhouse3", file = "grasslandhouse3_10_10_9.mts", offset_y = 0})
+
 
 
 
