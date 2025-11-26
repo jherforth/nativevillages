@@ -1,5 +1,8 @@
 local S = minetest.get_translator("nativevillages")
 
+-- Load the shared fill-under function map gen helper
+dofile(minetest.get_modpath("nativevillages") .. "/utils.lua")
+
 -- ===================================================================
 -- GRASSLAND / FOREST VILLAGE CLUSTERING NOISE
 -- Same noise for all houses → perfect village grouping
@@ -28,6 +31,7 @@ local function register_grassland_building(params)
         schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
         flags = "place_center_x, place_center_z, force_placement",
         rotation = "random",
+        on_placed = nativevillages.fill_under_house,
     })
 end
 
@@ -62,12 +66,14 @@ local function register_grassland_central(params)
         schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
         flags = "place_center_x, place_center_z, force_placement",
         rotation = "random",
+        on_placed = nativevillages.fill_under_house,
     })
 end
 
 register_grassland_central({name = "grasslandchurch", file = "grasslandchurch_11_17_21.mts", offset_y = 0})
 register_grassland_central({name = "grasslandmarket",file = "grasslandmarket_9_5_9.mts", offset_y = 0})
 register_grassland_central({name = "grasslandstable", file = "grasslandstable_15_8_16.mts", offset_y = 0})
+
 
 
 
