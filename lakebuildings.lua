@@ -17,7 +17,7 @@ local function register_lake_building(params)
         name = "nativevillages:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:dirt", "default:sand"},
-        sidelen = params.sidelen or 16,
+        sidelen = 16,
         noise_params = village_noise,
         biomes = {"deciduous_forest_ocean", "deciduous_forest_shore", "coniferous_forest_ocean"},
         y_min = -1,
@@ -71,6 +71,7 @@ end
 register_lake_central({ name = "lakechurch",  file = "lakechurch_9_13_13.mts",   seed_offset = 4001, sidelen = 16, offset_y = 2 })
 register_lake_central({ name = "lakemarket",  file = "lakemarket_7_6_10.mts",    seed_offset = 4002, sidelen = 16, offset_y = 1 })
 register_lake_central({ name = "lakestable",  file = "lakestable_7_7_13.mts",    seed_offset = 4003, sidelen = 16, offset_y = 1 })
+
 
 
 
