@@ -19,7 +19,7 @@ local function register_lake_building(params)
         place_on = {"default:dirt", "default:sand"},
         sidelen = 32,
         noise_params = village_noise,
-        biomes = {"deciduous_forest_ocean", "deciduous_forest_shore", "coniferous_forest_ocean"},
+        biomes = {"deciduous_forest_shore"},
         y_min = -1,
         y_max = 3,                     -- Must be right at water level
         height = 1,                    -- Extremely flat only (stilt houses!)
@@ -53,7 +53,7 @@ local function register_lake_central(params)
         place_on = {"default:dirt", "default:sand"},
         sidelen = 40,
         noise_params = central_noise,
-        biomes = {"deciduous_forest_ocean", "deciduous_forest_shore", "coniferous_forest_ocean"},
+        biomes = {"deciduous_forest_shore"},
         y_min = -1,
         y_max = 3,
         height = 1,
@@ -68,6 +68,7 @@ end
 register_lake_central({ name = "lakechurch",  file = "lakechurch_9_13_13.mts", offset_y = 2 })
 register_lake_central({ name = "lakemarket",  file = "lakemarket_7_6_10.mts",  offset_y = 1 })
 register_lake_central({ name = "lakestable",  file = "lakestable_7_7_13.mts",  offset_y = 1 })
+
 
 
 
