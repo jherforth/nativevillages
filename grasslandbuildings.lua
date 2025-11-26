@@ -63,9 +63,10 @@ local function register_grassland_central(params)
     })
 end
 
-register_central_grassland({name = "grasslandchurch", file = "grasslandchurch_11_17_21.mts", offset_y = 0})
-register_central_grassland({name = "grasslandmarket",file = "grasslandmarket_9_5_9.mts", offset_y = 0})
-register_central_grassland({name = "grasslandstable", file = "grasslandstable_15_8_16.mts", offset_y = 0})
+register_grassland_central({name = "grasslandchurch", file = "grasslandchurch_11_17_21.mts", offset_y = 0})
+register_grassland_central({name = "grasslandmarket",file = "grasslandmarket_9_5_9.mts", offset_y = 0})
+register_grassland_central({name = "grasslandstable", file = "grasslandstable_15_8_16.mts", offset_y = 0})
+
 
 
 
