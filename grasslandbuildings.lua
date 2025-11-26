@@ -17,7 +17,7 @@ local function register_grassland_building(params)
         place_on = {"default:dirt_with_grass", "default:dirt_with_coniferous_litter"},
         sidelen = 40,                       -- same as desert: plenty of room to find flat spots
         noise_params = village_noise,
-        biomes = {"grassland", "coniferous_forest", "deciduous_forest"},
+        biomes = {"grassland"},
         y_min = 1,
         y_max = 110,
 
@@ -46,7 +46,7 @@ local function register_grassland_central(params)
         place_on = {"default:dirt_with_grass", "default:dirt_with_coniferous_litter"},
         sidelen = 48,                       -- slightly larger grid for rare buildings
         noise_params = central_noise,
-        biomes = {"grassland", "coniferous_forest", "deciduous_forest"},
+        biomes = {"grassland"},
         y_min = 1,
         y_max = 110,
 
@@ -79,3 +79,4 @@ register_grassland_central({name = "grasslandchurch",   file = "grasslandchurch_
 register_grassland_central({name = "grasslandmarket",   file = "grasslandmarket_9_5_9.mts"})
 register_grassland_central({name = "grasslandstable",   file = "grasslandstable_15_8_16.mts"})
 register_grassland_central({name = "grasslandhouse3",   file = "grasslandhouse3_10_10_9.mts"})
+
