@@ -26,10 +26,10 @@ local function register_ice_building(params)
         y_min = 0,
         y_max = 40,
         height = 1,
-        height_max = 1,
+        height_max = 2,
         place_offset_y = params.offset_y or 0,  -- Most ice schematics sit directly on surface
         schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
-        flags = "place_center_x, place_center_z, force_placement",
+        flags = "place_center_x, place_center_z,
         rotation = "random",
         on_placed = function(pos)
             nativevillages.fill_under_house(pos, params.file)
@@ -62,10 +62,10 @@ local function register_ice_central(params)
         y_min = 0,
         y_max = 40,
         height = 1,
-        height_max = 1,
+        height_max = 2,
         place_offset_y = params.offset_y or 0,
         schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
-        flags = "place_center_x, place_center_z, force_placement",
+        flags = "place_center_x, place_center_z,
         rotation = "random",
         on_placed = function(pos)
             nativevillages.fill_under_house(pos, params.file)
@@ -76,6 +76,7 @@ end
 register_ice_central({ name = "icechurch", file = "icechurch_7_11_10.mts" })
 register_ice_central({ name = "icemarket", file = "icemarket_10_5_9.mts" })
 register_ice_central({ name = "icestable", file = "icestable_9_5_7.mts" })
+
 
 
 
