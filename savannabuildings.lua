@@ -1,5 +1,8 @@
 local S = minetest.get_translator("nativevillages")
 
+-- Load the shared fill-under function map gen helper
+dofile(minetest.get_modpath("nativevillages") .. "/utils.lua")
+
 -- ===================================================================
 -- SAVANNA VILLAGE CLUSTERING NOISE
 -- Large, proud villages with plenty of breathing room
@@ -28,6 +31,7 @@ local function register_savanna_building(params)
         schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
         flags = "place_center_x, place_center_z, force_placement",
         rotation = "random",
+        on_placed = nativevillages.fill_under_house,
     })
 end
 
@@ -62,12 +66,14 @@ local function register_savanna_central(params)
         schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
         flags = "place_center_x, place_center_z, force_placement",
         rotation = "random",
+        on_placed = nativevillages.fill_under_house,
     })
 end
 
 register_savanna_central({ name = "savannachurch",  file = "savannachurch_8_11_12.mts"})
 register_savanna_central({ name = "savannamarket",  file = "savannamarket_10_5_9.mts"})
 register_savanna_central({ name = "savannastable",  file = "savannastable_15_7_16.mts", offset_y = -1 })
+
 
 
 
