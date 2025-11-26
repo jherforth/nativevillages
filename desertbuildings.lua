@@ -17,23 +17,16 @@ local function register_desert_building(params)
         name = "nativevillages:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:desert_sand", "default:sand"},
-        sidelen = params.sidelen or 16,
+        sidelen = 16,
         noise_params = village_noise,
         biomes = {"desert", "sandstone_desert"},
         y_min = 1,
         y_max = 50,
-
-        -- Only place on relatively flat ground (max 3 nodes height difference)
         height = 3,
-
-        place_offset_y = params.offset_y or -1,
+        place_offset_y = params.offset_y or 0,
         schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
         flags = "place_center_x, place_center_z, force_placement",
         rotation = "random",
-
-        -- Slight random offset so buildings of same type don't stack perfectly
-        -- (optional but looks more natural)
-        param2 = params.param2 or 0,
     })
 end
 
@@ -41,44 +34,21 @@ end
 -- REGISTER ALL DESERT BUILDINGS
 -- ===================================================================
 
-register_desert_building({
-    name = "deserthouse1",
-    file = "deserthouse1_12_14_9.mts",
-    sidelen = 16,
-    offset_y = -1,
-})
-
-register_desert_building({
-    name = "deserthouse2",
-    file = "deserthouse2_8_7_8.mts",
-    sidelen = 16,
-})
-
-register_desert_building({
-    name = "deserthouse3",
-    file = "deserthouse3_8_10_8.mts",
-    sidelen = 16,
-})
-
-register_desert_building({
-    name = "deserthouse4",
-    file = "deserthouse4_10_8_7.mts",
-    sidelen = 16,
-})
+register_desert_building({name = "deserthouse1", file = "deserthouse1_12_14_9.mts", offset_y = -1,})
+register_desert_building({name = "deserthouse2", file = "deserthouse2_8_7_8.mts"})
+register_desert_building({name = "deserthouse3", file = "deserthouse3_8_10_8.mts"})
+register_desert_building({name = "deserthouse4", file = "deserthouse4_10_8_7.mts"})
 
 register_desert_building({
     name = "deserthouse5",
     file = "deserthouse5_10_6_8.mts",
-    sidelen = 16,
 })
 
--- Larger/rarer central buildings — slightly lower density by reducing scale just for them
-local central_noise = table.copy(desert_village_noise)
-central_noise.scale = 0.0003  -- about half as common as houses
+-- ===================================================================
+-- CENTRAL / RARER BUILDINGS — use the global central noise
+-- ===================================================================
 
-local function register_central_building(params)
-    local np = table.copy(central_noise)
-    np.seed = np.seed + params.seed_offset  -- different seed = slightly different centers
+local function register_desert_central(params)
     minetest.register_decoration({
         name = "nativevillages:" .. params.name,
         deco_type = "schematic",
@@ -86,35 +56,20 @@ local function register_central_building(params)
         sidelen = 32,
         noise_params = central_noise,
         biomes = {"desert", "sandstone_desert"},
-        y_min = 1,
+        y_min = 0,
         y_max = 50,
         height = 3,
-        place_offset_y = params.offset_y or -1,
+        place_offset_y = params.offset_y or 0,
         schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
         flags = "place_center_x, place_center_z, force_placement",
         rotation = "random",
     })
 end
 
-register_central_building({
-    name = "desertchurch",
-    file = "desertchurch_9_12_16.mts",
-    seed_offset = 1001,
-    offset_y = -1,
-})
+register_central_building({name = "desertchurch", file = "desertchurch_9_12_16.mts", offset_y = 0})
+register_central_building({name = "desertmarket", file = "desertmarket_12_16_13.mts", offset_y = 0})
+register_central_building({name = "desertstable",file = "desertstable_13_6_9.mts", offset_y 0})
 
-register_central_building({
-    name = "desertmarket",
-    file = "desertmarket_12_16_13.mts",
-    seed_offset = 1002,
-    offset_y = -2,
-})
-
-register_central_building({
-    name = "desertstable",
-    file = "desertstable_13_6_9.mts",
-    seed_offset = 1003,
-})
 
 
 
