@@ -17,9 +17,9 @@ local function register_grassland_building(params)
         name = "nativevillages:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:dirt_with_grass", "default:dirt_with_coniferous_litter"},
-        sidelen = 16,
+        sidelen = 24,
         noise_params = village_noise,
-        biomes = {"grassland", "snowy_grassland", "coniferous_forest", "deciduous_forest"},
+        biomes = {"grassland", "coniferous_forest", "deciduous_forest"},
         y_min = 0,
         y_max = 110,                    -- Higher than desert — forests go up to ~100
         height = 2,                     -- Grassland is flatter → we can demand flatter ground
@@ -66,6 +66,7 @@ end
 register_grassland_central({name = "grasslandchurch", file = "grasslandchurch_11_17_21.mts", offset_y = 0})
 register_grassland_central({name = "grasslandmarket",file = "grasslandmarket_9_5_9.mts", offset_y = 0})
 register_grassland_central({name = "grasslandstable", file = "grasslandstable_15_8_16.mts", offset_y = 0})
+
 
 
 
