@@ -17,10 +17,7 @@ local function register_lake_building(params)
         noise_params = village_noise,
         biomes = {
             "deciduous_forest_shore",
-            "deciduous_forest_ocean",
-            "coniferous_forest_shore",
-            "coniferous_forest_ocean",
-            "rainforest_swamp"               -- bonus: swamp villages on stilts!
+            "coniferous_forest_ocean"
         },
         y_min = -2,
         y_max = 4,                               -- must be right at water level
@@ -52,10 +49,7 @@ local function register_lake_central(params)
         noise_params = central_noise,
         biomes = {
             "deciduous_forest_shore",
-            "deciduous_forest_ocean",
-            "coniferous_forest_shore",
-            "coniferous_forest_ocean",
-            "rainforest_swamp"
+            "coniferous_forest_shore"
         },
         y_min = -2,
         y_max = 4,
@@ -89,3 +83,4 @@ register_lake_building({name = "lakehouse5", file = "lakehouse5_6_11_10.mts"})
 register_lake_central({name = "lakechurch", file = "lakechurch_9_13_13.mts"})
 register_lake_central({name = "lakemarket", file = "lakemarket_7_6_10.mts"})
 register_lake_central({name = "lakestable", file = "lakestable_7_7_13.mts"})
+
