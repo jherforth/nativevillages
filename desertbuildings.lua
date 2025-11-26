@@ -29,7 +29,7 @@ local function register_desert_building(params)
         height_max = 3,
         place_offset_y = params.offset_y or 0,
         schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
-        flags = "place_center_x, place_center_z,
+        flags = "place_center_x, place_center_z",
         rotation = "random",
         on_placed = function(pos)
             nativevillages.fill_under_house(pos, params.file)
@@ -65,7 +65,7 @@ local function register_desert_central(params)
         height_max = 3,
         place_offset_y = params.offset_y or 0,
         schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
-        flags = "place_center_x, place_center_z,
+        flags = "place_center_x, place_center_z",
         rotation = "random",
         on_placed = function(pos)
             nativevillages.fill_under_house(pos, params.file)
@@ -76,6 +76,7 @@ end
 register_desert_central({name = "desertchurch", file = "desertchurch_9_12_16.mts", offset_y = 0})
 register_desert_central({name = "desertmarket", file = "desertmarket_12_16_13.mts", offset_y = 0})
 register_desert_central({name = "desertstable",file = "desertstable_13_6_9.mts", offset_y = 0})
+
 
 
 
