@@ -17,7 +17,7 @@ local function register_desert_building(params)
         name = "nativevillages:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:desert_sand", "default:sand"},
-        sidelen = 32,
+        sidelen = 40,
         noise_params = village_noise,
         biomes = {"desert", "sandstone_desert"},
         y_min = 1,
@@ -67,6 +67,7 @@ end
 register_desert_central({name = "desertchurch", file = "desertchurch_9_12_16.mts", offset_y = 0})
 register_desert_central({name = "desertmarket", file = "desertmarket_12_16_13.mts", offset_y = 0})
 register_desert_central({name = "desertstable",file = "desertstable_13_6_9.mts", offset_y = 0})
+
 
 
 
