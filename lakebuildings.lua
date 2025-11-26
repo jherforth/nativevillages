@@ -34,28 +34,23 @@ end
 -- REGISTER ALL LAKE HOUSES
 -- ===================================================================
 
-register_lake_building({ name = "lakehouse1", file = "lakehouse1_12_11_15.mts", sidelen = 16, offset_y = 2 })
-register_lake_building({ name = "lakehouse2", file = "lakehouse2_6_8_8.mts",     sidelen = 16,  offset_y = 2 })
-register_lake_building({ name = "lakehouse3", file = "lakehouse3_5_9_9.mts",     sidelen = 16,  offset_y = 2 })
-register_lake_building({ name = "lakehouse4", file = "lakehouse4_5_9_9.mts",     sidelen = 16,  offset_y = 2 })
-register_lake_building({ name = "lakehouse5", file = "lakehouse5_6_11_10.mts",   sidelen = 16,  offset_y = 2 })
+register_lake_building({ name = "lakehouse1", file = "lakehouse1_12_11_15.mts", offset_y = 2 })
+register_lake_building({ name = "lakehouse2", file = "lakehouse2_6_8_8.mts"})
+register_lake_building({ name = "lakehouse3", file = "lakehouse3_5_9_9.mts"})
+register_lake_building({ name = "lakehouse4", file = "lakehouse4_5_9_9.mts"})
+register_lake_building({ name = "lakehouse5", file = "lakehouse5_6_11_10.mts"})
 
 -- ===================================================================
 -- CENTRAL / RARER BUILDINGS (church, market, stable)
 -- Lower density + offset seeds → appear at the "heart" of each hamlet
 -- ===================================================================
 
-local lake_central_noise = table.copy(lake_village_noise)
-lake_central_noise.scale = 0.0003   -- Rarer than houses
-
 local function register_lake_central(params)
-    local np = table.copy(lake_central_noise)
-    np.seed = np.seed + params.seed_offset
     minetest.register_decoration({
         name = "nativevillages:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:dirt", "default:sand"},
-        sidelen = params.sidelen or 16,
+        sidelen = 32,
         noise_params = central_noise,
         biomes = {"deciduous_forest_ocean", "deciduous_forest_shore", "coniferous_forest_ocean"},
         y_min = -1,
@@ -68,9 +63,10 @@ local function register_lake_central(params)
     })
 end
 
-register_lake_central({ name = "lakechurch",  file = "lakechurch_9_13_13.mts",   seed_offset = 4001, sidelen = 16, offset_y = 2 })
-register_lake_central({ name = "lakemarket",  file = "lakemarket_7_6_10.mts",    seed_offset = 4002, sidelen = 16, offset_y = 1 })
-register_lake_central({ name = "lakestable",  file = "lakestable_7_7_13.mts",    seed_offset = 4003, sidelen = 16, offset_y = 1 })
+register_lake_central({ name = "lakechurch",  file = "lakechurch_9_13_13.mts", offset_y = 2 })
+register_lake_central({ name = "lakemarket",  file = "lakemarket_7_6_10.mts",  offset_y = 1 })
+register_lake_central({ name = "lakestable",  file = "lakestable_7_7_13.mts",  offset_y = 1 })
+
 
 
 
