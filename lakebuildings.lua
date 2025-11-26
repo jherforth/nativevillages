@@ -33,7 +33,7 @@ local function register_lake_building(params)
         rotation = "random",
         on_placed = function(pos)
             nativevillages.fill_under_house(pos, params.file)
-        end
+        end,
     })
 end
 
@@ -70,13 +70,14 @@ local function register_lake_central(params)
         rotation = "random",
         on_placed = function(pos)
             nativevillages.fill_under_house(pos, params.file)
-        end
+        end,
     })
 end
 
 register_lake_central({ name = "lakechurch",  file = "lakechurch_9_13_13.mts", offset_y = 2 })
 register_lake_central({ name = "lakemarket",  file = "lakemarket_7_6_10.mts",  offset_y = 1 })
 register_lake_central({ name = "lakestable",  file = "lakestable_7_7_13.mts",  offset_y = 1 })
+
 
 
 
