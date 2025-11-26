@@ -5,16 +5,8 @@ local S = minetest.get_translator("nativevillages")
 -- One shared noise = all buildings appear in the same village spots
 -- ===================================================================
 
-local desert_village_noise = {
-    offset = 0.0,
-    scale = 0.025,          -- Controls village density inside clusters
-    spread = {x = 80, y = 80, z = 80},  -- Village size & spacing
-    seed = 22847392,        -- Change this number if you want different layout
-    octaves = 3,
-    persistence = 0.55,
-    lacunarity = 2.0,
-    flags = "defaults",
-}
+local village_noise = nativevillages.global_village_noise
+local central_noise = nativevillages.global_central_noise
 
 -- ===================================================================
 -- Helper function so we don't repeat the same 20 lines 8 times
@@ -26,7 +18,7 @@ local function register_desert_building(params)
         deco_type = "schematic",
         place_on = {"default:desert_sand", "default:sand"},
         sidelen = params.sidelen or 16,
-        noise_params = desert_village_noise,
+        noise_params = village_noise,
         biomes = {"desert", "sandstone_desert"},
         y_min = 1,
         y_max = 50,
@@ -92,7 +84,7 @@ local function register_central_building(params)
         deco_type = "schematic",
         place_on = {"default:desert_sand", "default:sand"},
         sidelen = 32,
-        noise_params = np,
+        noise_params = central_noise,
         biomes = {"desert", "sandstone_desert"},
         y_min = 1,
         y_max = 50,
@@ -123,6 +115,7 @@ register_central_building({
     file = "desertstable_13_6_9.mts",
     seed_offset = 1003,
 })
+
 
 
 
