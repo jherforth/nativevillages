@@ -5,16 +5,8 @@ local S = minetest.get_translator("nativevillages")
 -- Large, proud villages with plenty of breathing room
 -- ===================================================================
 
-local savanna_village_noise = {
-    offset = 0.0,
-    scale = 0.025,                 -- Perfect balance: common enough, never overcrowded
-    spread = {x = 80, y = 80, z = 80},  -- Big, impressive villages
-    seed = 67239184,               -- Unique seed
-    octaves = 3,
-    persistence = 0.62,
-    lacunarity = 2.0,
-    flags = "defaults",
-}
+local village_noise = nativevillages.global_village_noise
+local central_noise = nativevillages.global_central_noise
 
 -- ===================================================================
 -- Helper: regular savanna houses
@@ -26,7 +18,7 @@ local function register_savanna_building(params)
         deco_type = "schematic",
         place_on = {"default:dry_dirt_with_dry_grass"},
         sidelen = params.sidelen or 8,
-        noise_params = savanna_village_noise,
+        noise_params = village_noise,
         biomes = {"savanna"},
         y_min = 1,
         y_max = 120,                   -- Savanna can go high
@@ -64,7 +56,7 @@ local function register_savanna_central(params)
         deco_type = "schematic",
         place_on = {"default:dry_dirt_with_dry_grass"},
         sidelen = params.sidelen or 32,
-        noise_params = np,
+        noise_params = central_noise,
         biomes = {"savanna"},
         y_min = 1,
         y_max = 120,
@@ -79,6 +71,7 @@ end
 register_savanna_central({ name = "savannachurch",  file = "savannachurch_8_11_12.mts",   seed_offset = 5001, sidelen = 16 })
 register_savanna_central({ name = "savannamarket",  file = "savannamarket_10_5_9.mts",    seed_offset = 5002, sidelen = 16 })
 register_savanna_central({ name = "savannastable",  file = "savannastable_15_7_16.mts",  seed_offset = 5003, sidelen = 32, offset_y = -1 })
+
 
 
 
