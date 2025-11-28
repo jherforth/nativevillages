@@ -66,6 +66,7 @@ dofile(modpath .. "/paths.lua")         -- ‚Üê uses noise from building files ‚Ü
 -- dofile(modpath .. "/buyablestuff.lua")
 dofile(modpath .. "/explodingtoad.lua")
 dofile(modpath .. "/hunger.lua")
+dofile(modpath .. "/loot.lua")
 
 -- 5. Custom mob spawning (if exists)
 if mobs.custom_spawn_nativevillages then
