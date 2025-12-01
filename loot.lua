@@ -114,30 +114,76 @@ end
 
 minetest.register_lbm({
     name = "nativevillages:initialize_village_chests",
-    nodenames = {"default:chest"},
+    nodenames = {"default:chest", "default:chest_locked"},
     run_at_every_load = false,
     action = function(pos, node)
-        local meta = minetest.get_meta(pos)
+        local chest_def = minetest.registered_nodes[node.name]
+        if not chest_def then return end
 
+        if chest_def.on_construct then
+            chest_def.on_construct(pos)
+        end
+
+        local meta = minetest.get_meta(pos)
         if meta:get_string("nativevillages_loot_filled") == "true" then
             return
         end
 
-        local chest_def = minetest.registered_nodes["default:chest"]
-        if chest_def and chest_def.on_construct then
-            chest_def.on_construct(pos)
-        end
+        meta:set_string("nativevillages_loot_filled", "true")
 
         local loot_table = get_loot_table_for_biome(pos)
         if loot_table then
             minetest.after(0.1, function()
                 fill_chest_with_loot(pos, loot_table)
-
-                local meta = minetest.get_meta(pos)
-                meta:set_string("nativevillages_loot_filled", "true")
             end)
         end
     end
 })
+
+-- ===================================================================
+-- Fallback: Initialize chest on first interaction if LBM missed it
+-- ===================================================================
+
+local original_on_rightclick = {}
+
+local function wrap_chest_rightclick(chest_name)
+    local chest_def = minetest.registered_nodes[chest_name]
+    if not chest_def then return end
+
+    original_on_rightclick[chest_name] = chest_def.on_rightclick
+
+    local new_def = {}
+    for k, v in pairs(chest_def) do
+        new_def[k] = v
+    end
+
+    new_def.on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
+        local meta = minetest.get_meta(pos)
+
+        if not meta:get_string("formspec") or meta:get_string("formspec") == "" then
+            if chest_def.on_construct then
+                chest_def.on_construct(pos)
+            end
+
+            if meta:get_string("nativevillages_loot_filled") ~= "true" then
+                meta:set_string("nativevillages_loot_filled", "true")
+
+                local loot_table = get_loot_table_for_biome(pos)
+                if loot_table then
+                    fill_chest_with_loot(pos, loot_table)
+                end
+            end
+        end
+
+        if original_on_rightclick[chest_name] then
+            return original_on_rightclick[chest_name](pos, node, clicker, itemstack, pointed_thing)
+        end
+    end
+
+    minetest.override_item(chest_name, new_def)
+end
+
+wrap_chest_rightclick("default:chest")
+wrap_chest_rightclick("default:chest_locked")
 
 minetest.log("action", "[nativevillages] Loot system loaded - schematic chests will have treasure")
