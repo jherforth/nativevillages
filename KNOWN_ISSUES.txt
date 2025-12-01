@@ -91,38 +91,45 @@ SOLUTION: Edit village_noise.lua, line 10:
   scale = 0.0005 // Fewer villages (from 0.001)
 
 
-ISSUE: Buildings Spawning on Hills
------------------------------------
+ISSUE: Buildings Spawning on Hills (FIXED v2)
+----------------------------------------------
 SYMPTOM: Buildings appear on slopes with visible gaps underneath
 
-CAUSE: height_max was set to 2, checking only center point not footprint
+CAUSE: height_max only checks single column, not entire footprint
+       Missing all_floors flag meant only center was checked
 
-STATUS: ✅ FIXED - Changed height_max to 1 (perfectly flat only)
+STATUS: ✅ FIXED - Added all_floors flag + height_max = 0
 
-SOLUTION: All *buildings.lua files now use height_max = 1
-          Buildings only spawn on perfectly flat terrain
+SOLUTION: All *buildings.lua files now use:
+          - all_floors flag (checks ENTIRE schematic footprint)
+          - height = 0, height_max = 0 (zero variation = perfectly flat)
 
-TRADE-OFF: Buildings are slightly rarer, but always properly grounded
+TRADE-OFF: Buildings are MUCH rarer (perfectly flat terrain required)
+           But always perfectly grounded with zero gaps
 
-ADJUSTMENT: If you want more buildings and can accept small gaps:
-            Change height_max = 2 in *buildings.lua files
+ADJUSTMENT: If buildings too rare, increase height_max:
+            height_max = 1 (slight gaps, more buildings)
+            height_max = 2 (moderate gaps, many buildings)
+            height_max = 3 (larger gaps, maximum buildings)
 
 
-ISSUE: Chest Loot Issues
--------------------------
+ISSUE: Chest Loot Issues (FIXED v2)
+------------------------------------
 SYMPTOM: Village chests show no items or glitched inventory
-        Manually placed chests auto-fill with loot (should be empty)
+        Inventory unusable, items not accessible
 
-CAUSE: Loot system was filling ALL chests, including manual placements
-       Timing issues with chest initialization during mapgen
+CAUSE: register_on_placenode doesn't fire for schematic decorations
+       Chests from schematics never triggered the filling callback
 
-STATUS: ✅ FIXED - Loot only fills schematic-placed chests
+STATUS: ✅ FIXED - Now using LBM (Loading Block Modifier)
 
-SOLUTION: loot.lua now checks if chest has a placer (player)
-          Only chests placed by schematics (no placer) get filled
-          Reduced delay from 1s to 0.1s for faster initialization
+SOLUTION: loot.lua now uses minetest.register_lbm
+          LBMs run when blocks load/generate (perfect for decorations)
+          Tracks filled chests to avoid refilling
+          run_at_every_load = false for one-time processing
 
-RESULT: Village chests have proper loot, manual chests stay empty
+RESULT: Village chests properly filled with biome-appropriate loot
+        Chests fully usable, items visible and accessible
 
 
 ====================================================================
