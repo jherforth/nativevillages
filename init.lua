@@ -60,7 +60,7 @@ dofile(modpath .. "/desertbuildings.lua")
 dofile(modpath .. "/savannabuildings.lua")
 
 -- 4. Paths (uses same noise system)
-dofile(modpath .. "/paths_new.lua")
+dofile(modpath .. "/paths.lua")
 
 -- 5. Systems (villagers, mood, spawning)
 dofile(modpath .. "/npcmood.lua")
