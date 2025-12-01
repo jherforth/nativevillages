@@ -58,10 +58,7 @@ dofile(modpath .. "/lakebuildings.lua")
 dofile(modpath .. "/desertbuildings.lua")
 dofile(modpath .. "/savannabuildings.lua")
 
--- 4. Paths (uses same noise system)
-dofile(modpath .. "/paths.lua")
-
--- 5. Systems (villagers, mood, spawning)
+-- 4. Systems (villagers, mood, spawning)
 dofile(modpath .. "/npcmood.lua")
 dofile(modpath .. "/villagers.lua")
 dofile(modpath .. "/house_spawning.lua")
@@ -82,5 +79,5 @@ end
 -- ===================================================================
 
 minetest.log("action", "[nativevillages] Successfully loaded — " ..
-    "6 biomes | perfect villages | villagers | paths | exploding toads")
+    "6 biomes | perfect villages | villagers | exploding toads")
 print(S("[MOD] NativeVillages loaded — a living world awaits you"))

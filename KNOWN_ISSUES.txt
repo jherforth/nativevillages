@@ -32,36 +32,17 @@ SOLUTION: Generate new world or explore new chunks
           Old chunks cannot be retroactively fixed
 
 
-ISSUE: Paths Too Sparse
------------------------
-SYMPTOM: Villages have very few paths
+ISSUE: No Path/Road System
+---------------------------
+SYMPTOM: Villages don't have connecting paths or roads
 
-CAUSE: Default fill_ratio may be too conservative
+STATUS: Removed (paths spawned randomly, not with villages)
 
-STATUS: Working as designed, but configurable
+EXPLANATION: The path system was placing roads randomly throughout
+             the world instead of clustering with village buildings.
+             Removed until a proper village-aware system can be built.
 
-SOLUTION: Edit paths.lua, increase fill_ratio values:
-  Line ~58: fill_ratio = 0.003 (from 0.002) for straights
-  Line ~60: fill_ratio = 0.0015 (from 0.001) for turns
-  Line ~62: fill_ratio = 0.001 (from 0.0005) for junctions
-
-
-ISSUE: No Paths in Desert/Jungle
----------------------------------
-SYMPTOM: Desert and jungle villages have no paths
-
-CAUSE: Path schematics don't exist for these biomes yet
-
-STATUS: Expected - schematics not created
-
-SOLUTION: Create path schematics following naming pattern:
-  desert_dirt_forward_straight_5x5.mts
-  desert_dirt_sideways_straight_5x5.mts
-  desert_dirt_left_5x5.mts
-  desert_dirt_right_5x5.mts
-  desert_dirt_junction_5x5.mts
-
-  (Same pattern for jungle_dirt_*)
+FUTURE: May add back with proper village center detection
 
 
 ISSUE: Buildings Missing Nodes
