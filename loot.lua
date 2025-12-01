@@ -152,35 +152,30 @@ local function wrap_chest_rightclick(chest_name)
 
     original_on_rightclick[chest_name] = chest_def.on_rightclick
 
-    local new_def = {}
-    for k, v in pairs(chest_def) do
-        new_def[k] = v
-    end
+    minetest.override_item(chest_name, {
+        on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
+            local meta = minetest.get_meta(pos)
 
-    new_def.on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
-        local meta = minetest.get_meta(pos)
+            if not meta:get_string("formspec") or meta:get_string("formspec") == "" then
+                if chest_def.on_construct then
+                    chest_def.on_construct(pos)
+                end
 
-        if not meta:get_string("formspec") or meta:get_string("formspec") == "" then
-            if chest_def.on_construct then
-                chest_def.on_construct(pos)
-            end
+                if meta:get_string("nativevillages_loot_filled") ~= "true" then
+                    meta:set_string("nativevillages_loot_filled", "true")
 
-            if meta:get_string("nativevillages_loot_filled") ~= "true" then
-                meta:set_string("nativevillages_loot_filled", "true")
-
-                local loot_table = get_loot_table_for_biome(pos)
-                if loot_table then
-                    fill_chest_with_loot(pos, loot_table)
+                    local loot_table = get_loot_table_for_biome(pos)
+                    if loot_table then
+                        fill_chest_with_loot(pos, loot_table)
+                    end
                 end
             end
-        end
 
-        if original_on_rightclick[chest_name] then
-            return original_on_rightclick[chest_name](pos, node, clicker, itemstack, pointed_thing)
+            if original_on_rightclick[chest_name] then
+                return original_on_rightclick[chest_name](pos, node, clicker, itemstack, pointed_thing)
+            end
         end
-    end
-
-    minetest.override_item(chest_name, new_def)
+    })
 end
 
 wrap_chest_rightclick("default:chest")
