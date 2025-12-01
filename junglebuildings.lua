@@ -19,11 +19,10 @@ local function register_jungle_building(params)
         y_min = 4,
         y_max = 100,                           -- jungles go high!
 
-        -- THE THREE MAGIC LINES — jungle edition
-        place_offset_y = 1,                    -- bottom of stilts sits perfectly on ground
-        flags = "place_center_x, place_center_z",  -- NO force_placement → only real clearings
+        place_offset_y = 1,
+        flags = "place_center_x, place_center_z, force_placement",
         height = 1,
-        height_max = 2,                        -- jungle must be VERY flat (treehouses hate slopes)
+        height_max = 2,
 
         schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
         rotation = "random",
@@ -49,9 +48,9 @@ local function register_jungle_central(params)
         y_max = 100,
 
         place_offset_y = 1,
-        flags = "place_center_x, place_center_z",
+        flags = "place_center_x, place_center_z, force_placement",
         height = 1,
-        height_max = 2,                        -- must be perfectly flat clearing
+        height_max = 2,
 
         schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
         rotation = "random",

@@ -20,11 +20,10 @@ local function register_desert_building(params)
         y_min = 1,
         y_max = 50,
 
-        -- THESE THREE LINES ARE THE MAGIC
-        place_offset_y = 1,                    -- house sits ON the ground, never inside
-        flags = "place_center_x, place_center_z",  -- NO force_placement!
+        place_offset_y = 1,
+        flags = "place_center_x, place_center_z, force_placement",
         height = 1,
-        height_max = 3,                        -- allows gentle dunes, rejects cliffs
+        height_max = 3,
 
         schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
         rotation = "random",
@@ -50,8 +49,8 @@ local function register_desert_central(params)
         y_min = 0,
         y_max = 50,
 
-        place_offset_y = 1,                    -- same rule: sit ON the ground
-        flags = "place_center_x, place_center_z",
+        place_offset_y = 1,
+        flags = "place_center_x, place_center_z, force_placement",
         height = 1,
         height_max = 3,
 

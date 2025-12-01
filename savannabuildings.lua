@@ -19,11 +19,10 @@ local function register_savanna_building(params)
         y_min = 1,
         y_max = 140,                           -- savannas can climb high!
 
-        -- THE THREE FINAL MAGIC LINES — savanna edition
-        place_offset_y = 1,                    -- sits perfectly on dry grass
-        flags = "place_center_x, place_center_z",  -- NO force_placement
+        place_offset_y = 1,
+        flags = "place_center_x, place_center_z, force_placement",
         height = 1,
-        height_max = 4,                        -- savanna has rolling hills → allow gentle slopes
+        height_max = 4,
 
         schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
         rotation = "random",
@@ -49,7 +48,7 @@ local function register_savanna_central(params)
         y_max = 140,
 
         place_offset_y = 1,
-        flags = "place_center_x, place_center_z",
+        flags = "place_center_x, place_center_z, force_placement",
         height = 1,
         height_max = 4,
 

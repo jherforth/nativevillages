@@ -47,8 +47,11 @@ dofile(modpath .. "/lakeblocks.lua")
 dofile(modpath .. "/desertblocks.lua")
 dofile(modpath .. "/utils.lua")
 
--- 2. Buildings (they use the noise tables from above)
+-- 2. Village system (noise and grid must come first)
 dofile(modpath .. "/village_noise.lua")
+dofile(modpath .. "/village_grid.lua")
+
+-- 3. Buildings (they use the noise tables from above)
 dofile(modpath .. "/junglebuildings.lua")
 dofile(modpath .. "/icebuildings.lua")
 dofile(modpath .. "/grasslandbuildings.lua")
@@ -56,19 +59,21 @@ dofile(modpath .. "/lakebuildings.lua")
 dofile(modpath .. "/desertbuildings.lua")
 dofile(modpath .. "/savannabuildings.lua")
 
--- 3. Systems (villagers, mood, spawning, paths)
+-- 4. Paths (uses same noise system)
+dofile(modpath .. "/paths_new.lua")
+
+-- 5. Systems (villagers, mood, spawning)
 dofile(modpath .. "/npcmood.lua")
 dofile(modpath .. "/villagers.lua")
 dofile(modpath .. "/house_spawning.lua")
-dofile(modpath .. "/paths.lua")         -- ← uses noise from building files → must come after
 
--- 4. Optional/fun extras
+-- 6. Optional/fun extras
 -- dofile(modpath .. "/buyablestuff.lua")
 dofile(modpath .. "/explodingtoad.lua")
 dofile(modpath .. "/hunger.lua")
 dofile(modpath .. "/loot.lua")
 
--- 5. Custom mob spawning (if exists)
+-- 7. Custom mob spawning (if exists)
 if mobs.custom_spawn_nativevillages then
     dofile(modpath .. "/spawn.lua")
 end

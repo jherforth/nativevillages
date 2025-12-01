@@ -15,17 +15,16 @@ local function register_grassland_building(params)
         name = "nativevillages:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:dirt_with_grass", "default:dirt_with_coniferous_litter"},
-        sidelen = 40,                       -- same as desert: plenty of room to find flat spots
+        sidelen = 40,
         noise_params = village_noise,
         biomes = {"grassland"},
         y_min = 1,
         y_max = 110,
 
-        -- THE THREE MAGIC LINES (identical to desert)
-        place_offset_y = 1,                 -- sits perfectly ON the ground
-        flags = "place_center_x, place_center_z",  -- NO force_placement!
+        place_offset_y = 1,
+        flags = "place_center_x, place_center_z, force_placement",
         height = 1,
-        height_max = 3,                     -- allows gentle hills, rejects steep slopes
+        height_max = 3,
 
         schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
         rotation = "random",
@@ -44,14 +43,14 @@ local function register_grassland_central(params)
         name = "nativevillages:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:dirt_with_grass", "default:dirt_with_coniferous_litter"},
-        sidelen = 48,                       -- slightly larger grid for rare buildings
+        sidelen = 48,
         noise_params = central_noise,
         biomes = {"grassland"},
         y_min = 1,
         y_max = 110,
 
         place_offset_y = 1,
-        flags = "place_center_x, place_center_z",
+        flags = "place_center_x, place_center_z, force_placement",
         height = 1,
         height_max = 3,
 

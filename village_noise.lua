@@ -4,28 +4,31 @@
 nativevillages = nativevillages or {}
 
 -- This is the ONE AND ONLY village noise used by EVERY biome
+-- Optimized for compact, cohesive villages with grid layout
 nativevillages.global_village_noise = {
     offset = 0.0,
-    scale = 0.0002,            -- ↓ EXTREMELY low = villages are RARE
-    spread = {x = 500, y = 500, z = 500},   -- small, cozy villages
+    scale = 0.001,            -- Increased for better building clustering
+    spread = {x = 300, y = 300, z = 300},   -- Tighter spread = more compact villages
     seed = 987654321,
-    octaves = 3,
-    persistence = 0.5,
+    octaves = 2,              -- Reduced octaves = smoother, more predictable areas
+    persistence = 0.6,
     lacunarity = 2.0,
     flags = "defaults",
 }
 
 -- Rarer central buildings (church/market/stable)
 nativevillages.global_central_noise = table.copy(nativevillages.global_village_noise)
-nativevillages.global_central_noise.scale = 0.00002   -- appear in ~1 out of 8 villages
+nativevillages.global_central_noise.scale = 0.0001   -- appear in ~1 out of 10 villages
+nativevillages.global_central_noise.spread = {x = 400, y = 400, z = 400}
 
--- Third noise just for paths that is very strongly correlated but not identical
+-- Path noise - slightly different seed for variation but similar scale
 nativevillages.global_path_noise = {
     offset = 0,
-    scale = 0.0002,          -- same rarity as houses
-    spread = {x = 500, y = 500, z = 500},
-    seed = 987654321 + 1,   -- ← different seed so paths are offset a few meters from houses
-    octaves = 3,
-    persist = 0.5,
+    scale = 0.001,
+    spread = {x = 300, y = 300, z = 300},
+    seed = 987654322,        -- Different seed for slight offset
+    octaves = 2,
+    persistence = 0.6,
     lacunarity = 2.0,
+    flags = "defaults",
 }
