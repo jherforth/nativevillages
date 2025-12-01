@@ -41,16 +41,19 @@ This update fixes critical issues with village generation and introduces a more 
 
 **Effect:** Foundation for future grid-based village generation with proper spacing and organization.
 
-### 4. Improved Path System
-**Problem:** Old path system had errors and didn't integrate with building placement.
+### 4. Comprehensive Path System
+**Problem:** Old path system had errors, was sparse, and only used one schematic per biome.
 
-**Solution:** Created `paths_new.lua` with:
-- Simplified path registration using the same noise system as buildings
-- Proper biome-specific path schematics
+**Solution:** Completely rewrote `paths.lua` with:
+- All 5 path variants: forward_straight, sideways_straight, left, right, junction
+- Support for grass, savanna, snow, desert, and jungle biomes
+- Denser path noise (scale 0.003, 3x denser than buildings)
+- Variable fill_ratio: more straights (0.002), moderate turns (0.001), fewer junctions (0.0005)
+- Smaller sidelen (32 vs 40) for more placement attempts
 - Force placement for reliable path generation
-- Correct load order in init.lua
+- Automatic detection of available path schematics
 
-**Effect:** Paths now spawn consistently with buildings in village areas.
+**Effect:** Villages now have dense, connected road networks with natural variety including intersections and turns.
 
 ## Technical Changes
 
@@ -66,11 +69,11 @@ This update fixes critical issues with village generation and introduces a more 
 
 ### Files Created
 1. `village_grid.lua` - New grid-based village layout system
-2. `paths_new.lua` - Improved path generation system
+2. `paths.lua` - Completely rewritten comprehensive path generation system
 
 ## Configuration
 
-### Noise Parameters
+### Building Noise Parameters
 ```lua
 global_village_noise = {
     offset = 0.0,
@@ -82,11 +85,28 @@ global_village_noise = {
 }
 ```
 
+### Path Noise Parameters
+```lua
+dense_path_noise = {
+    offset = 0,
+    scale = 0.003,              -- 3x denser than buildings
+    spread = {x=250, y=250, z=250},
+    octaves = 2,
+    persistence = 0.65,
+    lacunarity = 2.0,
+}
+```
+
 ### Grid System
 ```lua
 GRID_SIZE = 20              -- Each plot is 20x20 nodes
 VILLAGE_RADIUS = 3          -- 3x3 grid (9 plots total)
 ```
+
+### Path Distribution
+- Straight paths: fill_ratio 0.002 (most common)
+- Turn paths (left/right): fill_ratio 0.001 (moderate)
+- Junctions: fill_ratio 0.0005 (rare, strategic placement)
 
 ## Results
 
@@ -101,8 +121,9 @@ VILLAGE_RADIUS = 3          -- 3x3 grid (9 plots total)
 - Complete buildings with all nodes intact
 - Compact, cohesive village clusters
 - Foundation for organized grid layout
-- Functioning path system
-- Villages feel like actual settlements
+- Dense, connected road networks with variety
+- Natural-looking intersections and turns
+- Villages feel like actual settlements with proper infrastructure
 
 ## Future Enhancements
 

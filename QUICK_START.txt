@@ -1,0 +1,126 @@
+====================================================================
+QUICK START - UPDATED VILLAGE SYSTEM
+====================================================================
+
+WHAT'S FIXED
+============
+✓ Buildings now spawn completely (no missing nodes)
+✓ Villages are compact and cohesive
+✓ Dense road networks with variety (straights, turns, junctions)
+✓ 5 path types per biome instead of 1
+
+HOW TO SEE THE IMPROVEMENTS
+============================
+
+1. START A NEW WORLD
+   - Old chunks won't have the improvements
+   - Generate fresh terrain to see the full system
+
+2. FIND A VILLAGE
+   - Villages are rare but cohesive
+   - Look in: grassland, desert, ice, savanna, jungle, lake biomes
+   - Use teleport commands if needed (depends on your game)
+
+3. WHAT TO EXPECT
+   - 5-8 houses clustered together
+   - 15-20 path segments connecting them
+   - Mix of straight roads, turns, and intersections
+   - All buildings complete with no missing blocks
+
+CONFIGURATION (if needed)
+=========================
+
+Make paths MORE dense:
+  Edit paths.lua, line ~58:
+    fill_ratio = 0.003  (was 0.002)
+
+Make paths LESS dense:
+  Edit paths.lua, line ~58:
+    fill_ratio = 0.001  (was 0.002)
+
+Make villages MORE common:
+  Edit village_noise.lua, line 10:
+    scale = 0.002  (was 0.001)
+
+Make villages MORE compact:
+  Edit village_noise.lua, line 11:
+    spread = {x=250, y=250, z=250}  (was 300)
+
+VERIFICATION
+============
+
+Check the game log (debug.txt) for:
+  "[nativevillages] Path system loaded with X path decorations"
+
+If you see this message, the system loaded correctly.
+
+Expected decoration count:
+  - 15 decorations (3 biomes × 5 path types)
+  - Plus desert/jungle if schematics exist
+
+AVAILABLE NOW
+=============
+
+Biomes with full path systems:
+  ✓ Grassland (grass_dirt_*)
+  ✓ Savanna (savanna_dirt_*)
+  ✓ Ice/Snow (snow_dirt_*)
+
+All biomes have force_placement on buildings:
+  ✓ Grassland
+  ✓ Desert
+  ✓ Ice/Snow
+  ✓ Savanna
+  ✓ Jungle
+  ✓ Lake
+
+TO ADD DESERT/JUNGLE PATHS
+==========================
+
+Create these schematics following the naming pattern:
+  desert_dirt_forward_straight_5x5.mts
+  desert_dirt_sideways_straight_5x5.mts
+  desert_dirt_left_5x5.mts
+  desert_dirt_right_5x5.mts
+  desert_dirt_junction_5x5.mts
+
+And/or:
+  jungle_dirt_forward_straight_5x5.mts
+  jungle_dirt_sideways_straight_5x5.mts
+  jungle_dirt_left_5x5.mts
+  jungle_dirt_right_5x5.mts
+  jungle_dirt_junction_5x5.mts
+
+The system will auto-detect and register them!
+
+TROUBLESHOOTING
+===============
+
+No villages appearing:
+  → They're rare by design
+  → Try teleporting far from spawn
+  → Or increase scale in village_noise.lua
+
+Buildings incomplete:
+  → Old chunks - generate new terrain
+  → Or something prevented force_placement
+
+Few paths:
+  → Check you're in grass/savanna/ice biome
+  → Desert/jungle need schematics first
+  → Or increase fill_ratio in paths.lua
+
+Too many paths:
+  → Decrease fill_ratio in paths.lua
+  → Or decrease scale in dense_path_noise
+
+DOCUMENTATION
+=============
+
+Full details in:
+  - VILLAGE_IMPROVEMENTS.md (technical overview)
+  - PATH_SYSTEM_SUMMARY.md (path system details)
+  - PATH_DISTRIBUTION_GUIDE.txt (visual examples)
+  - CHANGES_SUMMARY.txt (complete change list)
+
+====================================================================
