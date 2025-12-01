@@ -84,23 +84,12 @@ local function fill_chest_with_loot(pos)
     end
 
     -- Get chest metadata and inventory
+    -- Note: on_construct should have already set up formspec
     local meta = minetest.get_meta(pos)
     if not meta then return end
 
-    -- Set formspec and infotext (required for chest UI to work)
-    meta:set_string("formspec",
-        "size[8,9]" ..
-        "list[context;main;0,0;8,4;]" ..
-        "list[current_player;main;0,5;8,4;]" ..
-        "listring[context;main]" ..
-        "listring[current_player;main]")
-    meta:set_string("infotext", "Chest")
-
     local inv = meta:get_inventory()
     if not inv then return end
-
-    -- Ensure inventory is properly sized (8x4 = 32 slots)
-    inv:set_size("main", 8*4)
 
     -- Add 3-7 random items from loot table
     local num_items = math.random(3, 7)
@@ -127,6 +116,16 @@ minetest.register_lbm({
     nodenames = {"default:chest"},
     run_at_every_load = false,
     action = function(pos, node)
+        -- First, ensure the chest is properly initialized
+        -- Get the chest node definition
+        local chest_def = minetest.registered_nodes["default:chest"]
+
+        -- Call on_construct if it exists (initializes the chest properly)
+        if chest_def and chest_def.on_construct then
+            chest_def.on_construct(pos)
+        end
+
+        -- Now fill it with loot
         fill_chest_with_loot(pos)
     end
 })
