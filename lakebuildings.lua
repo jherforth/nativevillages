@@ -29,10 +29,6 @@ local function register_lake_building(params)
 
         schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
         rotation = "random",
-
-        on_placed = function(pos)
-            nativevillages.fill_under_house(pos, params.file)
-        end,
     })
 end
 
@@ -60,10 +56,6 @@ local function register_lake_central(params)
 
         schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
         rotation = "random",
-
-        on_placed = function(pos)
-            nativevillages.fill_under_house(pos, params.file)
-        end,
     })
 end
 

@@ -17,10 +17,10 @@ height_max = 2,        // Gentle slopes only (was 3-4)
 force_placement,       // Complete buildings
 ```
 
-### Foundation Filling: DISABLED
-**Critical:** Automated foundation filling caused floating dirt/stone artifacts in the air. It has been **completely disabled**.
+### Foundation Filling: REMOVED
+**Critical:** Automated foundation filling caused floating dirt/stone artifacts in the air. The entire `utils.lua` file and all foundation filling code has been **completely removed**.
 
-The `fill_under_house` function is now empty. Buildings are grounded purely through placement parameters.
+Buildings are now grounded purely through placement parameters with no callback functions.
 
 ## Results
 
@@ -76,8 +76,11 @@ If gaps are completely unacceptable:
 3. **Accept reality** - Small gaps are realistic and better than artifacts
 
 ## Files Modified
-- All 6 `*buildings.lua` files (placement parameters)
-- `utils.lua` (foundation filling disabled)
+- All 6 `*buildings.lua` files (placement parameters, removed on_placed callbacks)
+- `init.lua` (removed utils.lua loading)
+
+## Files Removed
+- `utils.lua` (entire foundation filling system removed)
 
 ## Summary
 **Problem:** Buildings floating with gaps

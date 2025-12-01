@@ -45,7 +45,6 @@ dofile(modpath .. "/arcticblocks.lua")
 dofile(modpath .. "/grasslandblocks.lua")
 dofile(modpath .. "/lakeblocks.lua")
 dofile(modpath .. "/desertblocks.lua")
-dofile(modpath .. "/utils.lua")
 
 -- 2. Village system (noise and grid must come first)
 dofile(modpath .. "/village_noise.lua")
