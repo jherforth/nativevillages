@@ -46,9 +46,8 @@ dofile(modpath .. "/grasslandblocks.lua")
 dofile(modpath .. "/lakeblocks.lua")
 dofile(modpath .. "/desertblocks.lua")
 
--- 2. Village system (noise and grid must come first)
+-- 2. Village system (noise parameters for building placement)
 dofile(modpath .. "/village_noise.lua")
-dofile(modpath .. "/village_grid.lua")
 
 -- 3. Buildings (they use the noise tables from above)
 dofile(modpath .. "/junglebuildings.lua")
