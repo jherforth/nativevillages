@@ -21,10 +21,10 @@ local function register_ice_building(params)
         y_max = 40,
 
         -- THE THREE MAGIC LINES (identical to every other biome)
-        place_offset_y = 1,
+        place_offset_y = 0,
         flags = "place_center_x, place_center_z, force_placement",
         height = 1,
-        height_max = 3,
+        height_max = 2,
 
         schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
         rotation = "random",
@@ -49,10 +49,10 @@ local function register_ice_central(params)
         y_min = -2,
         y_max = 40,
 
-        place_offset_y = 1,
+        place_offset_y = 0,
         flags = "place_center_x, place_center_z, force_placement",
         height = 1,
-        height_max = 3,
+        height_max = 2,
 
         schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
         rotation = "random",

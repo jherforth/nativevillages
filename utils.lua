@@ -1,62 +1,99 @@
--- utils.lua  –  FINAL safe version (2025 standard)
+-- utils.lua - Building foundation system
 
+-- Function to fill gaps under buildings and create proper foundations
 nativevillages.fill_under_house = function(pos, schematic_filename)
-    -- Get real schematic size
-    local fullpath = minetest.get_modpath("nativevillages") .. "/schematics/" .. schematic_filename
-    local size = minetest.get_schematic_size(fullpath)
-    if not size or size.x == 0 then
-        size = {x = 16, y = 12, z = 16}  -- safe fallback
+    -- Parse schematic size from filename (format: name_X_Y_Z.mts)
+    local size = {x = 10, y = 10, z = 10}  -- default fallback
+
+    local parts = {}
+    for part in schematic_filename:gmatch("[^_]+") do
+        table.insert(parts, part)
     end
 
-    -- Padding so corners and edges are always covered
-    local pad = 4
+    -- Extract dimensions (last 3 parts before .mts)
+    if #parts >= 3 then
+        local x = tonumber(parts[#parts - 2])
+        local y = tonumber(parts[#parts - 1])
+        local z_part = parts[#parts]:gsub("%.mts", "")
+        local z = tonumber(z_part)
+
+        if x and y and z then
+            size = {x = x, y = y, z = z}
+        end
+    end
+
+    -- Detect biome and set appropriate fill material
+    local test_node = minetest.get_node({x=pos.x, y=pos.y-1, z=pos.z})
+    local fill_material = "default:dirt"
+
+    if test_node.name:find("desert") or test_node.name == "default:sand" then
+        fill_material = "default:desert_sand"
+    elseif test_node.name:find("snow") or test_node.name == "default:ice" then
+        fill_material = "default:snowblock"
+    elseif test_node.name:find("dry") then
+        fill_material = "default:dry_dirt"
+    elseif test_node.name:find("rainforest") then
+        fill_material = "default:dirt"
+    end
+
+    -- Calculate foundation area (slightly larger than building footprint)
+    local half_x = math.ceil(size.x / 2) + 2
+    local half_z = math.ceil(size.z / 2) + 2
+
     local minp = {
-        x = pos.x - math.floor(size.x/2) - pad,
-        y = pos.y - 20,        -- max 20 nodes down is plenty
-        z = pos.z - math.floor(size.z/2) - pad
+        x = pos.x - half_x,
+        y = pos.y - 15,  -- Check up to 15 nodes down
+        z = pos.z - half_z
     }
     local maxp = {
-        x = pos.x + math.floor(size.x/2) + pad,
-        y = pos.y + 6,         -- slight upward buffer
-        z = pos.z + math.floor(size.z/2) + pad
+        x = pos.x + half_x,
+        y = pos.y + 2,   -- Slightly above placement to catch the floor
+        z = pos.z + half_z
     }
 
-    -- Detect correct fill material
-    local ground = minetest.get_node({x=pos.x, y=pos.y-1, z=pos.z}).name
-    local fill = "default:dirt"
-    if minetest.get_item_group(ground, "sand") > 0 or ground == "default:desert_sand" or ground == "default:sand" then
-        fill = "default:desert_sand"
-    elseif ground == "default:snowblock" or ground == "default:ice" then
-        fill = "default:dirt"
-    elseif ground:find("dry") then
-        fill = "default:dry_dirt"
-    end
+    -- Emerge area and fill after slight delay
+    minetest.emerge_area(minp, maxp, function(blockpos, action, calls_remaining)
+        if calls_remaining > 0 then return end
 
-    -- Fill only air below the house, stop at natural ground
-    minetest.emerge_area(minp, maxp)
-    minetest.after(0.3, function()
-        local vm, emin, emax = minetest.get_mapgen_object("voxelmanip")
-        if not vm then return end
-        local data = vm:get_data()
-        local area = VoxelArea:new{MinEdge=emin, MaxEdge=emax}
-        local fill_id = minetest.get_content_id(fill)
-        local air_id = minetest.get_content_id("air")
+        minetest.after(0.5, function()
+            -- Fill column by column
+            for x = minp.x, maxp.x do
+                for z = minp.z, maxp.z do
+                    -- Find the first solid block from top down
+                    local found_solid_y = nil
 
-        for x = minp.x, maxp.x do
-            for z = minp.z, maxp.z do
-                local found_surface = false
-                for y = maxp.y, minp.y, -1 do
-                    local vi = area:index(x, y, z)
-                    local nid = data[vi]
-                    if nid and nid ~= air_id and nid ~= minetest.get_content_id("ignore") then
-                        found_surface = true
-                    elseif found_surface and nid == air_id then
-                        data[vi] = fill_id
+                    for y = maxp.y, minp.y, -1 do
+                        local check_pos = {x=x, y=y, z=z}
+                        local node = minetest.get_node(check_pos)
+
+                        -- Check if it's a solid ground-type node
+                        if node.name ~= "air" and
+                           node.name ~= "ignore" and
+                           (minetest.get_item_group(node.name, "soil") > 0 or
+                            minetest.get_item_group(node.name, "sand") > 0 or
+                            node.name:find("dirt") or
+                            node.name:find("stone") or
+                            node.name:find("snow")) then
+                            found_solid_y = y
+                            break
+                        end
+                    end
+
+                    -- Fill air gaps from building floor down to solid ground
+                    if found_solid_y then
+                        for y = pos.y - 1, found_solid_y + 1, -1 do
+                            local fill_pos = {x=x, y=y, z=z}
+                            local node = minetest.get_node(fill_pos)
+
+                            if node.name == "air" then
+                                minetest.set_node(fill_pos, {name=fill_material})
+                            end
+                        end
                     end
                 end
             end
-        end
-        vm:set_data(data)
-        vm:write_to_map()
+        end)
     end)
 end
+
+print("[nativevillages] Utils loaded - foundation filling system active")

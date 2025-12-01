@@ -21,10 +21,10 @@ local function register_grassland_building(params)
         y_min = 1,
         y_max = 110,
 
-        place_offset_y = 1,
+        place_offset_y = 0,
         flags = "place_center_x, place_center_z, force_placement",
         height = 1,
-        height_max = 3,
+        height_max = 2,
 
         schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
         rotation = "random",
@@ -49,10 +49,10 @@ local function register_grassland_central(params)
         y_min = 1,
         y_max = 110,
 
-        place_offset_y = 1,
+        place_offset_y = 0,
         flags = "place_center_x, place_center_z, force_placement",
         height = 1,
-        height_max = 3,
+        height_max = 2,
 
         schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
         rotation = "random",
@@ -67,7 +67,7 @@ end
 -- REGISTER ALL BUILDINGS
 -- ===================================================================
 
--- Regular houses (no offset_y needed anymore — everything uses place_offset_y = 1)
+-- Regular houses (grounded placement with place_offset_y = 0)
 register_grassland_building({name = "grasslandhouse1", file = "grasslandhouse1_7_9_7.mts"})
 register_grassland_building({name = "grasslandhouse2", file = "grasslandhouse2_6_7_7.mts"})
 register_grassland_building({name = "grasslandhouse4", file = "grasslandhouse4_7_7_9.mts"})

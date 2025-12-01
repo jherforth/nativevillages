@@ -22,7 +22,7 @@ local function register_lake_building(params)
         y_min = -2,
         y_max = 4,                               -- must be right at water level
 
-        place_offset_y = 1,
+        place_offset_y = 0,
         flags = "place_center_x, place_center_z, force_placement",
         height = 1,
         height_max = 2,
@@ -53,7 +53,7 @@ local function register_lake_central(params)
         y_min = -2,
         y_max = 4,
 
-        place_offset_y = 1,
+        place_offset_y = 0,
         flags = "place_center_x, place_center_z, force_placement",
         height = 1,
         height_max = 2,

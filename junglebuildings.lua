@@ -19,7 +19,7 @@ local function register_jungle_building(params)
         y_min = 4,
         y_max = 100,                           -- jungles go high!
 
-        place_offset_y = 1,
+        place_offset_y = 0,
         flags = "place_center_x, place_center_z, force_placement",
         height = 1,
         height_max = 2,
@@ -47,7 +47,7 @@ local function register_jungle_central(params)
         y_min = 4,
         y_max = 100,
 
-        place_offset_y = 1,
+        place_offset_y = 0,
         flags = "place_center_x, place_center_z, force_placement",
         height = 1,
         height_max = 2,

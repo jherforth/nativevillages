@@ -16,14 +16,22 @@ KEY FIXES
    - No more missing blocks in houses
    - Affected files: All *buildings.lua files (6 biomes)
 
-2. IMPROVED VILLAGE COHESION
+2. FLOATING BUILDINGS (CRITICAL FIX)
+   - Changed place_offset_y from 1 to 0 (ground-level placement)
+   - Reduced height_max from 3-4 to 2 (stricter terrain requirements)
+   - Completely rewrote foundation filling system in utils.lua
+   - Buildings now sit ON the ground, not above it
+   - Automatic biome-appropriate fill materials
+   - Affected files: All *buildings.lua files + utils.lua
+
+3. IMPROVED VILLAGE COHESION
    - Updated noise parameters for tighter clustering
    - Scale increased: 0.0002 → 0.001 (5x)
    - Spread reduced: 500 → 300
    - Villages are now compact instead of scattered
    - File: village_noise.lua
 
-3. COMPREHENSIVE PATH SYSTEM
+4. COMPREHENSIVE PATH SYSTEM
    - Rewrote entire path generation system
    - Now includes ALL 5 path types per biome:
      * forward_straight
@@ -35,7 +43,7 @@ KEY FIXES
    - Smart distribution: more straights, fewer junctions
    - File: paths.lua (completely rewritten)
 
-4. GRID SYSTEM FOUNDATION
+5. GRID SYSTEM FOUNDATION
    - Created infrastructure for organized village layouts
    - 20×20 node grid system
    - Village tracking to prevent overlap
@@ -82,12 +90,14 @@ RESULTS
 
 Before:
   - Houses with missing nodes
+  - Buildings floating above ground
   - Sparse, disconnected villages
   - 2-3 random paths
   - No variety in roads
 
 After:
   - Complete buildings (no missing blocks)
+  - Buildings properly grounded with foundations
   - Compact village clusters
   - 15-20 path segments per village
   - Natural road networks with turns and intersections
@@ -104,21 +114,25 @@ TESTING
 FILES CHANGED
 -------------
 Modified:
-  - village_noise.lua
-  - grasslandbuildings.lua
-  - desertbuildings.lua
-  - icebuildings.lua
-  - savannabuildings.lua
-  - junglebuildings.lua
-  - lakebuildings.lua
-  - paths.lua (complete rewrite)
-  - init.lua
+  - village_noise.lua (improved cohesion)
+  - grasslandbuildings.lua (force_placement, grounded placement)
+  - desertbuildings.lua (force_placement, grounded placement)
+  - icebuildings.lua (force_placement, grounded placement)
+  - savannabuildings.lua (force_placement, grounded placement)
+  - junglebuildings.lua (force_placement, grounded placement)
+  - lakebuildings.lua (force_placement, grounded placement)
+  - paths.lua (complete rewrite with all variants)
+  - utils.lua (complete rewrite of foundation system)
+  - init.lua (updated load order)
 
 Created:
   - village_grid.lua
   - VILLAGE_IMPROVEMENTS.md
   - PATH_SYSTEM_SUMMARY.md
+  - PATH_DISTRIBUTION_GUIDE.txt
+  - FLOATING_BUILDINGS_FIX.md
   - CHANGES_SUMMARY.txt
+  - QUICK_START.txt
 
 FUTURE ENHANCEMENTS
 -------------------
