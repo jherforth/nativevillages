@@ -18,10 +18,10 @@ KEY FIXES
 
 2. FLOATING BUILDINGS (CRITICAL FIX)
    - Changed place_offset_y from 1 to 0 (ground-level placement)
-   - Reduced height_max from 3-4 to 2 (stricter terrain requirements)
+   - Reduced height_max from 3-4 to 1 (perfectly flat terrain only)
    - REMOVED foundation filling system entirely (caused floating artifacts)
-   - Buildings now sit ON the ground, not above it
-   - Small gaps acceptable vs floating terrain corruption
+   - Buildings now sit ON the ground with no gaps
+   - Buildings only spawn on flat terrain, not slopes
    - Affected files: All *buildings.lua files, removed utils.lua
 
 3. IMPROVED VILLAGE COHESION
@@ -43,7 +43,15 @@ KEY FIXES
    - Smart distribution: more straights, fewer junctions
    - File: paths.lua (completely rewritten)
 
-5. GRID SYSTEM FOUNDATION
+5. CHEST LOOT SYSTEM (FIXED)
+   - Fixed: Village chests now show items properly
+   - Fixed: Manually placed chests no longer auto-fill
+   - Loot system only fills schematic-placed chests (no placer)
+   - Reduced initialization delay from 1s to 0.1s
+   - Biome-specific loot tables working correctly
+   - File: loot.lua
+
+6. GRID SYSTEM FOUNDATION
    - Created infrastructure for organized village layouts
    - 20×20 node grid system
    - Village tracking to prevent overlap

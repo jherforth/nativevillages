@@ -13,7 +13,7 @@ Buildings were spawning above the ground with visible air gaps underneath, creat
 All building files now use:
 ```lua
 place_offset_y = 0,    // Ground level (was 1)
-height_max = 2,        // Gentle slopes only (was 3-4)
+height_max = 1,        // Perfectly flat only (was 2-4)
 force_placement,       // Complete buildings
 ```
 
@@ -39,24 +39,24 @@ Buildings are now grounded purely through placement parameters with no callback 
 
 ## Configuration Options
 
-### Current Balanced Settings (Recommended)
+### Current Flat Terrain Settings (Recommended)
 ```lua
 place_offset_y = 0,
-height_max = 2,
+height_max = 1,
 ```
-Good balance of spawn rates and minimal gaps.
+Buildings only spawn on perfectly flat terrain - no slopes, no gaps.
 
-### For Zero Gaps (Rarer Buildings)
+### For More Buildings (Accept Small Gaps)
 ```lua
-height_max = 1,  // Only perfectly flat terrain
+height_max = 2,  // Allow gentle slopes
 ```
-Buildings become much rarer but have no gaps.
+More buildings but may have 1-2 node gaps on gentle slopes.
 
-### For More Buildings (Larger Gaps)
+### For Maximum Buildings (Accept Larger Gaps)
 ```lua
 height_max = 3,  // Allow more variation
 ```
-More buildings but may have 2-3 node gaps on slopes.
+Maximum buildings but may have 2-3 node gaps on slopes.
 
 ## Why Foundation Filling Failed
 

@@ -9,16 +9,15 @@ SYMPTOM: Random dirt or stone blocks floating in the air above villages
 CAUSE: Foundation filling system had bugs that caused it to place
        blocks in mid-air instead of only under buildings
 
-STATUS: ✅ FIXED - Foundation filling completely disabled
+STATUS: ✅ FIXED - Foundation filling completely removed
 
 SOLUTION: Buildings now use placement parameters only:
   - place_offset_y = 0 (ground level)
-  - height_max = 2 (gentle slopes only)
+  - height_max = 1 (perfectly flat terrain only)
   - No automated filling
+  - utils.lua completely removed
 
-TRADE-OFF: Buildings may have small 0-2 node gaps underneath on slopes
-           This is acceptable and realistic (like crawl spaces)
-           Better than floating terrain corruption
+RESULT: Buildings spawn on flat ground with no gaps and no artifacts
 
 
 ISSUE: Buildings Still Floating
@@ -92,25 +91,38 @@ SOLUTION: Edit village_noise.lua, line 10:
   scale = 0.0005 // Fewer villages (from 0.001)
 
 
-ISSUE: Small Gaps Under Buildings
-----------------------------------
-SYMPTOM: 1-2 node air gaps visible under buildings
+ISSUE: Buildings Spawning on Hills
+-----------------------------------
+SYMPTOM: Buildings appear on slopes with visible gaps underneath
 
-CAUSE: Terrain has gentle slopes, buildings placed on average height
+CAUSE: height_max was set to 2, checking only center point not footprint
 
-STATUS: ✅ ACCEPTABLE - This is realistic and minimal
+STATUS: ✅ FIXED - Changed height_max to 1 (perfectly flat only)
 
-EXPLANATION: Foundation filling was causing worse problems
-             (floating artifacts). Small gaps are better.
+SOLUTION: All *buildings.lua files now use height_max = 1
+          Buildings only spawn on perfectly flat terrain
 
-SOLUTION (if gaps unacceptable):
-  Option 1: Edit all *buildings.lua files:
-            height_max = 1  // Only perfectly flat (buildings rarer)
+TRADE-OFF: Buildings are slightly rarer, but always properly grounded
 
-  Option 2: Edit building schematics to include foundation layers
-            (add 2-3 dirt layers at bottom of each .mts file)
+ADJUSTMENT: If you want more buildings and can accept small gaps:
+            Change height_max = 2 in *buildings.lua files
 
-  Option 3: Accept the gaps as realistic crawl spaces
+
+ISSUE: Chest Loot Issues
+-------------------------
+SYMPTOM: Village chests show no items or glitched inventory
+        Manually placed chests auto-fill with loot (should be empty)
+
+CAUSE: Loot system was filling ALL chests, including manual placements
+       Timing issues with chest initialization during mapgen
+
+STATUS: ✅ FIXED - Loot only fills schematic-placed chests
+
+SOLUTION: loot.lua now checks if chest has a placer (player)
+          Only chests placed by schematics (no placer) get filled
+          Reduced delay from 1s to 0.1s for faster initialization
+
+RESULT: Village chests have proper loot, manual chests stay empty
 
 
 ====================================================================

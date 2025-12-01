@@ -1,14 +1,13 @@
 -- loot.lua
--- Random loot for ALL village chests — works instantly
+-- Random loot for village chests (schematic-placed only)
 
 local modpath = minetest.get_modpath("nativevillages")
 
 -- ===================================================================
--- LOOT TABLES — customize forever
+-- LOOT TABLES
 -- ===================================================================
 
 local loot_tables = {
-    -- Grassland houses
     grassland = {
         {name = "farming:bread",          chance = 0.8, min = 1, max = 4},
         {name = "farming:seeds_wheat",    chance = 0.6, min = 1, max = 3},
@@ -34,7 +33,6 @@ local loot_tables = {
         {name = "default:bronze_ingot",   chance = 0.3, min = 1, max = 2},
     },
     lake = {
-        {name = "default:fishing_rod",    chance = 0.4},
         {name = "default:clay_lump",      chance = 0.8, min = 3, max = 8},
         {name = "default:papyrus",        chance = 0.7, min = 2, max = 7},
         {name = "farming:string",         chance = 0.5, min = 1, max = 3},
@@ -47,16 +45,29 @@ local loot_tables = {
     },
 }
 
+-- Track schematic chest positions to differentiate from manually placed chests
+local schematic_chests = {}
+
 -- ===================================================================
--- Fill chest when it's placed (from schematic)
+-- Fill chest when schematic is placed
 -- ===================================================================
 
 minetest.register_on_placenode(function(pos, newnode, placer, oldnode, itemstack, pointed_thing)
     if newnode.name ~= "default:chest" then return end
 
+    -- Only fill if this is a schematic-placed chest (no placer)
+    if placer then return end
+
+    -- Mark this position as a schematic chest
+    local pos_hash = minetest.hash_node_position(pos)
+    schematic_chests[pos_hash] = true
+
     -- Determine biome at chest position
     local biome_data = minetest.get_biome_data(pos)
+    if not biome_data then return end
+
     local biome_name = minetest.get_biome_name(biome_data.biome)
+    if not biome_name then return end
 
     local loot_table = nil
     if biome_name:find("grassland") or biome_name:find("deciduous") or biome_name:find("coniferous") then
@@ -75,9 +86,14 @@ minetest.register_on_placenode(function(pos, newnode, placer, oldnode, itemstack
 
     if not loot_table then return end
 
-    minetest.after(1, function()
+    -- Fill chest after a delay to ensure it's fully initialized
+    minetest.after(0.1, function()
         local meta = minetest.get_meta(pos)
+        if not meta then return end
+
         local inv = meta:get_inventory()
+        if not inv then return end
+
         inv:set_size("main", 8*4)
 
         -- Add 3–7 random items
@@ -93,4 +109,4 @@ minetest.register_on_placenode(function(pos, newnode, placer, oldnode, itemstack
     end)
 end)
 
-minetest.log("action", "[nativevillages] Loot system loaded — chests now have treasure!")
+minetest.log("action", "[nativevillages] Loot system loaded - schematic chests will have treasure")

@@ -24,7 +24,7 @@ local function register_grassland_building(params)
         place_offset_y = 0,
         flags = "place_center_x, place_center_z, force_placement",
         height = 1,
-        height_max = 2,
+        height_max = 1,
 
         schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
         rotation = "random",
@@ -48,7 +48,7 @@ local function register_grassland_central(params)
         place_offset_y = 0,
         flags = "place_center_x, place_center_z, force_placement",
         height = 1,
-        height_max = 2,
+        height_max = 1,
 
         schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
         rotation = "random",
