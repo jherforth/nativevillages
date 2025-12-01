@@ -87,10 +87,19 @@ local function fill_chest_with_loot(pos)
     local meta = minetest.get_meta(pos)
     if not meta then return end
 
+    -- Set formspec and infotext (required for chest UI to work)
+    meta:set_string("formspec",
+        "size[8,9]" ..
+        "list[context;main;0,0;8,4;]" ..
+        "list[current_player;main;0,5;8,4;]" ..
+        "listring[context;main]" ..
+        "listring[current_player;main]")
+    meta:set_string("infotext", "Chest")
+
     local inv = meta:get_inventory()
     if not inv then return end
 
-    -- Ensure inventory is properly sized
+    -- Ensure inventory is properly sized (8x4 = 32 slots)
     inv:set_size("main", 8*4)
 
     -- Add 3-7 random items from loot table

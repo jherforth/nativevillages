@@ -57,10 +57,19 @@ minetest.register_lbm({
 - Perfect for post-processing schematic placements
 - `run_at_every_load = false` means it only runs once per chest
 
+**Critical metadata fix:**
+The LBM also sets the formspec metadata, which is required for the chest UI:
+```lua
+meta:set_string("formspec", "size[8,9]list[context;main;0,0;8,4;]...")
+meta:set_string("infotext", "Chest")
+```
+Without this, the chest inventory slots don't show in the UI.
+
 **Advantages:**
 ✅ Works with schematic decorations
 ✅ Runs after mapgen completes
-✅ Doesn't affect player-placed chests (they get filled once, then marked)
+✅ Sets proper formspec metadata for working UI
+✅ Doesn't affect player-placed chests
 ✅ No timing issues or race conditions
 
 ---
