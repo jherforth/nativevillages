@@ -1,5 +1,7 @@
 -- loot.lua
--- Random loot for village chests using LBM (Loading Block Modifier)
+-- Random loot for village chests (schematic-placed only)
+
+local modpath = minetest.get_modpath("nativevillages")
 
 -- ===================================================================
 -- LOOT TABLES
@@ -43,28 +45,30 @@ local loot_tables = {
     },
 }
 
--- Track filled chests to avoid refilling
-local filled_chests = {}
+-- Track schematic chest positions to differentiate from manually placed chests
+local schematic_chests = {}
 
 -- ===================================================================
--- Helper function to fill a chest with loot
+-- Fill chest when schematic is placed
 -- ===================================================================
 
-local function fill_chest_with_loot(pos)
-    -- Check if already filled
+minetest.register_on_placenode(function(pos, newnode, placer, oldnode, itemstack, pointed_thing)
+    if newnode.name ~= "default:chest" then return end
+
+    -- Only fill if this is a schematic-placed chest (no placer)
+    if placer then return end
+
+    -- Mark this position as a schematic chest
     local pos_hash = minetest.hash_node_position(pos)
-    if filled_chests[pos_hash] then
-        return
-    end
+    schematic_chests[pos_hash] = true
 
-    -- Get biome at position
+    -- Determine biome at chest position
     local biome_data = minetest.get_biome_data(pos)
     if not biome_data then return end
 
     local biome_name = minetest.get_biome_name(biome_data.biome)
     if not biome_name then return end
 
-    -- Select loot table based on biome
     local loot_table = nil
     if biome_name:find("grassland") or biome_name:find("deciduous") or biome_name:find("coniferous") then
         loot_table = loot_tables.grassland
@@ -78,56 +82,31 @@ local function fill_chest_with_loot(pos)
         loot_table = loot_tables.jungle
     elseif biome_name:find("lake") or biome_name:find("shore") then
         loot_table = loot_tables.lake
-    else
-        -- Default to grassland for unknown biomes
-        loot_table = loot_tables.grassland
     end
 
-    -- Get chest metadata and inventory
-    -- Note: on_construct should have already set up formspec
-    local meta = minetest.get_meta(pos)
-    if not meta then return end
+    if not loot_table then return end
 
-    local inv = meta:get_inventory()
-    if not inv then return end
+    -- Fill chest after a delay to ensure it's fully initialized
+    minetest.after(0.1, function()
+        local meta = minetest.get_meta(pos)
+        if not meta then return end
 
-    -- Add 3-7 random items from loot table
-    local num_items = math.random(3, 7)
-    for i = 1, num_items do
-        local item = loot_table[math.random(#loot_table)]
-        if math.random() < item.chance then
-            local count = item.min and math.random(item.min, item.max) or 1
-            local stack = ItemStack(item.name .. " " .. count)
-            inv:set_stack("main", math.random(1, 32), stack)
+        local inv = meta:get_inventory()
+        if not inv then return end
+
+        inv:set_size("main", 8*4)
+
+        -- Add 3–7 random items
+        local num_items = math.random(3, 7)
+        for i = 1, num_items do
+            local item = loot_table[math.random(#loot_table)]
+            if math.random() < item.chance then
+                local count = item.min and math.random(item.min, item.max) or 1
+                local stack = ItemStack(item.name .. " " .. count)
+                inv:set_stack("main", math.random(1, 32), stack)
+            end
         end
-    end
+    end)
+end)
 
-    -- Mark as filled
-    filled_chests[pos_hash] = true
-end
-
--- ===================================================================
--- Use LBM to fill chests after mapgen
--- ===================================================================
-
-minetest.register_lbm({
-    label = "Fill village chests with loot",
-    name = "nativevillages:fill_chests",
-    nodenames = {"default:chest"},
-    run_at_every_load = false,
-    action = function(pos, node)
-        -- First, ensure the chest is properly initialized
-        -- Get the chest node definition
-        local chest_def = minetest.registered_nodes["default:chest"]
-
-        -- Call on_construct if it exists (initializes the chest properly)
-        if chest_def and chest_def.on_construct then
-            chest_def.on_construct(pos)
-        end
-
-        -- Now fill it with loot
-        fill_chest_with_loot(pos)
-    end
-})
-
-minetest.log("action", "[nativevillages] Loot system loaded - using LBM for chest filling")
+minetest.log("action", "[nativevillages] Loot system loaded - schematic chests will have treasure")
