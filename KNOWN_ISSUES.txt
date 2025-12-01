@@ -1,0 +1,133 @@
+====================================================================
+KNOWN ISSUES & SOLUTIONS
+====================================================================
+
+ISSUE: Floating Dirt/Stone Artifacts
+-------------------------------------
+SYMPTOM: Random dirt or stone blocks floating in the air above villages
+
+CAUSE: Foundation filling system had bugs that caused it to place
+       blocks in mid-air instead of only under buildings
+
+STATUS: ✅ FIXED - Foundation filling completely disabled
+
+SOLUTION: Buildings now use placement parameters only:
+  - place_offset_y = 0 (ground level)
+  - height_max = 2 (gentle slopes only)
+  - No automated filling
+
+TRADE-OFF: Buildings may have small 0-2 node gaps underneath on slopes
+           This is acceptable and realistic (like crawl spaces)
+           Better than floating terrain corruption
+
+
+ISSUE: Buildings Still Floating
+--------------------------------
+SYMPTOM: Buildings appear 1-3 nodes above ground
+
+CAUSE: Old chunks generated with old parameters (place_offset_y = 1)
+
+STATUS: Expected behavior in old chunks
+
+SOLUTION: Generate new world or explore new chunks
+          Old chunks cannot be retroactively fixed
+
+
+ISSUE: Paths Too Sparse
+-----------------------
+SYMPTOM: Villages have very few paths
+
+CAUSE: Default fill_ratio may be too conservative
+
+STATUS: Working as designed, but configurable
+
+SOLUTION: Edit paths.lua, increase fill_ratio values:
+  Line ~58: fill_ratio = 0.003 (from 0.002) for straights
+  Line ~60: fill_ratio = 0.0015 (from 0.001) for turns
+  Line ~62: fill_ratio = 0.001 (from 0.0005) for junctions
+
+
+ISSUE: No Paths in Desert/Jungle
+---------------------------------
+SYMPTOM: Desert and jungle villages have no paths
+
+CAUSE: Path schematics don't exist for these biomes yet
+
+STATUS: Expected - schematics not created
+
+SOLUTION: Create path schematics following naming pattern:
+  desert_dirt_forward_straight_5x5.mts
+  desert_dirt_sideways_straight_5x5.mts
+  desert_dirt_left_5x5.mts
+  desert_dirt_right_5x5.mts
+  desert_dirt_junction_5x5.mts
+
+  (Same pattern for jungle_dirt_*)
+
+
+ISSUE: Buildings Missing Nodes
+-------------------------------
+SYMPTOM: Houses have holes or missing blocks
+
+CAUSE: Terrain overriding schematic (old issue, should be fixed)
+
+STATUS: ✅ FIXED with force_placement flag
+
+SOLUTION: If still occurring, check:
+  1. Is this an old chunk? (Generate new world)
+  2. Is force_placement in flags? (Should be in all *buildings.lua)
+  3. Check debug.log for errors
+
+
+ISSUE: Villages Too Rare/Common
+--------------------------------
+SYMPTOM: Can't find villages OR villages everywhere
+
+CAUSE: Noise scale determines spawn frequency
+
+STATUS: Configurable
+
+SOLUTION: Edit village_noise.lua, line 10:
+  scale = 0.002  // More villages (from 0.001)
+  scale = 0.0005 // Fewer villages (from 0.001)
+
+
+ISSUE: Small Gaps Under Buildings
+----------------------------------
+SYMPTOM: 1-2 node air gaps visible under buildings
+
+CAUSE: Terrain has gentle slopes, buildings placed on average height
+
+STATUS: ✅ ACCEPTABLE - This is realistic and minimal
+
+EXPLANATION: Foundation filling was causing worse problems
+             (floating artifacts). Small gaps are better.
+
+SOLUTION (if gaps unacceptable):
+  Option 1: Edit all *buildings.lua files:
+            height_max = 1  // Only perfectly flat (buildings rarer)
+
+  Option 2: Edit building schematics to include foundation layers
+            (add 2-3 dirt layers at bottom of each .mts file)
+
+  Option 3: Accept the gaps as realistic crawl spaces
+
+
+====================================================================
+REPORTING NEW ISSUES
+====================================================================
+
+If you encounter new issues:
+
+1. Check if it's in old chunks (generate new world to test)
+2. Check debug.log for error messages
+3. Verify file modifications are correct (grep for key values)
+4. Note which biome the issue occurs in
+5. Include screenshots if visual issue
+
+Common false positives:
+- Old chunks will have old behavior (not a bug)
+- Missing path schematics means no paths (expected)
+- Small gaps under buildings (acceptable trade-off)
+
+====================================================================

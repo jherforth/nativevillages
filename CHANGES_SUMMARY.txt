@@ -19,9 +19,9 @@ KEY FIXES
 2. FLOATING BUILDINGS (CRITICAL FIX)
    - Changed place_offset_y from 1 to 0 (ground-level placement)
    - Reduced height_max from 3-4 to 2 (stricter terrain requirements)
-   - Completely rewrote foundation filling system in utils.lua
+   - DISABLED foundation filling (was causing floating artifacts)
    - Buildings now sit ON the ground, not above it
-   - Automatic biome-appropriate fill materials
+   - Small gaps acceptable vs floating terrain corruption
    - Affected files: All *buildings.lua files + utils.lua
 
 3. IMPROVED VILLAGE COHESION
@@ -122,7 +122,7 @@ Modified:
   - junglebuildings.lua (force_placement, grounded placement)
   - lakebuildings.lua (force_placement, grounded placement)
   - paths.lua (complete rewrite with all variants)
-  - utils.lua (complete rewrite of foundation system)
+  - utils.lua (foundation filling disabled)
   - init.lua (updated load order)
 
 Created:
