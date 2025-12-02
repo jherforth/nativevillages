@@ -116,20 +116,65 @@ function nativevillages.behaviors.open_door(door_pos, self)
 	local node = minetest.get_node(door_pos)
 	if not node or not node.name then return end
 
+	minetest.log("action", "[villagers] Attempting to open door: " .. node.name)
+
 	if minetest.get_item_group(node.name, "door") > 0 then
 		local door_def = minetest.registered_nodes[node.name]
+
+		-- Method 1: Try on_rightclick
 		if door_def and door_def.on_rightclick then
+			minetest.log("action", "[villagers] Trying on_rightclick method")
 			local success, err = pcall(function()
+				-- Try with nil player first
 				door_def.on_rightclick(door_pos, node, nil, nil)
 			end)
-			if not success then
+			if success then
+				minetest.log("action", "[villagers] on_rightclick succeeded")
+			else
+				minetest.log("action", "[villagers] on_rightclick failed: " .. tostring(err))
+				-- Method 2: Try doors.door_toggle
 				if doors and doors.door_toggle then
-					doors.door_toggle(door_pos, node, nil)
+					minetest.log("action", "[villagers] Trying doors.door_toggle")
+					local toggle_success, toggle_err = pcall(function()
+						doors.door_toggle(door_pos, node, nil)
+					end)
+					if toggle_success then
+						minetest.log("action", "[villagers] doors.door_toggle succeeded")
+					else
+						minetest.log("action", "[villagers] doors.door_toggle failed: " .. tostring(toggle_err))
+						-- Method 3: Try swapping node directly
+						minetest.log("action", "[villagers] Trying direct node swap")
+						local closed_name = node.name
+						local open_name = closed_name:gsub("_b$", "_a"):gsub("_c$", "_a")
+						if open_name ~= closed_name then
+							local success_swap = pcall(function()
+								minetest.swap_node(door_pos, {name = open_name, param1 = node.param1, param2 = node.param2})
+							end)
+							if success_swap then
+								minetest.log("action", "[villagers] Direct swap succeeded: " .. closed_name .. " -> " .. open_name)
+							else
+								minetest.log("action", "[villagers] Direct swap failed")
+							end
+						end
+					end
 				end
 			end
 		elseif doors and doors.door_toggle then
-			doors.door_toggle(door_pos, node, nil)
+			-- Method 2: Direct doors.door_toggle (no on_rightclick)
+			minetest.log("action", "[villagers] No on_rightclick, using doors.door_toggle")
+			local success, err = pcall(function()
+				doors.door_toggle(door_pos, node, nil)
+			end)
+			if success then
+				minetest.log("action", "[villagers] doors.door_toggle succeeded")
+			else
+				minetest.log("action", "[villagers] doors.door_toggle failed: " .. tostring(err))
+			end
+		else
+			minetest.log("warning", "[villagers] No door API available for " .. node.name)
 		end
+	else
+		minetest.log("warning", "[villagers] Node is not in door group: " .. node.name)
 	end
 end
 
@@ -146,23 +191,62 @@ function nativevillages.behaviors.schedule_door_close(door_pos)
 		nativevillages.behaviors.door_timers[door_key] = nil
 
 		if nativevillages.behaviors.is_door_open(door_pos) then
-			minetest.log("action", "[villagers] Closing door at " .. minetest.pos_to_string(door_pos))
 			local node = minetest.get_node(door_pos)
+			minetest.log("action", "[villagers] Closing door: " .. node.name .. " at " .. minetest.pos_to_string(door_pos))
+
 			if minetest.get_item_group(node.name, "door") > 0 then
 				local door_def = minetest.registered_nodes[node.name]
+
+				-- Method 1: Try on_rightclick
 				if door_def and door_def.on_rightclick then
+					minetest.log("action", "[villagers] Trying on_rightclick to close")
 					local success, err = pcall(function()
 						door_def.on_rightclick(door_pos, node, nil, nil)
 					end)
-					if not success then
-						minetest.log("action", "[villagers] Door rightclick failed, trying toggle: " .. tostring(err))
+					if success then
+						minetest.log("action", "[villagers] on_rightclick close succeeded")
+					else
+						minetest.log("action", "[villagers] on_rightclick close failed: " .. tostring(err))
+						-- Method 2: Try doors.door_toggle
 						if doors and doors.door_toggle then
-							doors.door_toggle(door_pos, node, nil)
+							minetest.log("action", "[villagers] Trying doors.door_toggle to close")
+							local toggle_success, toggle_err = pcall(function()
+								doors.door_toggle(door_pos, node, nil)
+							end)
+							if toggle_success then
+								minetest.log("action", "[villagers] doors.door_toggle close succeeded")
+							else
+								minetest.log("action", "[villagers] doors.door_toggle close failed: " .. tostring(toggle_err))
+								-- Method 3: Try swapping node directly
+								minetest.log("action", "[villagers] Trying direct node swap to close")
+								local open_name = node.name
+								local closed_name = open_name:gsub("_a$", "_b"):gsub("_open$", "_closed")
+								if closed_name ~= open_name then
+									local success_swap = pcall(function()
+										minetest.swap_node(door_pos, {name = closed_name, param1 = node.param1, param2 = node.param2})
+									end)
+									if success_swap then
+										minetest.log("action", "[villagers] Direct swap to close succeeded: " .. open_name .. " -> " .. closed_name)
+									else
+										minetest.log("action", "[villagers] Direct swap to close failed")
+									end
+								end
+							end
 						end
 					end
 				elseif doors and doors.door_toggle then
-					minetest.log("action", "[villagers] Using door_toggle to close")
-					doors.door_toggle(door_pos, node, nil)
+					-- Method 2: Direct doors.door_toggle
+					minetest.log("action", "[villagers] Using doors.door_toggle to close")
+					local success, err = pcall(function()
+						doors.door_toggle(door_pos, node, nil)
+					end)
+					if success then
+						minetest.log("action", "[villagers] doors.door_toggle close succeeded")
+					else
+						minetest.log("action", "[villagers] doors.door_toggle close failed: " .. tostring(err))
+					end
+				else
+					minetest.log("warning", "[villagers] No door close API available for " .. node.name)
 				end
 			end
 			-- Update state to closed
