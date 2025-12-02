@@ -135,7 +135,8 @@ function nativevillages.mood.check_nearby_trade_items(self)
 				ranger = {"farming:bread", "default:apple"},
 				cleric = {"farming:bread","default:mese_crystal"},
 				entertainer = {"farming:bread","default:gold_lump"},
-				witch = {"farming:bread", "default:apple"},
+				witch = {"farming:bread", "default:apple","default:stick"},
+				bum = {"farming:bread", "default:apple"},
 			}
 
 			if class_trade_items[class_name] then
@@ -511,6 +512,7 @@ minetest.register_entity("nativevillages:mood_indicator", {
 	on_activate = function(self, staticdata)
 	end,
 })
+
 
 
 
