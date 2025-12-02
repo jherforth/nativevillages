@@ -76,6 +76,7 @@ end
 -- DOOR INTERACTION SYSTEM
 --------------------------------------------------------------------
 nativevillages.behaviors.door_timers = {}
+nativevillages.behaviors.door_states = {}  -- Track last known state of each door
 
 function nativevillages.behaviors.find_nearby_door(self)
 	if not self.object then return nil end
@@ -164,25 +165,54 @@ function nativevillages.behaviors.schedule_door_close(door_pos)
 					doors.door_toggle(door_pos, node, nil)
 				end
 			end
+			-- Update state to closed
+			nativevillages.behaviors.door_states[door_key] = false
 		else
 			minetest.log("action", "[villagers] Door already closed at " .. minetest.pos_to_string(door_pos))
+			nativevillages.behaviors.door_states[door_key] = false
 		end
 	end)
 end
 
 function nativevillages.behaviors.handle_door_interaction(self)
-	local door_pos = nativevillages.behaviors.find_nearby_door(self)
-	if not door_pos then return end
-
-	local node = minetest.get_node(door_pos)
-	minetest.log("action", "[villagers] Door found: " .. node.name .. " at " .. minetest.pos_to_string(door_pos))
-
-	if not nativevillages.behaviors.is_door_open(door_pos) then
-		minetest.log("action", "[villagers] Opening door at " .. minetest.pos_to_string(door_pos))
-		nativevillages.behaviors.open_door(door_pos, self)
+	-- Only check doors occasionally to reduce spam
+	if not self.nv_door_check_timer then
+		self.nv_door_check_timer = 0
 	end
 
-	nativevillages.behaviors.schedule_door_close(door_pos)
+	self.nv_door_check_timer = self.nv_door_check_timer + 1
+	if self.nv_door_check_timer < 10 then
+		return
+	end
+	self.nv_door_check_timer = 0
+
+	local door_pos = nativevillages.behaviors.find_nearby_door(self)
+	if not door_pos then
+		self.nv_last_door_pos = nil
+		return
+	end
+
+	local door_key = minetest.pos_to_string(door_pos)
+	local is_open = nativevillages.behaviors.is_door_open(door_pos)
+
+	-- Get last known state for this door
+	local last_state = nativevillages.behaviors.door_states[door_key]
+
+	-- If we don't know the state, or state changed, take action
+	if last_state == nil or last_state ~= is_open then
+		nativevillages.behaviors.door_states[door_key] = is_open
+
+		if not is_open then
+			-- Door is closed, open it
+			local node = minetest.get_node(door_pos)
+			minetest.log("action", "[villagers] Opening door: " .. node.name .. " at " .. door_key)
+			nativevillages.behaviors.open_door(door_pos, self)
+			nativevillages.behaviors.door_states[door_key] = true
+			nativevillages.behaviors.schedule_door_close(door_pos)
+		end
+	end
+
+	self.nv_last_door_pos = door_pos
 end
 
 --------------------------------------------------------------------
