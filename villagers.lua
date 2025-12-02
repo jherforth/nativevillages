@@ -32,8 +32,8 @@ local biome_spawn_config = {
 	},
 	cannibal = {
 		nodes = {"default:dirt_with_grass", "default:dirt_with_rainforest_litter"},
-		markers = {"nativevillages:cannibalshrine", "nativevillages:driedpeople"},
-		stay_near = {"nativevillages:cannibalshrine", "nativevillages:driedpeople"}
+		markers = {"nativevillages:cannibalshrine"},
+		stay_near = {"nativevillages:cannibalshrine"}
 	}
 }
 
@@ -125,14 +125,14 @@ local villager_classes = {
 	blacksmith = {
 		type = "npc",
 		passive = false,
-		damage = 6,
+		damage = 4,
 		hp_min = 70,
 		hp_max = 100,
 		armor = 150,
 		attack_type = "dogfight",
 		attacks_monsters = true,
 		attack_npcs = false,
-		reach = 2,
+		reach = 1,
 		drops = {
 			{name = "default:iron_lump", chance = 1, min = 0, max = 2},
 			{name = "default:steel_ingot", chance = 1, min = 0, max = 1}
