@@ -7,8 +7,8 @@ local S = minetest.get_translator("nativevillages")
 local biome_spawn_config = {
 	grassland = {
 		nodes = {"default:dirt_with_grass", "default:cobble", "default:dirt_with_coniferous_litter", "default:clay"},
-		markers = {"nativevillages:grasslandbarrel"},
-		stay_near = {"nativevillages:grasslandbarrel"}
+		markers = {"beds:bed_bottom"},
+		stay_near = {"beds:bed_bottom"}
 	},
 	desert = {
 		nodes = {"default:desert_sand", "group:wool"},
@@ -103,7 +103,7 @@ local villager_classes = {
 			{name = "default:gold_lump", chance = 1, min = 0, max = 1},
 			{name = "default:diamond", chance = 2, min = 0, max = 1}
 		},
-		trade_items = {"default:gold_lump"},
+		trade_items = {"farming:bread","default:gold_lump"},
 	},
 	farmer = {
 		type = "npc",
@@ -124,7 +124,7 @@ local villager_classes = {
 	},
 	blacksmith = {
 		type = "npc",
-		passive = false,
+		passive = true,
 		damage = 4,
 		hp_min = 70,
 		hp_max = 100,
@@ -137,7 +137,7 @@ local villager_classes = {
 			{name = "default:iron_lump", chance = 1, min = 0, max = 2},
 			{name = "default:steel_ingot", chance = 1, min = 0, max = 1}
 		},
-		trade_items = {"default:iron_lump", "default:coal_lump"},
+		trade_items = {"farming:bread","default:iron_lump", "default:coal_lump"},
 	},
 	fisherman = {
 		type = "npc",
@@ -153,7 +153,7 @@ local villager_classes = {
 		drops = {
 			{name = "nativevillages:catfish_raw", chance = 1, min = 0, max = 2}
 		},
-		trade_items = {"nativevillages:catfish_raw", "nativevillages:catfish_cooked"},
+		trade_items = {"farming:bread", "default:paper"},
 	},
 	cleric = {
 		type = "npc",
@@ -169,7 +169,7 @@ local villager_classes = {
 		drops = {
 			{name = "default:mese_crystal", chance = 1, min = 0, max = 1}
 		},
-		trade_items = {"default:mese_crystal_fragment"},
+		trade_items = {"farming:bread","default:mese_crystal"},
 	},
 	bum = {
 		type = "npc",
@@ -201,7 +201,7 @@ local villager_classes = {
 		drops = {
 			{name = "default:gold_lump", chance = 1, min = 0, max = 1}
 		},
-		trade_items = {"default:gold_lump"},
+		trade_items = {"farming:bread","default:gold_lump"},
 	},
 	witch = {
 		type = "npc",
@@ -218,7 +218,7 @@ local villager_classes = {
 			{name = "default:mese_crystal", chance = 1, min = 0, max = 1},
 			{name = "nativevillages:zombietame", chance = 3, min = 0, max = 1}
 		},
-		trade_items = {"nativevillages:driedhumanmeat", "default:mese_crystal_fragment"},
+		trade_items = {"farming:bread", "default:apple", "default:stick"},
 	},
 }
 
