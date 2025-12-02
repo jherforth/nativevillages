@@ -1,11 +1,11 @@
 -- house_spawning.lua
--- Final polished version — 1 villager per house, realistic occupancy, no spam
--- Works perfectly with rare, beautiful villages
+-- Bed-based villager linking — 1 villager per bed, universal and natural
+-- Works with all villages regardless of biome
 
 local S = minetest.get_translator("nativevillages")
 
--- Track which 16×16×16 areas already have a villager (prevents duplicates)
-local houses_with_villagers = {}
+-- Track which beds already have villagers (prevents duplicates)
+local beds_with_villagers = {}
 
 -- Friendly villager classes (add/remove as you like)
 local friendly_classes = {
@@ -13,7 +13,7 @@ local friendly_classes = {
     "bum", "entertainer", "witch", "jeweler", "ranger"
 }
 
--- Map every marker node to its biome
+-- Map every marker node to its biome (used to determine which villager type to spawn)
 local marker_to_biome = {
     -- Grassland
     ["nativevillages:grasslandbarrel"] = "grassland",
@@ -36,7 +36,7 @@ local marker_to_biome = {
     ["nativevillages:driedpeople"] = "cannibal",
 }
 
--- Build the full list of marker nodes for find_nodes_in_area
+-- Build the full list of marker nodes for biome detection
 local marker_list = {}
 for node, _ in pairs(marker_to_biome) do
     table.insert(marker_list, node)
@@ -45,10 +45,10 @@ end
 -- Save/load system
 local storage = minetest.get_mod_storage()
 
-local function load_houses()
-    local data = storage:get_string("houses_with_villagers")
+local function load_beds()
+    local data = storage:get_string("beds_with_villagers")
     if data and data ~= "" then
-        houses_with_villagers = minetest.deserialize(data) or {}
+        beds_with_villagers = minetest.deserialize(data) or {}
     end
 end
 
@@ -57,11 +57,11 @@ minetest.register_globalstep(function(dtime)
     save_timer = save_timer + dtime
     if save_timer >= 60 then
         save_timer = 0
-        storage:set_string("houses_with_villagers", minetest.serialize(houses_with_villagers))
+        storage:set_string("beds_with_villagers", minetest.serialize(beds_with_villagers))
     end
 end)
 
-load_houses()
+load_beds()
 
 -- Main villager spawning on chunk generation
 minetest.register_on_generated(function(minp, maxp, blockseed)
@@ -71,51 +71,66 @@ minetest.register_on_generated(function(minp, maxp, blockseed)
         local search_min = {x = minp.x, y = ymin, z = minp.z}
         local search_max = {x = maxp.x, y = ymax, z = maxp.z}
 
-        local markers = minetest.find_nodes_in_area(search_min, search_max, marker_list)
-        local processed_houses = {}  -- Temporary table for this chunk
+        -- Find all beds in the chunk
+        local beds = minetest.find_nodes_in_area(search_min, search_max, "group:bed")
+        local processed_beds = {}  -- Temporary table for this chunk
 
-        for _, pos in ipairs(markers) do
-            local node_name = minetest.get_node(pos).name
-            local biome = marker_to_biome[node_name]
-            if not biome then goto continue end
+        for _, bed_pos in ipairs(beds) do
+            local bed_key = minetest.pos_to_string(bed_pos)
 
-            -- Snap to 16×16×16 grid (includes Y level — safe for treehouses!)
-            local house_key = string.format("%d,%d,%d",
-                math.floor(pos.x / 16) * 16,
-                math.floor(pos.y / 16) * 16,
-                math.floor(pos.z / 16) * 16
+            -- Skip if this bed already has a villager
+            if beds_with_villagers[bed_key] or processed_beds[bed_key] then
+                goto continue
+            end
+
+            -- 28% chance the bed is unoccupied (adds realism)
+            if math.random() < 0.28 then
+                processed_beds[bed_key] = true
+                goto continue
+            end
+
+            -- Determine biome by looking for nearby markers
+            local biome = nil
+            local markers_nearby = minetest.find_nodes_in_area(
+                {x = bed_pos.x - 30, y = bed_pos.y - 10, z = bed_pos.z - 30},
+                {x = bed_pos.x + 30, y = bed_pos.y + 10, z = bed_pos.z + 30},
+                marker_list
             )
 
-            -- Skip if already spawned in this area (this world session or saved)
-            if houses_with_villagers[house_key] or processed_houses[house_key] then
-                goto continue
+            if #markers_nearby > 0 then
+                local marker_node = minetest.get_node(markers_nearby[1]).name
+                biome = marker_to_biome[marker_node]
             end
 
-            -- 28% chance the house is empty (feels lived-in, not robotic)
-            if math.random() < 0.28 then
-                processed_houses[house_key] = true
-                goto continue
+            -- Default to grassland if no marker found
+            if not biome then
+                biome = "grassland"
             end
 
-            -- Find a safe air spot with solid floor
+            -- Find spawn position near the bed
             local spawn_pos = nil
-            for dy = -3, 8 do
-                local check = {
-                    x = pos.x + math.random(-5, 5),
-                    y = pos.y + dy,
-                    z = pos.z + math.random(-5, 5)
-                }
-                local node = minetest.get_node(check)
-                local below = minetest.get_node({x=check.x, y=check.y-1, z=check.z})
+            for dx = -2, 2 do
+                for dy = 0, 2 do
+                    for dz = -2, 2 do
+                        local check = {
+                            x = bed_pos.x + dx,
+                            y = bed_pos.y + dy,
+                            z = bed_pos.z + dz
+                        }
+                        local node = minetest.get_node(check)
+                        local below = minetest.get_node({x=check.x, y=check.y-1, z=check.z})
 
-                if node.name == "air" and minetest.get_item_group(below.name, "solid") == 1 then
-                    spawn_pos = check
-                    break
+                        if node.name == "air" and minetest.get_item_group(below.name, "solid") == 1 then
+                            spawn_pos = check
+                            goto spawn_found
+                        end
+                    end
                 end
             end
+            ::spawn_found::
 
             if not spawn_pos then
-                spawn_pos = {x = pos.x, y = pos.y + 1, z = pos.z}
+                spawn_pos = {x = bed_pos.x, y = bed_pos.y + 1, z = bed_pos.z}
             end
 
             -- Spawn the villager
@@ -126,13 +141,13 @@ minetest.register_on_generated(function(minp, maxp, blockseed)
             if obj then
                 local luaent = obj:get_luaentity()
                 if luaent then
-                    luaent.nv_house_pos = vector.new(pos)
-                    luaent.nv_home_radius = 22
+                    luaent.nv_house_pos = vector.new(bed_pos)
+                    luaent.nv_home_radius = 20
                 end
-                houses_with_villagers[house_key] = true
-                processed_houses[house_key] = true
-                minetest.log("action", "[nativevillages] Villager spawned: " .. mob_name ..
-                    " at " .. minetest.pos_to_string(spawn_pos))
+                beds_with_villagers[bed_key] = true
+                processed_beds[bed_key] = true
+                minetest.log("action", "[nativevillages] Villager spawned near bed: " .. mob_name ..
+                    " at " .. minetest.pos_to_string(spawn_pos) .. " linked to bed at " .. bed_key)
             end
 
             ::continue::
@@ -140,4 +155,4 @@ minetest.register_on_generated(function(minp, maxp, blockseed)
     end)
 end)
 
-print(S("[MOD] Native Villages - House spawning system loaded (final version)"))
+print(S("[MOD] Native Villages - Bed-based villager spawning loaded"))

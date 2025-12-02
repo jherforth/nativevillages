@@ -166,12 +166,14 @@ function nativevillages.behaviors.schedule_door_close(door_pos)
 end
 
 function nativevillages.behaviors.handle_door_interaction(self)
-	if math.random() > 0.3 then return end
-
 	local door_pos = nativevillages.behaviors.find_nearby_door(self)
 	if not door_pos then return end
 
+	local node = minetest.get_node(door_pos)
+	minetest.log("action", "[villagers] Door found: " .. node.name .. " at " .. minetest.pos_to_string(door_pos))
+
 	if not nativevillages.behaviors.is_door_open(door_pos) then
+		minetest.log("action", "[villagers] Opening door at " .. minetest.pos_to_string(door_pos))
 		nativevillages.behaviors.open_door(door_pos, self)
 	end
 
