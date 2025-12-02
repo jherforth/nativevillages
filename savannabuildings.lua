@@ -12,10 +12,10 @@ local function register_savanna_building(params)
     minetest.register_decoration({
         name = "nativevillages:" .. params.name,
         deco_type = "schematic",
-        place_on = {"default:dry_dirt_with_dry_grass"},
+        place_on = {"default:dry_dirt_with_dry_grass","naturalbiomes:outback_litter"},
         sidelen = 40,                          -- consistent with all other biomes
         noise_params = village_noise,
-        biomes = {"savanna"},
+        biomes = {"savanna","prarie","naturalbiomes:outback"},
         y_min = 1,
         y_max = 140,                           -- savannas can climb high!
 
@@ -36,10 +36,10 @@ local function register_savanna_central(params)
     minetest.register_decoration({
         name = "nativevillages:" .. params.name,
         deco_type = "schematic",
-        place_on = {"default:dry_dirt_with_dry_grass"},
+        place_on = {"default:dry_dirt_with_dry_grass","naturalbiomes:outback_litter"},
         sidelen = 48,                          -- rare, proud structures
         noise_params = central_noise,
-        biomes = {"savanna"},
+        biomes = {"savanna","prarie","naturalbiomes:outback"},
         y_min = 1,
         y_max = 140,
 
@@ -68,3 +68,4 @@ register_savanna_building({name = "savannahouse5", file = "savannahouse5_7_6_7.m
 register_savanna_central({name = "savannachurch", file = "savannachurch_8_11_12.mts"})
 register_savanna_central({name = "savannamarket", file = "savannamarket_10_5_9.mts"})
 register_savanna_central({name = "savannastable", file = "savannastable_15_7_16.mts"})
+
