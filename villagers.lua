@@ -291,6 +291,11 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 				if nativevillages.mood then
 					nativevillages.mood.update_mood(self, dtime)
 				end
+
+				-- Update enhanced behaviors
+				if nativevillages.behaviors then
+					nativevillages.behaviors.update(self, dtime)
+				end
 			end)
 
 			if not success then
@@ -314,12 +319,22 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 						if nativevillages.mood and data.mood then
 							nativevillages.mood.on_activate_extra(self, data.mood)
 						end
+
+						-- Restore behavior data
+						if nativevillages.behaviors and data.behaviors then
+							nativevillages.behaviors.load_save_data(self, data.behaviors)
+						end
 					end
 				end
 
 				-- Initialize mood system
 				if nativevillages.mood then
 					nativevillages.mood.init_npc(self)
+				end
+
+				-- Initialize behaviors system
+				if nativevillages.behaviors then
+					nativevillages.behaviors.init_house(self)
 				end
 			end)
 
@@ -347,6 +362,11 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 				-- Add mood data if available
 				if nativevillages.mood then
 					tmp.mood = nativevillages.mood.get_staticdata_extra(self)
+				end
+
+				-- Add behavior data if available
+				if nativevillages.behaviors then
+					tmp.behaviors = nativevillages.behaviors.get_save_data(self)
 				end
 
 				return minetest.serialize(tmp)
