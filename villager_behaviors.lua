@@ -282,17 +282,15 @@ function nativevillages.behaviors.handle_door_interaction(self)
 	-- Get last known state for this door
 	local last_state = nativevillages.behaviors.door_states[door_key]
 
-	-- If we don't know the state, or state changed, take action
-	if last_state == nil or last_state ~= is_open then
-		nativevillages.behaviors.door_states[door_key] = is_open
-
+	-- If we don't know the state, or door is closed, open it
+	if last_state == nil or not is_open then
 		if not is_open then
-			-- Door is closed, open it
+			-- Door is closed, open it (no auto-close)
 			local node = minetest.get_node(door_pos)
 			minetest.log("action", "[villagers] Opening door: " .. node.name .. " at " .. door_key)
 			nativevillages.behaviors.open_door(door_pos, self)
 			nativevillages.behaviors.door_states[door_key] = true
-			nativevillages.behaviors.schedule_door_close(door_pos)
+			-- Removed: nativevillages.behaviors.schedule_door_close(door_pos)
 		end
 	end
 
@@ -300,9 +298,9 @@ function nativevillages.behaviors.handle_door_interaction(self)
 end
 
 --------------------------------------------------------------------
--- SLEEP SYSTEM
+-- NIGHT-TIME BED PATHFINDING (Simplified - no sleeping animation)
 --------------------------------------------------------------------
-function nativevillages.behaviors.should_sleep(self)
+function nativevillages.behaviors.should_go_to_bed(self)
 	return nativevillages.behaviors.is_night_time() and nativevillages.behaviors.has_house(self)
 end
 
@@ -319,95 +317,34 @@ function nativevillages.behaviors.is_at_house(self)
 	return dist <= nativevillages.behaviors.config.sleep_radius
 end
 
-function nativevillages.behaviors.enter_sleep_state(self)
-	if self.nv_sleeping then return end
-
-	self.nv_sleeping = true
-
-	-- Stop movement completely
-	self.state = "stand"
-	if self.object then
-		self.object:set_velocity({x=0, y=0, z=0})
+function nativevillages.behaviors.handle_night_time_movement(self)
+	-- During night, just pathfind to bed - no sleep animation
+	if not nativevillages.behaviors.should_go_to_bed(self) then
+		return false
 	end
 
-	-- Find the actual bed and position on it
+	-- If already at house, just stand around
+	if nativevillages.behaviors.is_at_house(self) then
+		return true
+	end
+
+	-- Otherwise, pathfind to house
 	local house_pos = nativevillages.behaviors.get_house_position(self)
 	if house_pos and self.object then
 		local pos = self.object:get_pos()
 		if pos then
-			-- Search for bed node near house position
-			local bed_pos = nil
-			for dx = -3, 3 do
-				for dy = -1, 2 do
-					for dz = -3, 3 do
-						local check_pos = {
-							x = house_pos.x + dx,
-							y = house_pos.y + dy,
-							z = house_pos.z + dz
-						}
-						local node = minetest.get_node(check_pos)
-						if minetest.get_item_group(node.name, "bed") > 0 then
-							bed_pos = check_pos
-							goto bed_found
-						end
-					end
-				end
-			end
-			::bed_found::
+			if self.order ~= "stand" and not self.following then
+				local dist = vector.distance(pos, house_pos)
+				if dist > 1 then
+					-- Use mobs_redo pathfinding
+					self._target = house_pos
+					self.state = "walk"
+					self:set_animation("walk")
 
-			-- Position villager on bed if found
-			if bed_pos then
-				-- Position slightly above bed surface
-				local sleep_pos = {
-					x = bed_pos.x,
-					y = bed_pos.y + 0.5,
-					z = bed_pos.z
-				}
-				self.object:set_pos(sleep_pos)
-				minetest.log("action", "[villagers] Villager sleeping on bed at " .. minetest.pos_to_string(bed_pos))
-			end
-		end
-	end
-
-	-- Set sleeping animation
-	self:set_animation("lay")
-end
-
-function nativevillages.behaviors.exit_sleep_state(self)
-	if not self.nv_sleeping then return end
-
-	self.nv_sleeping = false
-	self:set_animation("stand")
-end
-
-function nativevillages.behaviors.handle_sleep(self)
-	if not nativevillages.behaviors.should_sleep(self) then
-		nativevillages.behaviors.exit_sleep_state(self)
-		return false
-	end
-
-	if nativevillages.behaviors.is_at_house(self) then
-		nativevillages.behaviors.enter_sleep_state(self)
-		return true
-	else
-		local house_pos = nativevillages.behaviors.get_house_position(self)
-		if house_pos and self.object then
-			local pos = self.object:get_pos()
-			if pos then
-				if self.order ~= "stand" and not self.following then
-					local dist = vector.distance(pos, house_pos)
-					if dist > 1 then
-						-- Use mobs_redo pathfinding by setting the _target
-						-- The mob's AI will automatically pathfind to it
-						self._target = house_pos
-						self.state = "walk"
-						self:set_animation("walk")
-
-						-- Face the target
-						local dir = vector.direction(pos, house_pos)
-						local yaw = minetest.dir_to_yaw(dir)
-						self.object:set_yaw(yaw)
-					end
+					-- Face the target
+					local dir = vector.direction(pos, house_pos)
+					local yaw = minetest.dir_to_yaw(dir)
+					self.object:set_yaw(yaw)
 				end
 			end
 		end
@@ -735,10 +672,12 @@ end
 function nativevillages.behaviors.update(self, dtime)
 	nativevillages.behaviors.init_house(self)
 
-	if nativevillages.behaviors.handle_sleep(self) then
+	-- Handle night-time pathfinding to bed (no sleep animation)
+	if nativevillages.behaviors.handle_night_time_movement(self) then
 		return
 	end
 
+	-- Handle door opening (no closing)
 	nativevillages.behaviors.handle_door_interaction(self)
 
 	nativevillages.behaviors.check_stuck_and_recover(self, dtime)

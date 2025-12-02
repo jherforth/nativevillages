@@ -111,7 +111,19 @@ end
 -- Check for nearby trade items
 --------------------------------------------------------------------
 function nativevillages.mood.check_nearby_trade_items(self)
-	if not self.object or not self.nv_trade_items then return false end
+	if not self.object then
+		return false
+	end
+
+	if not self.nv_trade_items then
+		minetest.log("action", "[npcmood] NPC has no nv_trade_items defined")
+		return false
+	end
+
+	if #self.nv_trade_items == 0 then
+		-- No trade items defined for this NPC class
+		return false
+	end
 
 	local pos = self.object:get_pos()
 	if not pos then return false end
@@ -122,8 +134,15 @@ function nativevillages.mood.check_nearby_trade_items(self)
 			local wielded = obj:get_wielded_item()
 			if wielded then
 				local name = wielded:get_name()
-				for _, trade_item in ipairs(self.nv_trade_items) do
-					if name == trade_item then return true end
+				if name and name ~= "" then
+					minetest.log("action", "[npcmood] Player holding: " .. name)
+					minetest.log("action", "[npcmood] NPC trade items: " .. table.concat(self.nv_trade_items, ", "))
+					for _, trade_item in ipairs(self.nv_trade_items) do
+						if name == trade_item then
+							minetest.log("action", "[npcmood] TRADE MATCH! " .. name .. " == " .. trade_item)
+							return true
+						end
+					end
 				end
 			end
 		end
