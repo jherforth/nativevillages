@@ -145,6 +145,7 @@ function nativevillages.behaviors.schedule_door_close(door_pos)
 		nativevillages.behaviors.door_timers[door_key] = nil
 
 		if nativevillages.behaviors.is_door_open(door_pos) then
+			minetest.log("action", "[villagers] Closing door at " .. minetest.pos_to_string(door_pos))
 			local node = minetest.get_node(door_pos)
 			if minetest.get_item_group(node.name, "door") > 0 then
 				local door_def = minetest.registered_nodes[node.name]
@@ -153,14 +154,18 @@ function nativevillages.behaviors.schedule_door_close(door_pos)
 						door_def.on_rightclick(door_pos, node, nil, nil)
 					end)
 					if not success then
+						minetest.log("action", "[villagers] Door rightclick failed, trying toggle: " .. tostring(err))
 						if doors and doors.door_toggle then
 							doors.door_toggle(door_pos, node, nil)
 						end
 					end
 				elseif doors and doors.door_toggle then
+					minetest.log("action", "[villagers] Using door_toggle to close")
 					doors.door_toggle(door_pos, node, nil)
 				end
 			end
+		else
+			minetest.log("action", "[villagers] Door already closed at " .. minetest.pos_to_string(door_pos))
 		end
 	end)
 end

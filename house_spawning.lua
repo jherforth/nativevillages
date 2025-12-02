@@ -74,6 +74,7 @@ minetest.register_on_generated(function(minp, maxp, blockseed)
         -- Find all beds in the chunk
         local beds = minetest.find_nodes_in_area(search_min, search_max, "group:bed")
         local processed_beds = {}  -- Temporary table for this chunk
+        local bed_pairs = {}  -- Track bed pairs to avoid duplicates
 
         for _, bed_pos in ipairs(beds) do
             local bed_key = minetest.pos_to_string(bed_pos)
@@ -81,6 +82,34 @@ minetest.register_on_generated(function(minp, maxp, blockseed)
             -- Skip if this bed already has a villager
             if beds_with_villagers[bed_key] or processed_beds[bed_key] then
                 goto continue
+            end
+
+            -- Check if this is part of a bed pair and mark both halves
+            -- Most beds have _top and _bottom or two connected parts
+            local bed_node = minetest.get_node(bed_pos)
+            local bed_pair_key = nil
+
+            -- Try to find the other half of the bed (usually adjacent)
+            for _, offset in ipairs({{x=1,y=0,z=0}, {x=-1,y=0,z=0}, {x=0,y=0,z=1}, {x=0,y=0,z=-1}}) do
+                local check_pos = vector.add(bed_pos, offset)
+                local check_node = minetest.get_node(check_pos)
+                if minetest.get_item_group(check_node.name, "bed") > 0 then
+                    -- Found the other half - create a unique pair key
+                    local pos1, pos2 = bed_pos, check_pos
+                    if pos1.x + pos1.y + pos1.z > pos2.x + pos2.y + pos2.z then
+                        pos1, pos2 = pos2, pos1
+                    end
+                    bed_pair_key = minetest.pos_to_string(pos1) .. "|" .. minetest.pos_to_string(pos2)
+                    break
+                end
+            end
+
+            -- Skip if we've already processed this bed pair
+            if bed_pair_key and bed_pairs[bed_pair_key] then
+                goto continue
+            end
+            if bed_pair_key then
+                bed_pairs[bed_pair_key] = true
             end
 
             -- 28% chance the bed is unoccupied (adds realism)
