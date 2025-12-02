@@ -118,7 +118,16 @@ function nativevillages.behaviors.open_door(door_pos, self)
 	if minetest.get_item_group(node.name, "door") > 0 then
 		local door_def = minetest.registered_nodes[node.name]
 		if door_def and door_def.on_rightclick then
-			door_def.on_rightclick(door_pos, node, self.object)
+			local success, err = pcall(function()
+				door_def.on_rightclick(door_pos, node, nil, nil)
+			end)
+			if not success then
+				if doors and doors.door_toggle then
+					doors.door_toggle(door_pos, node, nil)
+				end
+			end
+		elseif doors and doors.door_toggle then
+			doors.door_toggle(door_pos, node, nil)
 		end
 	end
 end
@@ -140,7 +149,16 @@ function nativevillages.behaviors.schedule_door_close(door_pos)
 			if minetest.get_item_group(node.name, "door") > 0 then
 				local door_def = minetest.registered_nodes[node.name]
 				if door_def and door_def.on_rightclick then
-					door_def.on_rightclick(door_pos, node, nil)
+					local success, err = pcall(function()
+						door_def.on_rightclick(door_pos, node, nil, nil)
+					end)
+					if not success then
+						if doors and doors.door_toggle then
+							doors.door_toggle(door_pos, node, nil)
+						end
+					end
+				elseif doors and doors.door_toggle then
+					doors.door_toggle(door_pos, node, nil)
 				end
 			end
 		end
@@ -148,6 +166,8 @@ function nativevillages.behaviors.schedule_door_close(door_pos)
 end
 
 function nativevillages.behaviors.handle_door_interaction(self)
+	if math.random() > 0.3 then return end
+
 	local door_pos = nativevillages.behaviors.find_nearby_door(self)
 	if not door_pos then return end
 
@@ -203,6 +223,30 @@ function nativevillages.behaviors.handle_sleep(self)
 	if nativevillages.behaviors.is_at_house(self) then
 		nativevillages.behaviors.enter_sleep_state(self)
 		return true
+	else
+		local house_pos = nativevillages.behaviors.get_house_position(self)
+		if house_pos and self.object then
+			local pos = self.object:get_pos()
+			if pos then
+				if self.order ~= "stand" and not self.following then
+					local dist = vector.distance(pos, house_pos)
+					if dist > 1 then
+						local dir = vector.direction(pos, house_pos)
+						local yaw = minetest.dir_to_yaw(dir)
+						self.object:set_yaw(yaw)
+
+						local speed = self.run_velocity or 2
+						local vel = vector.multiply(dir, speed)
+						self.object:set_velocity(vel)
+
+						if self.state ~= "walk" then
+							self.state = "walk"
+							self:set_animation("walk")
+						end
+					end
+				end
+			end
+		end
 	end
 
 	return false
@@ -324,7 +368,7 @@ function nativevillages.behaviors.emit_social_particles(pos1, pos2)
 	}
 
 	minetest.add_particlespawner({
-		amount = 5,
+		amount = 40,
 		time = 1,
 		minpos = {x = mid_pos.x - 0.3, y = mid_pos.y, z = mid_pos.z - 0.3},
 		maxpos = {x = mid_pos.x + 0.3, y = mid_pos.y + 0.5, z = mid_pos.z + 0.3},
@@ -334,8 +378,8 @@ function nativevillages.behaviors.emit_social_particles(pos1, pos2)
 		maxacc = {x = 0, y = 0, z = 0},
 		minexptime = 1,
 		maxexptime = 2,
-		minsize = 2,
-		maxsize = 4,
+		minsize = 0.25,
+		maxsize = 0.5,
 		texture = "nativevillages_mood_happy.png",
 		glow = 5,
 	})
@@ -420,7 +464,7 @@ function nativevillages.behaviors.emit_food_share_particles(pos1, pos2)
 	}
 
 	minetest.add_particlespawner({
-		amount = 8,
+		amount = 64,
 		time = 1.5,
 		minpos = {x = mid_pos.x - 0.3, y = mid_pos.y, z = mid_pos.z - 0.3},
 		maxpos = {x = mid_pos.x + 0.3, y = mid_pos.y + 0.5, z = mid_pos.z + 0.3},
@@ -430,8 +474,8 @@ function nativevillages.behaviors.emit_food_share_particles(pos1, pos2)
 		maxacc = {x = 0, y = 0, z = 0},
 		minexptime = 1,
 		maxexptime = 2,
-		minsize = 1.5,
-		maxsize = 3,
+		minsize = 0.2,
+		maxsize = 0.4,
 		texture = "default_cloud.png^[colorize:blue:100",
 		glow = 3,
 	})
@@ -476,7 +520,7 @@ function nativevillages.behaviors.emit_greeting_particles(self, player_pos)
 	end
 
 	minetest.add_particlespawner({
-		amount = 3,
+		amount = 24,
 		time = 0.5,
 		minpos = {x = pos.x - 0.3, y = pos.y + 1.5, z = pos.z - 0.3},
 		maxpos = {x = pos.x + 0.3, y = pos.y + 2.0, z = pos.z + 0.3},
@@ -486,8 +530,8 @@ function nativevillages.behaviors.emit_greeting_particles(self, player_pos)
 		maxacc = {x = 0, y = 0, z = 0},
 		minexptime = 0.5,
 		maxexptime = 1,
-		minsize = 2,
-		maxsize = 3,
+		minsize = 0.25,
+		maxsize = 0.4,
 		texture = "default_cloud.png^[colorize:" .. color .. ":150",
 		glow = 8,
 	})
