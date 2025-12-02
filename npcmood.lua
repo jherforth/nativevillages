@@ -129,13 +129,13 @@ function nativevillages.mood.check_nearby_trade_items(self)
 			-- Map of class to trade items (fallback if not set on spawn)
 			local class_trade_items = {
 				farmer = {"farming:bread", "farming:wheat"},
-				blacksmith = {"default:iron_lump", "default:coal_lump"},
-				jeweler = {"default:gold_lump"},
-				fisherman = {"nativevillages:catfish_cooked", "nativevillages:catfish_raw"},
+				blacksmith = {"farming:bread","default:iron_lump", "default:coal_lump"},
+				jeweler = {"farming:bread","default:gold_lump"},
+				fisherman = {"farming:bread", "default:paper"},
 				ranger = {"farming:bread", "default:apple"},
-				cleric = {"default:mese_crystal"},
-				entertainer = {"default:gold_lump"},
-				witch = {"nativevillages:driedhumanmeat", "default:mese_crystal_fragment"},
+				cleric = {"farming:bread","default:mese_crystal"},
+				entertainer = {"farming:bread","default:gold_lump"},
+				witch = {"farming:bread", "default:apple"},
 			}
 
 			if class_trade_items[class_name] then
@@ -511,6 +511,7 @@ minetest.register_entity("nativevillages:mood_indicator", {
 	on_activate = function(self, staticdata)
 	end,
 })
+
 
 
 
