@@ -239,8 +239,53 @@ function nativevillages.behaviors.enter_sleep_state(self)
 	if self.nv_sleeping then return end
 
 	self.nv_sleeping = true
+
+	-- Stop movement completely
 	self.state = "stand"
-	self:set_velocity(0)
+	if self.object then
+		self.object:set_velocity({x=0, y=0, z=0})
+	end
+
+	-- Find the actual bed and position on it
+	local house_pos = nativevillages.behaviors.get_house_position(self)
+	if house_pos and self.object then
+		local pos = self.object:get_pos()
+		if pos then
+			-- Search for bed node near house position
+			local bed_pos = nil
+			for dx = -3, 3 do
+				for dy = -1, 2 do
+					for dz = -3, 3 do
+						local check_pos = {
+							x = house_pos.x + dx,
+							y = house_pos.y + dy,
+							z = house_pos.z + dz
+						}
+						local node = minetest.get_node(check_pos)
+						if minetest.get_item_group(node.name, "bed") > 0 then
+							bed_pos = check_pos
+							goto bed_found
+						end
+					end
+				end
+			end
+			::bed_found::
+
+			-- Position villager on bed if found
+			if bed_pos then
+				-- Position slightly above bed surface
+				local sleep_pos = {
+					x = bed_pos.x,
+					y = bed_pos.y + 0.5,
+					z = bed_pos.z
+				}
+				self.object:set_pos(sleep_pos)
+				minetest.log("action", "[villagers] Villager sleeping on bed at " .. minetest.pos_to_string(bed_pos))
+			end
+		end
+	end
+
+	-- Set sleeping animation
 	self:set_animation("lay")
 end
 
@@ -268,18 +313,16 @@ function nativevillages.behaviors.handle_sleep(self)
 				if self.order ~= "stand" and not self.following then
 					local dist = vector.distance(pos, house_pos)
 					if dist > 1 then
+						-- Use mobs_redo pathfinding by setting the _target
+						-- The mob's AI will automatically pathfind to it
+						self._target = house_pos
+						self.state = "walk"
+						self:set_animation("walk")
+
+						-- Face the target
 						local dir = vector.direction(pos, house_pos)
 						local yaw = minetest.dir_to_yaw(dir)
 						self.object:set_yaw(yaw)
-
-						local speed = self.run_velocity or 2
-						local vel = vector.multiply(dir, speed)
-						self.object:set_velocity(vel)
-
-						if self.state ~= "walk" then
-							self.state = "walk"
-							self:set_animation("walk")
-						end
 					end
 				end
 			end
