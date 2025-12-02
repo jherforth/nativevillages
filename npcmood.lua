@@ -115,13 +115,38 @@ function nativevillages.mood.check_nearby_trade_items(self)
 		return false
 	end
 
-	if not self.nv_trade_items then
-		minetest.log("action", "[npcmood] NPC has no nv_trade_items defined")
-		return false
+	-- Try to initialize trade items from mob name if not set
+	if not self.nv_trade_items or #self.nv_trade_items == 0 then
+		-- Try to determine trade items from mob name
+		local mob_name = self.name or ""
+		minetest.log("action", "[npcmood] NPC has no nv_trade_items, mob name: " .. mob_name)
+
+		-- Extract class from mob name (e.g., "nativevillages:grassland_farmer" -> "farmer")
+		local class_name = mob_name:match("_([^_]+)$")
+		if class_name then
+			minetest.log("action", "[npcmood] Detected class: " .. class_name)
+
+			-- Map of class to trade items (fallback if not set on spawn)
+			local class_trade_items = {
+				farmer = {"farming:bread", "farming:wheat"},
+				blacksmith = {"default:iron_lump", "default:coal_lump"},
+				jeweler = {"default:gold_lump"},
+				fisherman = {"nativevillages:catfish_cooked", "nativevillages:catfish_raw"},
+				ranger = {"farming:bread", "default:apple"},
+				cleric = {"default:mese_crystal"},
+				entertainer = {"default:gold_lump"},
+				witch = {"nativevillages:driedhumanmeat", "default:mese_crystal_fragment"},
+			}
+
+			if class_trade_items[class_name] then
+				self.nv_trade_items = class_trade_items[class_name]
+				minetest.log("action", "[npcmood] Set trade items from class: " .. table.concat(self.nv_trade_items, ", "))
+			end
+		end
 	end
 
-	if #self.nv_trade_items == 0 then
-		-- No trade items defined for this NPC class
+	if not self.nv_trade_items or #self.nv_trade_items == 0 then
+		-- Still no trade items - this NPC doesn't trade
 		return false
 	end
 
