@@ -73,7 +73,7 @@ local villager_classes = {
 	},
 	ranger = {
 		type = "npc",
-		passive = false,
+		passive = true,
 		damage = 5,
 		hp_min = 50,
 		hp_max = 80,
@@ -205,7 +205,7 @@ local villager_classes = {
 	},
 	witch = {
 		type = "npc",
-		passive = false,
+		passive = true,
 		damage = 7,
 		hp_min = 60,
 		hp_max = 90,
