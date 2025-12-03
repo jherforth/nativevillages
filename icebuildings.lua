@@ -23,8 +23,8 @@ local function register_ice_building(params)
         -- THE THREE MAGIC LINES (identical to every other biome)
         place_offset_y = 0,
         flags = "place_center_x, place_center_z, force_placement, all_floors",
-        height = -7,
-        height_max = -7,
+        height = 0,
+        height_max = 0,
 
         schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
         rotation = "random",
@@ -69,6 +69,7 @@ register_ice_building({name = "icehouse4", file = "icehouse4_6_7_7.mts"})
 register_ice_central({name = "icechurch",  file = "icechurch_7_11_10.mts"})
 register_ice_central({name = "icemarket",  file = "icemarket_10_5_9.mts"})
 register_ice_central({name = "icestable",  file = "icestable_9_5_7.mts"})
+
 
 
 
