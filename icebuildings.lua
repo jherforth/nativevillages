@@ -14,7 +14,7 @@ local function register_ice_building(params)
         name = "nativevillages:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:snowblock", "default:ice"},
-        sidelen = 40,                       -- consistent with desert/grassland
+        sidelen = 24,                       -- consistent with desert/grassland
         noise_params = village_noise,
         biomes = {"icesheet", "icesheet_ocean"},  -- also allows coastal ice villages
         y_min = -2,
@@ -39,7 +39,7 @@ local function register_ice_central(params)
         name = "nativevillages:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:snowblock", "default:ice"},
-        sidelen = 48,                       -- slightly larger grid for rare buildings
+        sidelen = 32,                       -- slightly larger grid for rare buildings
         noise_params = central_noise,
         biomes = {"icesheet", "icesheet_ocean"},
         y_min = -2,
@@ -69,4 +69,5 @@ register_ice_building({name = "icehouse4", file = "icehouse4_6_7_7.mts"})
 register_ice_central({name = "icechurch",  file = "icechurch_7_11_10.mts"})
 register_ice_central({name = "icemarket",  file = "icemarket_10_5_9.mts"})
 register_ice_central({name = "icestable",  file = "icestable_9_5_7.mts"})
+
 
