@@ -60,15 +60,16 @@ end
 -- ===================================================================
 
 -- Regular houses
-register_ice_building({name = "icehouse1", file = "icehouse1_7_9_7.mts"})
-register_ice_building({name = "icehouse2", file = "icehouse2_7_7_9.mts"})
-register_ice_building({name = "icehouse3", file = "icehouse3_6_6_6.mts"})
-register_ice_building({name = "icehouse4", file = "icehouse4_6_7_7.mts"})
+register_ice_building({name = "icehouse1", file = "icehouse1.mts"})
+register_ice_building({name = "icehouse2", file = "icehouse2.mts"})
+register_ice_building({name = "icehouse3", file = "icehouse3.mts"})
+register_ice_building({name = "icehouse4", file = "icehouse4.mts"})
 
 -- Central / rare buildings
-register_ice_central({name = "icechurch",  file = "icechurch_7_11_10.mts"})
-register_ice_central({name = "icemarket",  file = "icemarket_10_5_9.mts"})
-register_ice_central({name = "icestable",  file = "icestable_9_5_7.mts"})
+register_ice_central({name = "icechurch",  file = "icechurch.mts"})
+register_ice_central({name = "icemarket",  file = "icemarket.mts"})
+register_ice_central({name = "icestable",  file = "icestable.mts"})
+
 
 
 
