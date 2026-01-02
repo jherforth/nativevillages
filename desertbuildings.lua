@@ -63,8 +63,8 @@ register_desert_building({name = "deserthouse1", file = "deserthouse1_12_14_9.mt
 register_desert_building({name = "deserthouse2", file = "deserthouse2_8_7_8.mts"})
 register_desert_building({name = "deserthouse3", file = "deserthouse3_8_10_8.mts"})
 register_desert_building({name = "deserthouse4", file = "deserthouse4_10_8_7.mts"})
-register_desert_building({name = "deserthouse5", file = "deserthouse5_10_6_8.mts"})
 
 register_desert_central({name = "desertchurch",  file = "desertchurch_9_12_16.mts"})
 register_desert_central({name = "desertmarket",  file = "desertmarket_12_16_13.mts"})
 register_desert_central({name = "desertstable",  file = "desertstable_13_6_9.mts"})
+
