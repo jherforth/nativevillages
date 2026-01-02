@@ -58,13 +58,13 @@ end
 -- ===================================================================
 
 -- Regular treehouses (all have built-in stilts → no offset needed)
-register_jungle_building({name = "junglehouse1",   file = "junglehouse1_7_26_7.mts"})
-register_jungle_building({name = "junglehouse2",   file = "junglehouse2_7_25_7.mts"})
-register_jungle_building({name = "junglehouse3",   file = "junglehouse3_7_25_7.mts"})
-register_jungle_building({name = "junglehouse4",   file = "junglehouse4_7_26_7.mts"})
-register_jungle_building({name = "junglehouse5",   file = "junglehouse5_7_28_7.mts"})
-register_jungle_building({name = "junglestable",   file = "junglestable_7_25_7.mts"})
+register_jungle_building({name = "junglehouse1",   file = "junglehouse1.mts"})
+register_jungle_building({name = "junglehouse2",   file = "junglehouse2.mts"})
+register_jungle_building({name = "junglehouse3",   file = "junglehouse3.mts"})
+register_jungle_building({name = "junglehouse4",   file = "junglehouse4.mts"})
 
 -- Legendary central structures
-register_jungle_central({name = "junglechurch",    file = "junglechurch_7_28_7.mts"})
-register_jungle_central({name = "junglemarket",    file = "junglemarket_9_32_9.mts"})
+register_jungle_central({name = "junglechurch",    file = "junglechurch.mts"})
+register_jungle_central({name = "junglemarket",    file = "junglemarket.mts"})
+register_jungle_central({name = "junglestable",   file = "junglestable.mts"})
+
