@@ -64,15 +64,16 @@ end
 -- ===================================================================
 
 -- Regular houses (grounded placement with place_offset_y = 0)
-register_grassland_building({name = "grasslandhouse1", file = "grasslandhouse1_6_6_6.mts"})
-register_grassland_building({name = "grasslandhouse2", file = "grasslandhouse2_6_7_7.mts"})
-register_grassland_building({name = "grasslandhouse4", file = "grasslandhouse4_7_7_8.mts"})
-register_grassland_building({name = "grasslandhouse5", file = "grasslandhouse5_6_6_6.mts"})
+register_grassland_building({name = "grasslandhouse1", file = "grasslandhouse1.mts"})
+register_grassland_building({name = "grasslandhouse2", file = "grasslandhouse2.mts"})
+register_grassland_building({name = "grasslandhouse3", file = "grasslandhouse3.mts"})
+register_grassland_building({name = "grasslandhouse4", file = "grasslandhouse4.mts"})
 
 -- Central/rare buildings
-register_grassland_central({name = "grasslandchurch",   file = "grasslandchurch_11_17_21.mts"})
-register_grassland_central({name = "grasslandmarket",   file = "grasslandmarket_9_5_9.mts"})
-register_grassland_central({name = "grasslandstable",   file = "grasslandstable_15_8_16.mts"})
-register_grassland_central({name = "grasslandhouse3",   file = "grasslandhouse3_10_10_9.mts"})
+register_grassland_central({name = "grasslandchurch",   file = "grasslandchurch.mts"})
+register_grassland_central({name = "grasslandmarket",   file = "grasslandmarket.mts"})
+register_grassland_central({name = "grasslandstable",   file = "grasslandstable.mts"})
+
+
 
 
