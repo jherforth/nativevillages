@@ -64,7 +64,6 @@ end
 -- ===================================================================
 
 -- Regular stilt houses
-register_lake_building({name = "lakehouse1", file = "lakehouse1_12_11_15.mts"})
 register_lake_building({name = "lakehouse2", file = "lakehouse2_6_8_8.mts"})
 register_lake_building({name = "lakehouse3", file = "lakehouse3_5_9_9.mts"})
 register_lake_building({name = "lakehouse4", file = "lakehouse4_5_9_9.mts"})
@@ -74,4 +73,5 @@ register_lake_building({name = "lakehouse5", file = "lakehouse5_6_11_10.mts"})
 register_lake_central({name = "lakechurch", file = "lakechurch_9_13_13.mts"})
 register_lake_central({name = "lakemarket", file = "lakemarket_7_6_10.mts"})
 register_lake_central({name = "lakestable", file = "lakestable_7_7_13.mts"})
+
 
