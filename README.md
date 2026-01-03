@@ -29,7 +29,7 @@ Each village is populated with various NPC types, each with unique behaviors, tr
 - **Cleric** - Mystical NPCs with magical items
 - **Bum** - Humble NPCs with modest trades
 - **Entertainer** - Social NPCs that enhance village atmosphere
-- **Witch** - Powerful magic users with rare potions and items
+- **Witch** - Hostile magic users that attack with teleportation spells
 
 ### 🎭 Advanced Mood System
 
@@ -251,6 +251,7 @@ Contributions are welcome! Please ensure:
 ## Changelog
 
 ### Recent Updates
+- **Witch Magic System**: Witches are now hostile monsters with teleportation magic attacks
 - Added dynamic sound system with mood-based audio
 - Implemented configurable sound repeat delays
 - Enhanced NPC interaction feedback

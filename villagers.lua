@@ -205,20 +205,20 @@ local villager_classes = {
 	},
 	witch = {
 		type = "monster",
-		passive = true,
+		passive = false,
 		damage = 7,
 		hp_min = 60,
 		hp_max = 90,
 		armor = 110,
 		attack_type = "dogfight",
-		attacks_monsters = true,
-		attack_npcs = false,
-		reach = 3,
+		attacks_monsters = false,
+		attack_npcs = true,
+		reach = 15,  -- Longer range for magic attacks
 		drops = {
 			{name = "default:mese_crystal", chance = 1, min = 0, max = 1},
 			{name = "nativevillages:zombietame", chance = 3, min = 0, max = 1}
 		},
-		trade_items = {"farming:bread", "default:apple", "default:stick"},
+		trade_items = {},  -- Witches don't trade
 	},
 }
 
@@ -230,6 +230,37 @@ local class_order = {"hostile", "raider", "ranger", "jeweler", "farmer", "blacks
 --------------------------------------------------------------------
 local function register_villager(class_name, class_def, biome_name, biome_config)
 	local mob_name = "nativevillages:" .. biome_name .. "_" .. class_name
+
+	-- Determine which do_custom function to use
+	local custom_function
+	if class_name == "witch" then
+		-- Witches use magic-based custom function
+		custom_function = function(self, dtime)
+			if nativevillages.witch_magic then
+				nativevillages.witch_magic.do_custom(self, dtime)
+			end
+		end
+	else
+		-- Regular villagers use standard behavior
+		custom_function = function(self, dtime)
+			-- Wrap in error handler to prevent crashes
+			local success, err = pcall(function()
+				-- Update mood system
+				if nativevillages.mood then
+					nativevillages.mood.update_mood(self, dtime)
+				end
+
+				-- Update enhanced behaviors
+				if nativevillages.behaviors then
+					nativevillages.behaviors.update(self, dtime)
+				end
+			end)
+
+			if not success then
+				minetest.log("warning", "[nativevillages] do_custom error: " .. tostring(err))
+			end
+		end
+	end
 
 	mobs:register_mob(mob_name, {
 		type = class_def.type,
@@ -284,24 +315,7 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 			die_rotate = true,
 		},
 
-		do_custom = function(self, dtime)
-			-- Wrap in error handler to prevent crashes
-			local success, err = pcall(function()
-				-- Update mood system
-				if nativevillages.mood then
-					nativevillages.mood.update_mood(self, dtime)
-				end
-
-				-- Update enhanced behaviors
-				if nativevillages.behaviors then
-					nativevillages.behaviors.update(self, dtime)
-				end
-			end)
-
-			if not success then
-				minetest.log("warning", "[nativevillages] do_custom error: " .. tostring(err))
-			end
-		end,
+		do_custom = custom_function,
 
 		on_activate = function(self, staticdata, dtime_s)
 			-- Wrap everything in error handler to prevent crashes
