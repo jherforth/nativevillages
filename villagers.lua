@@ -276,6 +276,7 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 		armor = class_def.armor,
 		reach = class_def.reach,
 		collisionbox = {-0.35, 0.0, -0.35, 0.35, 1.8, 0.35},
+		stepheight = 1.1,
 		visual = "mesh",
 		mesh = "character.b3d",
 		textures = {

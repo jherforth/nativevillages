@@ -7,7 +7,7 @@ nativevillages.smart_doors = {}
 local DOOR_CHECK_INTERVAL = 1.0  -- Check for NPCs every second
 local DOOR_DETECTION_RADIUS = 2.5  -- How close NPCs need to be
 local DOOR_CLOSE_DELAY = 3  -- Seconds to wait before closing
-local DOOR_COOLDOWN = 10  -- Seconds to wait between open/close operations
+local DOOR_COOLDOWN = 30  -- Seconds to wait between open/close operations
 
 --------------------------------------------------------------------
 -- HELPER FUNCTIONS
@@ -43,12 +43,10 @@ local function has_nearby_npcs(pos, radius)
 	for _, obj in ipairs(objects) do
 		if obj and obj:get_luaentity() then
 			local entity = obj:get_luaentity()
-			-- Check if it's a villager (has the nativevillages marker)
+			-- Check if it's a villager or monster (has the nativevillages marker)
 			if entity.name and entity.name:match("^nativevillages:") then
-				-- Don't open for hostile mobs
-				if entity.type ~= "monster" then
-					return true
-				end
+				-- Open for all NPC types including monsters
+				return true
 			end
 		end
 	end

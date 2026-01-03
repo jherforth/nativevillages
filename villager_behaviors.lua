@@ -81,6 +81,155 @@ end
 --------------------------------------------------------------------
 nativevillages.behaviors.open_doors = {}  -- Track which doors are open by which NPCs
 
+-- Check if a node is a closed door
+local function is_closed_door(node_name)
+	return node_name and (
+		node_name:match("^doors:door_.*_b$") or
+		node_name:match("^doors:hidden$")
+	)
+end
+
+-- Find the nearest door in the general direction of target
+function nativevillages.behaviors.find_nearest_door_to_target(self, target_pos)
+	if not self.object or not target_pos then return nil end
+	local pos = self.object:get_pos()
+	if not pos then return nil end
+
+	local direction = vector.direction(pos, target_pos)
+	local distance_to_target = vector.distance(pos, target_pos)
+
+	-- Only check for doors if target is far enough away
+	if distance_to_target < 3 then return nil end
+
+	-- Search in a corridor towards the target
+	local max_search_dist = math.min(15, distance_to_target)
+	local nearest_door = nil
+	local nearest_dist = 999
+
+	-- Check positions in the direction of target
+	for i = 2, max_search_dist do
+		local check_pos = vector.add(pos, vector.multiply(direction, i))
+		check_pos = vector.round(check_pos)
+
+		-- Check this position and adjacent positions (including vertical)
+		for dy = -1, 2 do
+			for dx = -1, 1 do
+				for dz = -1, 1 do
+					local scan_pos = {
+						x = check_pos.x + dx,
+						y = check_pos.y + dy,
+						z = check_pos.z + dz
+					}
+
+					local node = minetest.get_node(scan_pos)
+					if is_closed_door(node.name) then
+						local dist = vector.distance(pos, scan_pos)
+						if dist < nearest_dist and dist > 1.5 then
+							nearest_dist = dist
+							nearest_door = scan_pos
+						end
+					end
+				end
+			end
+		end
+
+		-- If we found a door, stop searching (only path to first door)
+		if nearest_door then
+			break
+		end
+	end
+
+	return nearest_door
+end
+
+-- Handle waiting at closed doors
+function nativevillages.behaviors.handle_door_waiting(self)
+	if not self.object then return false end
+	local pos = self.object:get_pos()
+	if not pos then return false end
+
+	-- Initialize door waiting state
+	if not self.nv_waiting_for_door then
+		self.nv_waiting_for_door = false
+		self.nv_door_wait_start = 0
+		self.nv_waiting_door_pos = nil
+	end
+
+	-- Check if there's a closed door nearby (within 3 blocks)
+	local found_closed_door = false
+	local door_pos = nil
+
+	for dx = -2, 2 do
+		for dy = -1, 2 do
+			for dz = -2, 2 do
+				local check_pos = {
+					x = math.floor(pos.x) + dx,
+					y = math.floor(pos.y) + dy,
+					z = math.floor(pos.z) + dz
+				}
+				local node = minetest.get_node(check_pos)
+				if is_closed_door(node.name) then
+					local dist = vector.distance(pos, check_pos)
+					if dist < 3 then
+						found_closed_door = true
+						door_pos = check_pos
+						break
+					end
+				end
+			end
+			if found_closed_door then break end
+		end
+		if found_closed_door then break end
+	end
+
+	local current_time = minetest.get_gametime()
+
+	if found_closed_door then
+		-- Start or continue waiting
+		if not self.nv_waiting_for_door then
+			self.nv_waiting_for_door = true
+			self.nv_door_wait_start = current_time
+			self.nv_waiting_door_pos = door_pos
+
+			-- Stop movement while waiting
+			if self.object then
+				self.object:set_velocity({x=0, y=0, z=0})
+			end
+			self.state = "stand"
+			self:set_animation("stand")
+		end
+
+		-- Check timeout (5 seconds)
+		local wait_time = current_time - self.nv_door_wait_start
+		if wait_time > 5 then
+			-- Timeout - give up on this door
+			self.nv_waiting_for_door = false
+			self.nv_waiting_door_pos = nil
+			self._target = nil  -- Clear target to find new path
+			return false
+		end
+
+		-- Check if door has opened
+		local node = minetest.get_node(door_pos)
+		if not is_closed_door(node.name) then
+			-- Door opened! Continue movement
+			self.nv_waiting_for_door = false
+			self.nv_waiting_door_pos = nil
+			return false
+		end
+
+		-- Still waiting
+		return true
+	else
+		-- No closed door nearby, reset waiting state
+		if self.nv_waiting_for_door then
+			self.nv_waiting_for_door = false
+			self.nv_waiting_door_pos = nil
+		end
+		return false
+	end
+end
+
 function nativevillages.behaviors.get_door_at_pos(pos)
 	-- Use the doors API to get door object
 	if doors and doors.get then
@@ -257,7 +406,34 @@ function nativevillages.behaviors.update_movement_target(self)
 
 	if period == "night" then
 		if not self.nv_sleeping and not nativevillages.behaviors.is_at_house(self) then
-			return nativevillages.behaviors.get_house_position(self)
+			local target = nativevillages.behaviors.get_house_position(self)
+
+			-- Check for doors in the path
+			if target and not self.nv_waiting_for_door then
+				local door_pos = nativevillages.behaviors.find_nearest_door_to_target(self, target)
+				if door_pos then
+					-- Store the final destination
+					self.nv_final_destination = target
+					-- Return door position as intermediate waypoint
+					return door_pos
+				end
+			end
+
+			-- If we have a final destination and reached the door, continue to final destination
+			if self.nv_final_destination then
+				local pos = self.object:get_pos()
+				if pos and self._target then
+					local dist_to_waypoint = vector.distance(pos, self._target)
+					if dist_to_waypoint < 2 then
+						-- Reached door waypoint, now go to final destination
+						local final_dest = self.nv_final_destination
+						self.nv_final_destination = nil
+						return final_dest
+					end
+				end
+			end
+
+			return target
 		end
 	end
 
@@ -644,8 +820,41 @@ function nativevillages.behaviors.handle_daytime_movement(self)
 		return false
 	end
 
+	-- Check for door waypoint completion first
+	if self.nv_final_destination and self._target then
+		local dist_to_waypoint = vector.distance(pos, self._target)
+		if dist_to_waypoint < 2 then
+			-- Reached door, continue to final destination
+			self._target = self.nv_final_destination
+			self.nv_final_destination = nil
+			self.state = "walk"
+			self:set_animation("walk")
+
+			local dir = vector.direction(pos, self._target)
+			local yaw = minetest.dir_to_yaw(dir)
+			self.object:set_yaw(yaw)
+			return true
+		end
+	end
+
 	local avoid_pos = nativevillages.behaviors.get_bed_avoidance_position(self)
 	if avoid_pos then
+		-- Check for doors in path to avoid position
+		if not self.nv_waiting_for_door then
+			local door_pos = nativevillages.behaviors.find_nearest_door_to_target(self, avoid_pos)
+			if door_pos then
+				self.nv_final_destination = avoid_pos
+				self._target = door_pos
+				self.state = "walk"
+				self:set_animation("walk")
+
+				local dir = vector.direction(pos, door_pos)
+				local yaw = minetest.dir_to_yaw(dir)
+				self.object:set_yaw(yaw)
+				return true
+			end
+		end
+
 		self._target = avoid_pos
 		self.state = "walk"
 		self:set_animation("walk")
@@ -663,6 +872,22 @@ function nativevillages.behaviors.handle_daytime_movement(self)
 			if npc_pos then
 				local dist = vector.distance(pos, npc_pos)
 				if dist > 3 then
+					-- Check for doors in path to NPC
+					if not self.nv_waiting_for_door then
+						local door_pos = nativevillages.behaviors.find_nearest_door_to_target(self, npc_pos)
+						if door_pos then
+							self.nv_final_destination = npc_pos
+							self._target = door_pos
+							self.state = "walk"
+							self:set_animation("walk")
+
+							local dir = vector.direction(pos, door_pos)
+							local yaw = minetest.dir_to_yaw(dir)
+							self.object:set_yaw(yaw)
+							return true
+						end
+					end
+
 					self._target = npc_pos
 					self.state = "walk"
 					self:set_animation("walk")
@@ -696,8 +921,41 @@ function nativevillages.behaviors.handle_night_time_movement_with_avoidance(self
 		local pos = self.object:get_pos()
 		if pos then
 			if self.order ~= "stand" and not self.following then
+				-- Check for door waypoint completion first
+				if self.nv_final_destination and self._target then
+					local dist_to_waypoint = vector.distance(pos, self._target)
+					if dist_to_waypoint < 2 then
+						-- Reached door, continue to final destination
+						self._target = self.nv_final_destination
+						self.nv_final_destination = nil
+						self.state = "walk"
+						self:set_animation("walk")
+
+						local dir = vector.direction(pos, self._target)
+						local yaw = minetest.dir_to_yaw(dir)
+						self.object:set_yaw(yaw)
+						return false
+					end
+				end
+
 				local dist = vector.distance(pos, house_pos)
 				if dist > 1 then
+					-- Check for doors in path to house
+					if not self.nv_waiting_for_door then
+						local door_pos = nativevillages.behaviors.find_nearest_door_to_target(self, house_pos)
+						if door_pos then
+							self.nv_final_destination = house_pos
+							self._target = door_pos
+							self.state = "walk"
+							self:set_animation("walk")
+
+							local dir = vector.direction(pos, door_pos)
+							local yaw = minetest.dir_to_yaw(dir)
+							self.object:set_yaw(yaw)
+							return false
+						end
+					end
+
 					self._target = house_pos
 					self.state = "walk"
 					self:set_animation("walk")
@@ -718,6 +976,12 @@ end
 --------------------------------------------------------------------
 function nativevillages.behaviors.update(self, dtime)
 	nativevillages.behaviors.init_house(self)
+
+	-- Check if NPC is waiting for a door to open
+	if nativevillages.behaviors.handle_door_waiting(self) then
+		-- NPC is waiting, don't do anything else
+		return
+	end
 
 	if nativevillages.behaviors.is_night_time() then
 		if nativevillages.behaviors.handle_night_time_movement_with_avoidance(self) then
@@ -763,6 +1027,10 @@ function nativevillages.behaviors.get_save_data(self)
 		nv_last_food_share_time = self.nv_last_food_share_time,
 		nv_last_player_greeting_time = self.nv_last_player_greeting_time,
 		nv_opened_doors = self.nv_opened_doors,
+		nv_final_destination = self.nv_final_destination,
+		nv_waiting_for_door = self.nv_waiting_for_door,
+		nv_door_wait_start = self.nv_door_wait_start,
+		nv_waiting_door_pos = self.nv_waiting_door_pos,
 	}
 end
 
@@ -777,6 +1045,10 @@ function nativevillages.behaviors.load_save_data(self, data)
 	self.nv_last_food_share_time = data.nv_last_food_share_time or 0
 	self.nv_last_player_greeting_time = data.nv_last_player_greeting_time or 0
 	self.nv_opened_doors = data.nv_opened_doors or {}
+	self.nv_final_destination = data.nv_final_destination
+	self.nv_waiting_for_door = data.nv_waiting_for_door or false
+	self.nv_door_wait_start = data.nv_door_wait_start or 0
+	self.nv_waiting_door_pos = data.nv_waiting_door_pos
 end
 
 print(S("[MOD] Native Villages - Enhanced villager behaviors loaded"))

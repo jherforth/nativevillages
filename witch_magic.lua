@@ -201,9 +201,14 @@ function nativevillages.witch_magic.do_custom(self, dtime)
 			nativevillages.mood.update_mood(self, dtime)
 		end
 
-		-- Update enhanced behaviors (but witches are hostile so they don't follow normal patterns)
-		if nativevillages.behaviors and self.type ~= "monster" then
-			nativevillages.behaviors.update(self, dtime)
+		-- Update enhanced behaviors (including door waiting for all entity types)
+		if nativevillages.behaviors then
+			-- Only call handle_door_waiting for monsters, skip other behaviors
+			if self.type == "monster" then
+				nativevillages.behaviors.handle_door_waiting(self)
+			else
+				nativevillages.behaviors.update(self, dtime)
+			end
 		end
 	end)
 
