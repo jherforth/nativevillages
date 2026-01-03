@@ -1,4 +1,4 @@
-# Session Summary - Witch Magic, Smart Doors & Village Sizing
+# Session Summary - Witch Magic, Smart Doors, Village Sizing & Day/Night Behaviors
 
 ## Changes Made
 
@@ -66,7 +66,44 @@ DOOR_CLOSE_DELAY = 3          -- Seconds to wait before closing
 DOOR_COOLDOWN = 10            -- Seconds to wait between open/close operations
 ```
 
-### 3. Village Size Limits (Performance & Organization)
+### 3. Day/Night Cycle Behaviors (New Feature)
+**Files Modified:**
+- `villager_behaviors.lua` - Added bed avoidance and NPC seeking behaviors
+
+**Files Created:**
+- `DAY_NIGHT_BEHAVIORS.md` - Complete documentation
+
+**Problem:**
+NPCs had no awareness of day/night cycles and would behave the same regardless of time. This made villages feel static and unrealistic.
+
+**Solution:**
+Implemented distinct behaviors for day and night times:
+
+**Daytime Behaviors (6:00 AM - 6:00 PM):**
+1. **Bed Avoidance**: NPCs detect beds within 8 blocks and move away if closer than 6 blocks
+2. **NPC Seeking**: NPCs search for other NPCs within 10 blocks to socialize with
+3. **Active Social Life**: Social interactions, food sharing, and player greetings are enabled
+
+**Nighttime Behaviors (6:00 PM - 6:00 AM):**
+1. **Bed Seeking**: NPCs pathfind directly to their assigned bed/house
+2. **Social Avoidance**: All social interactions are disabled
+3. **Focus on Sleep**: NPCs ignore other NPCs and remain near their beds
+
+**Configuration:**
+```lua
+bed_detection_radius = 8        -- How far to detect beds during daytime
+bed_avoidance_distance = 6      -- Stay this far from beds during day
+npc_seek_radius = 10            -- Radius to search for NPCs to socialize with during day
+```
+
+**Benefits:**
+- More realistic daily routines
+- Villages feel more alive during the day
+- Clear distinction between day and night activities
+- Natural NPC spacing during daytime
+- Encourages social interactions
+
+### 4. Village Size Limits (Performance & Organization)
 **Files Modified:**
 - `village_noise.lua` - Reduced noise spread parameters
 
@@ -163,9 +200,22 @@ Users can adjust village size by editing `village_noise.lua`:
 - [ ] No placement errors in debug.txt
 - [ ] Performance improvement noticeable in large worlds
 
+### Day/Night Cycle Behaviors
+- [ ] NPCs avoid beds during daytime (6:00 AM - 6:00 PM)
+- [ ] NPCs move toward other NPCs during daytime
+- [ ] NPCs socialize when close to each other during day
+- [ ] NPCs pathfind to beds at nighttime (6:00 PM - 6:00 AM)
+- [ ] NPCs ignore other NPCs at nighttime
+- [ ] No social interactions occur at night
+- [ ] NPCs stay near their beds at night
+- [ ] Transition between day/night works smoothly
+- [ ] Bed detection works correctly (8 block radius)
+- [ ] Bed avoidance triggers at correct distance (6 blocks)
+- [ ] NPC seeking finds NPCs within 10 blocks
+
 ## Files Summary
 
-### New Files (11)
+### New Files (13)
 1. `witch_magic.lua` - Magic system implementation
 2. `smart_doors.lua` - Automatic door system
 3. `WITCH_MAGIC_SYSTEM.md` - Witch magic docs
@@ -173,11 +223,12 @@ Users can adjust village size by editing `village_noise.lua`:
 5. `SMART_DOORS_SYSTEM.md` - Smart doors docs
 6. `SMART_DOORS_UPDATE.md` - Smart doors implementation details
 7. `VILLAGE_SIZE_LIMITS.md` - Village size documentation
-8. `DOOR_FIX_FINAL.md` - Previous door system docs
-9. `SESSION_SUMMARY.md` - This file
+8. `DAY_NIGHT_BEHAVIORS.md` - Day/night cycle behavior documentation
+9. `DOOR_FIX_FINAL.md` - Previous door system docs
+10. `SESSION_SUMMARY.md` - This file
 
 ### Modified Files (5)
-1. `villager_behaviors.lua` - Disabled door interaction code
+1. `villager_behaviors.lua` - Disabled door interaction code, added day/night behaviors (bed avoidance, NPC seeking)
 2. `villagers.lua` - Witch class changes, conditional do_custom
 3. `init.lua` - Added witch_magic.lua and smart_doors.lua to load order
 4. `village_noise.lua` - Reduced spread for smaller villages
@@ -187,15 +238,16 @@ Users can adjust village size by editing `village_noise.lua`:
 - `witch_magic.lua`: +210 lines (new)
 - `smart_doors.lua`: +200 lines (new)
 - `village_noise.lua`: Modified noise parameters, added documentation
-- `villager_behaviors.lua`: Door interaction disabled (commented out)
+- `villager_behaviors.lua`: Door interaction disabled, +120 lines (bed avoidance, NPC seeking, day/night handlers)
 - `villagers.lua`: +30 lines (conditional logic)
-- Documentation: +700 lines (3 new MD files, 2 updated)
+- Documentation: +900 lines (4 new MD files, 2 updated)
 
 ## Next Steps
 1. Test witch magic attacks in-game
 2. Test door system with multiple NPCs
-3. Generate new world chunks to see smaller villages
-4. Verify no errors in debug.txt
-5. Consider adding more witch spells (polymorph, splash) if needed
-6. Fine-tune door close timing if needed
-7. Adjust village size if 1-2 mapchunks feels too small/large
+3. Test day/night behaviors (bed avoidance, NPC seeking)
+4. Observe NPCs during different times of day
+5. Generate new world chunks to see smaller villages
+6. Verify no errors in debug.txt
+7. Fine-tune door close timing if needed
+8. Adjust village size if 1-2 mapchunks feels too small/large

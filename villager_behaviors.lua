@@ -19,6 +19,9 @@ nativevillages.behaviors.config = {
 	door_close_distance = 4,  -- Doors close when NPC is this far away
 	door_close_time = 5,  -- Doors close after this many seconds of inactivity
 	stuck_teleport_threshold = 300,
+	bed_detection_radius = 8,  -- How far to detect beds during daytime
+	bed_avoidance_distance = 6,  -- Stay this far from beds during day
+	npc_seek_radius = 10,  -- Radius to search for NPCs to socialize with during day
 }
 
 --------------------------------------------------------------------
@@ -227,41 +230,6 @@ function nativevillages.behaviors.is_at_house(self)
 	return dist <= nativevillages.behaviors.config.sleep_radius
 end
 
-function nativevillages.behaviors.handle_night_time_movement(self)
-	-- During night, just pathfind to bed - no sleep animation
-	if not nativevillages.behaviors.should_go_to_bed(self) then
-		return false
-	end
-
-	-- If already at house, just stand around
-	if nativevillages.behaviors.is_at_house(self) then
-		return true
-	end
-
-	-- Otherwise, pathfind to house
-	local house_pos = nativevillages.behaviors.get_house_position(self)
-	if house_pos and self.object then
-		local pos = self.object:get_pos()
-		if pos then
-			if self.order ~= "stand" and not self.following then
-				local dist = vector.distance(pos, house_pos)
-				if dist > 1 then
-					-- Use mobs_redo pathfinding
-					self._target = house_pos
-					self.state = "walk"
-					self:set_animation("walk")
-
-					-- Face the target
-					local dir = vector.direction(pos, house_pos)
-					local yaw = minetest.dir_to_yaw(dir)
-					self.object:set_yaw(yaw)
-				end
-			end
-		end
-	end
-
-	return false
-end
 
 --------------------------------------------------------------------
 -- DAILY ROUTINE & MOVEMENT
@@ -339,14 +307,72 @@ function nativevillages.behaviors.flee_to_house_on_low_health(self)
 end
 
 --------------------------------------------------------------------
--- SOCIAL INTERACTIONS (Villager-to-Villager)
+-- BED DETECTION & AVOIDANCE (Daytime behavior)
 --------------------------------------------------------------------
-function nativevillages.behaviors.find_nearby_villagers(self)
+function nativevillages.behaviors.find_nearby_beds(self)
 	if not self.object then return {} end
 	local pos = self.object:get_pos()
 	if not pos then return {} end
 
-	local radius = nativevillages.behaviors.config.social_detection_radius
+	local radius = nativevillages.behaviors.config.bed_detection_radius
+	local beds = {}
+
+	for x = -radius, radius do
+		for y = -2, 2 do
+			for z = -radius, radius do
+				local check_pos = {
+					x = math.floor(pos.x) + x,
+					y = math.floor(pos.y) + y,
+					z = math.floor(pos.z) + z
+				}
+				local node = minetest.get_node(check_pos)
+				if node and node.name and node.name:match("bed") then
+					table.insert(beds, check_pos)
+				end
+			end
+		end
+	end
+
+	return beds
+end
+
+function nativevillages.behaviors.get_bed_avoidance_position(self)
+	if not self.object then return nil end
+	local pos = self.object:get_pos()
+	if not pos then return nil end
+
+	local nearby_beds = nativevillages.behaviors.find_nearby_beds(self)
+	if #nearby_beds == 0 then return nil end
+
+	local closest_bed = nil
+	local closest_dist = 999
+
+	for _, bed_pos in ipairs(nearby_beds) do
+		local dist = vector.distance(pos, bed_pos)
+		if dist < closest_dist then
+			closest_dist = dist
+			closest_bed = bed_pos
+		end
+	end
+
+	if closest_bed and closest_dist < nativevillages.behaviors.config.bed_avoidance_distance then
+		local away_dir = vector.direction(closest_bed, pos)
+		local away_pos = vector.add(pos, vector.multiply(away_dir, 8))
+		return away_pos
+	end
+
+	return nil
+end
+
+--------------------------------------------------------------------
+-- SOCIAL INTERACTIONS (Villager-to-Villager)
+--------------------------------------------------------------------
+function nativevillages.behaviors.find_nearby_villagers(self, radius)
+	if not self.object then return {} end
+	local pos = self.object:get_pos()
+	if not pos then return {} end
+
+	radius = radius or nativevillages.behaviors.config.social_detection_radius
 	local objects = minetest.get_objects_inside_radius(pos, radius)
 	local nearby_villagers = {}
 
@@ -360,6 +386,32 @@ function nativevillages.behaviors.find_nearby_villagers(self)
 	end
 
 	return nearby_villagers
+end
+
+function nativevillages.behaviors.find_npc_to_socialize_with(self)
+	local nearby = nativevillages.behaviors.find_nearby_villagers(self, nativevillages.behaviors.config.npc_seek_radius)
+	if #nearby == 0 then return nil end
+
+	local pos = self.object:get_pos()
+	if not pos then return nil end
+
+	local closest_npc = nil
+	local closest_dist = 999
+
+	for _, npc in ipairs(nearby) do
+		if npc.object then
+			local npc_pos = npc.object:get_pos()
+			if npc_pos then
+				local dist = vector.distance(pos, npc_pos)
+				if dist > 2 and dist < closest_dist then
+					closest_dist = dist
+					closest_npc = npc
+				end
+			end
+		end
+	end
+
+	return closest_npc
 end
 
 function nativevillages.behaviors.should_socialize(self)
@@ -577,32 +629,120 @@ function nativevillages.behaviors.check_nearby_players(self)
 end
 
 --------------------------------------------------------------------
+-- DAYTIME BEHAVIOR (Bed avoidance & NPC seeking)
+--------------------------------------------------------------------
+function nativevillages.behaviors.handle_daytime_movement(self)
+	if not nativevillages.behaviors.is_day_time() then
+		return false
+	end
+
+	if not self.object then return false end
+	local pos = self.object:get_pos()
+	if not pos then return false end
+
+	if self.order == "stand" or self.following then
+		return false
+	end
+
+	local avoid_pos = nativevillages.behaviors.get_bed_avoidance_position(self)
+	if avoid_pos then
+		self._target = avoid_pos
+		self.state = "walk"
+		self:set_animation("walk")
+
+		local dir = vector.direction(pos, avoid_pos)
+		local yaw = minetest.dir_to_yaw(dir)
+		self.object:set_yaw(yaw)
+		return true
+	end
+
+	if math.random() < 0.1 then
+		local target_npc = nativevillages.behaviors.find_npc_to_socialize_with(self)
+		if target_npc and target_npc.object then
+			local npc_pos = target_npc.object:get_pos()
+			if npc_pos then
+				local dist = vector.distance(pos, npc_pos)
+				if dist > 3 then
+					self._target = npc_pos
+					self.state = "walk"
+					self:set_animation("walk")
+
+					local dir = vector.direction(pos, npc_pos)
+					local yaw = minetest.dir_to_yaw(dir)
+					self.object:set_yaw(yaw)
+					return true
+				end
+			end
+		end
+	end
+
+	return false
+end
+
+--------------------------------------------------------------------
+-- NIGHTTIME BEHAVIOR (Modified to ignore NPCs)
+--------------------------------------------------------------------
+function nativevillages.behaviors.handle_night_time_movement_with_avoidance(self)
+	if not nativevillages.behaviors.should_go_to_bed(self) then
+		return false
+	end
+
+	if nativevillages.behaviors.is_at_house(self) then
+		return true
+	end
+
+	local house_pos = nativevillages.behaviors.get_house_position(self)
+	if house_pos and self.object then
+		local pos = self.object:get_pos()
+		if pos then
+			if self.order ~= "stand" and not self.following then
+				local dist = vector.distance(pos, house_pos)
+				if dist > 1 then
+					self._target = house_pos
+					self.state = "walk"
+					self:set_animation("walk")
+
+					local dir = vector.direction(pos, house_pos)
+					local yaw = minetest.dir_to_yaw(dir)
+					self.object:set_yaw(yaw)
+				end
+			end
+		end
+	end
+
+	return false
+end
+
+--------------------------------------------------------------------
 -- MAIN UPDATE FUNCTION
 --------------------------------------------------------------------
 function nativevillages.behaviors.update(self, dtime)
 	nativevillages.behaviors.init_house(self)
 
-	-- Handle night-time pathfinding to bed (no sleep animation)
-	if nativevillages.behaviors.handle_night_time_movement(self) then
-		return
+	if nativevillages.behaviors.is_night_time() then
+		if nativevillages.behaviors.handle_night_time_movement_with_avoidance(self) then
+			return
+		end
+	else
+		if nativevillages.behaviors.handle_daytime_movement(self) then
+			return
+		end
 	end
-
-	-- Door interactions are now handled automatically by smart_doors.lua
-	-- Doors detect nearby NPCs and open/close themselves
-	-- nativevillages.behaviors.handle_door_interaction(self)
 
 	nativevillages.behaviors.check_stuck_and_recover(self, dtime)
 
-	if math.random() < 0.05 then
-		nativevillages.behaviors.handle_social_interactions(self)
-	end
+	if nativevillages.behaviors.is_day_time() then
+		if math.random() < 0.05 then
+			nativevillages.behaviors.handle_social_interactions(self)
+		end
 
-	if math.random() < 0.03 then
-		nativevillages.behaviors.handle_food_sharing(self)
-	end
+		if math.random() < 0.03 then
+			nativevillages.behaviors.handle_food_sharing(self)
+		end
 
-	if math.random() < 0.02 then
-		nativevillages.behaviors.check_nearby_players(self)
+		if math.random() < 0.02 then
+			nativevillages.behaviors.check_nearby_players(self)
+		end
 	end
 
 	local flee_target = nativevillages.behaviors.flee_to_house_on_low_health(self)
