@@ -2,27 +2,30 @@
 
 ## Changes Made
 
-### 1. Witch Magic System (New Feature)
+### 1. Witch Dual-Attack System (New Feature)
 **Files Created:**
 - `witch_magic.lua` - Complete magic attack system
 - `WITCH_MAGIC_SYSTEM.md` - Technical documentation
 - `WITCH_CHANGES.md` - Detailed change summary
 
 **Files Modified:**
-- `villagers.lua` - Made witches hostile monsters with magic attacks
+- `villagers.lua` - Made witches hostile monsters with dual attacks
 - `init.lua` - Added witch_magic.lua to load order
 - `README.md` - Updated witch description
 
 **Key Features:**
 - Witches are now hostile monsters (type=monster, passive=false)
-- Teleport attack: minimal displacement (0.8 blocks horizontal, 0.5 blocks vertical)
-- 7 damage per attack with 4-second cooldown
-- Range: 1.5-5 blocks (close range magic)
-- Purple particle effects using greeting-style particles
+- **Dual Attack System:**
+  - **Melee Punch (0-1.5 blocks):** 7 damage, standard dogfight attack
+  - **Magic Teleport (1.5-5 blocks):** Teleports target 10 blocks away in random direction, NO damage
+- Teleport attack: Random direction (360 degrees), keeps same Y-level, pure disruption
+- 4-second cooldown between magic attacks (melee has no special cooldown)
+- Purple particle effects using greeting-style particles for magic
 - Magic sound effect (magic.ogg at 30% volume) when casting
 - No texture files needed - uses `default_cloud.png^[colorize:purple:150`
 - Witches don't trade anymore
 - Custom do_custom function for witch-specific behavior
+- Players must manage distance carefully to avoid both attack types
 
 ### 2. Door System (Smart Doors)
 **Files Modified:**
@@ -123,15 +126,17 @@ Users can adjust village size by editing `village_noise.lua`:
 
 ## Testing Status
 
-### Witch Magic System
+### Witch Dual-Attack System
 - [ ] Witches spawn in all biomes
 - [ ] Witches attack players
-- [ ] Teleport attack works correctly (minimal displacement)
-- [ ] Purple particles appear
+- [ ] **Melee punch at close range (0-1.5 blocks) deals 7 damage**
+- [ ] **Teleport at medium range (1.5-5 blocks) displaces player 10 blocks**
+- [ ] **Teleport does NOT deal damage**
+- [ ] Teleport direction is random (360 degrees)
+- [ ] Purple particles appear on magic attacks
 - [ ] Magic sound (magic.ogg at 30% volume) plays when casting
-- [ ] 4-second cooldown enforced
-- [ ] Range (1.5-5 blocks) works
-- [ ] Damage (7 HP) applied correctly
+- [ ] 4-second cooldown enforced for magic (not melee)
+- [ ] Witches chase at long range (5+ blocks)
 
 ### Door System (Smart Doors)
 - [ ] Doors open when NPCs approach (2.5 block radius)

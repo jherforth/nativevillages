@@ -80,7 +80,7 @@ end
 --------------------------------------------------------------------
 -- TELEPORT ATTACK (Main witch attack)
 --------------------------------------------------------------------
-function nativevillages.witch_magic.teleport_attack(self, target, strength, height)
+function nativevillages.witch_magic.teleport_attack(self, target, distance)
 	if not self or not self.object then return false end
 	if not target then return false end
 
@@ -94,8 +94,7 @@ function nativevillages.witch_magic.teleport_attack(self, target, strength, heig
 		max_hear_distance = 32
 	}, true)
 
-	strength = strength or 0.8
-	height = height or 0.5
+	distance = distance or 10
 
 	local target_pos = nil
 
@@ -110,12 +109,16 @@ function nativevillages.witch_magic.teleport_attack(self, target, strength, heig
 
 	if not target_pos then return false end
 
-	-- Calculate new position (throw target away and up)
-	local new_target_pos = vector.add(
-		target_pos,
-		vector.multiply(vector.direction(caster_pos, target_pos), strength)
-	)
-	new_target_pos.y = target_pos.y + height
+	-- Calculate random direction for teleport (10 blocks away)
+	local angle = math.random() * math.pi * 2  -- Random angle 0 to 2π
+	local offset_x = math.cos(angle) * distance
+	local offset_z = math.sin(angle) * distance
+
+	local new_target_pos = {
+		x = target_pos.x + offset_x,
+		y = target_pos.y,  -- Keep same Y level
+		z = target_pos.z + offset_z
+	}
 
 	-- Teleport the target
 	target:set_pos(new_target_pos)
@@ -126,13 +129,8 @@ function nativevillages.witch_magic.teleport_attack(self, target, strength, heig
 	local vol = pos_to_vol(caster_pos, vector.new(2, 2, 2))
 	nativevillages.witch_magic.effect_area(vol[1], vol[2], 100, "purple")
 
-	-- Damage target
-	if target:is_player() then
-		target:set_hp(target:get_hp() - 7)
-	elseif target:get_luaentity() and target:get_luaentity().health then
-		local ent = target:get_luaentity()
-		ent.health = ent.health - 7
-	end
+	-- NO DAMAGE - teleport only!
+	-- Melee punch (dogfight) attack handles damage separately
 
 	return true
 end
@@ -171,12 +169,12 @@ function nativevillages.witch_magic.custom_attack(self, dtime)
 
 	local distance = vector.distance(pos, target_pos)
 
-	-- Only attack if within range (witches have longer range than melee)
+	-- Only attack if within magic range (medium distance)
 	if distance > 5 then return false end
-	if distance < 1.5 then return false end  -- Too close, need some distance
+	if distance < 1.5 then return false end  -- Too close, use melee instead
 
-	-- Perform teleport attack (reduced strength)
-	local success = nativevillages.witch_magic.teleport_attack(self, self.attack, 0.8, 0.5)
+	-- Perform teleport attack (10 blocks in random direction)
+	local success = nativevillages.witch_magic.teleport_attack(self, self.attack, 10)
 
 	if success then
 		-- Reset timer

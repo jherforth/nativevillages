@@ -1,7 +1,7 @@
 # Witch Modification Summary
 
 ## Overview
-Witches have been transformed from passive NPCs into hostile monsters with magic attack abilities, inspired by the witches mod but using the greeting particle system instead of texture-based particles.
+Witches have been transformed from passive NPCs into hostile monsters with dual attack abilities: melee punches for close combat and magic teleportation for medium range. Inspired by the witches mod but using the greeting particle system instead of texture-based particles.
 
 ## Changes Made
 
@@ -15,20 +15,28 @@ Created a complete magic system for witches with the following features:
 - Purple color theme to indicate hostile magic
 - Glow value of 10 for visibility
 
-**Teleport Attack**
-- Primary witch attack: throws targets away and upward
-- Default strength: 0.8 blocks horizontal displacement (reduced for balance)
-- Default height: 0.5 blocks vertical lift (reduced for balance)
-- Deals 7 damage to target
+**Teleport Attack (Medium Range)**
+- Magic attack used at 1.5-5 block distance
+- Teleports target 10 blocks away in random direction
+- **NO DAMAGE** - pure displacement/disruption
+- Random direction (360 degrees, keeps same Y-level)
 - Works on both players and entities
 - Visual feedback with line and area particle effects
 - Magic sound effect at 30% volume (gain = 0.3)
 
+**Melee Punch Attack (Close Range)**
+- Standard dogfight attack used at 0-1.5 block distance
+- Deals 7 damage per hit
+- No special effects or cooldown
+- Automatic mobs_redo melee behavior
+
 **Custom Attack Behavior**
-- 4-second cooldown between attacks
-- Attack range: 3-15 blocks (witches need distance to cast)
+- 4-second cooldown between magic attacks (melee has no special cooldown)
+- Magic range: 1.5-5 blocks (medium distance)
+- Melee range: 0-1.5 blocks (close combat)
 - Only attacks when target is in range
 - Automatic timer management per witch entity
+- Dual-attack strategy based on distance
 
 **Custom do_custom Function**
 - Handles magic attack logic
@@ -64,14 +72,25 @@ Created a complete magic system for witches with the following features:
 ## Technical Details
 
 ### Attack Mechanics
+
+**Close Range (0-1.5 blocks):**
+1. Witch detects target (players, NPCs)
+2. Uses standard mobs_redo melee attack
+3. Deals 7 damage per hit
+4. No special effects
+
+**Medium Range (1.5-5 blocks):**
 1. Witch detects target (players, NPCs)
 2. Checks attack timer (4-second cooldown)
-3. Validates distance (3-15 blocks)
-4. Calculates throw direction and height
+3. Validates distance (1.5-5 blocks)
+4. Calculates random teleport direction (10 blocks away)
 5. Teleports target to new position
 6. Spawns particle effects (line + area)
-7. Deals 7 damage
+7. No damage - pure disruption
 8. Resets cooldown timer
+
+**Long Range (5+ blocks):**
+1. Witch chases target to get into magic range
 
 ### Particle System
 - No texture files required
@@ -111,13 +130,15 @@ Witches spawn in all biomes:
 ### After
 - Type: monster
 - Passive: false (actively hostile)
-- Attack type: dogfight (chases targets)
+- Attack type: dogfight (chases targets, uses for melee)
 - Range: 5 blocks (magic range)
 - Trading: no
 - Attacks players and NPCs
-- Uses magic teleport attack (minimal displacement)
-- 4-second attack cooldown
-- Purple particle effects
+- **Dual Attack System:**
+  - **Melee punch** at 0-1.5 blocks: 7 damage, standard attack
+  - **Magic teleport** at 1.5-5 blocks: 10 blocks displacement, no damage
+- 4-second cooldown between magic attacks (not melee)
+- Purple particle effects for magic
 - Magic sound effect (magic.ogg at 30% volume)
 
 ## Files Modified Summary
@@ -131,11 +152,12 @@ Witches spawn in all biomes:
 ## Testing Checklist
 - [ ] Witches spawn in all biomes
 - [ ] Witches are hostile to players
-- [ ] Witches attack with teleport spell
-- [ ] Purple particle effects appear on attack
-- [ ] 4-second cooldown between attacks
-- [ ] Witches work at 3-15 block range
-- [ ] Witches deal 7 damage per attack
+- [ ] Witches punch at close range (0-1.5 blocks) dealing 7 damage
+- [ ] Witches cast teleport at medium range (1.5-5 blocks)
+- [ ] Teleport sends player 10 blocks away in random direction
+- [ ] Teleport does NOT deal damage
+- [ ] Purple particle effects appear on magic attack
+- [ ] 4-second cooldown between magic attacks (not melee)
 - [ ] No errors in debug.txt
 - [ ] Other villager types unaffected
 - [ ] Witches don't crash on serialization

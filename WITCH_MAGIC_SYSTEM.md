@@ -4,7 +4,7 @@ This document describes the witch magic system implemented in the Native Village
 
 ## Overview
 
-Witches are now properly hostile monsters that use magic attacks instead of melee combat. The magic system is inspired by the witches mod but uses the greeting particles from villager_behaviors.lua instead of texture-based particles.
+Witches are now properly hostile monsters with two distinct attack types: melee punches for close combat and magic teleportation for medium range. The magic system is inspired by the witches mod but uses the greeting particles from villager_behaviors.lua instead of texture-based particles.
 
 ## Key Features
 
@@ -12,19 +12,27 @@ Witches are now properly hostile monsters that use magic attacks instead of mele
 - **Type**: monster
 - **Passive**: false (actively hostile)
 - **Attacks**: Players and NPCs
-- **Range**: 5 blocks (longer than melee)
+- **Range**: 5 blocks (magic range)
 
-### 2. Magic Attack: Teleport
-The witch's primary attack is a teleport spell that:
-- Throws the target away from the witch (0.8 blocks)
-- Lifts the target into the air (0.5 blocks)
-- Deals 7 damage
-- Has a 4-second cooldown between attacks
-- Works at range (1.5-5 blocks)
+### 2. Melee Punch Attack (Close Range)
+When the witch is very close to the target (0-1.5 blocks):
+- Uses standard mobs_redo dogfight attack
+- Deals 7 damage per hit
+- No cooldown (standard melee timing)
+- No special effects
+- Automatic when in close range
+
+### 3. Magic Attack: Teleport (Medium Range)
+When the witch is at medium distance (1.5-5 blocks):
+- Teleports target 10 blocks away in a random direction
+- **NO DAMAGE** - pure disruption/displacement
+- Random direction (360 degrees, keeps same Y-level)
+- Has a 4-second cooldown between magic attacks
 - Creates purple particle effects using greeting-style particles
 - Plays magic.ogg sound when casting (30% volume)
+- Forces target to reposition and re-engage
 
-### 3. Particle Effects
+### 4. Particle Effects
 Instead of using texture-based particles, the witch magic uses the same particle system as the greeting particles in villager_behaviors.lua:
 - **Texture**: `default_cloud.png^[colorize:purple:150`
 - **Color**: Purple (to indicate hostile magic)
@@ -33,13 +41,32 @@ Instead of using texture-based particles, the witch magic uses the same particle
   - Line effect from witch to target
   - Area effect around the witch when casting
 
-### 4. Attack Behavior
-- Witches only attack when they have a target
-- Minimum distance: 1.5 blocks (need some distance to cast)
-- Maximum distance: 5 blocks (magic range)
-- Cooldown: 4 seconds between attacks
-- Attack type: "dogfight" (will chase targets)
-- Sound effect: magic.ogg at 30% volume (gain = 0.3)
+### 5. Attack Behavior Strategy
+Witches use a dual-attack strategy based on distance:
+
+**Close Range (0-1.5 blocks):**
+- Automatically uses melee punch attack
+- Deals 7 damage per hit
+- No special effects or sounds
+- Standard mobs_redo dogfight behavior
+
+**Medium Range (1.5-5 blocks):**
+- Uses magic teleport attack
+- Teleports target 10 blocks away randomly
+- No damage (disruption only)
+- 4-second cooldown between magic casts
+- Purple particle effects and magic sound
+
+**Long Range (5+ blocks):**
+- Chases target to get within magic range
+- Attack type: "dogfight" (will pursue)
+
+**Combat Flow:**
+1. Witch spots player/NPC
+2. Chases if too far away (5+ blocks)
+3. Casts teleport when in range (1.5-5 blocks) every 4 seconds
+4. Punches if player gets too close (0-1.5 blocks)
+5. Player must carefully manage distance to avoid both attacks
 
 ## Technical Implementation
 
