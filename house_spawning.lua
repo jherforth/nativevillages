@@ -136,30 +136,40 @@ minetest.register_on_generated(function(minp, maxp, blockseed)
                 biome = "grassland"
             end
 
-            -- Find spawn position near the bed
+            -- Find spawn position 6 blocks away from the bed (outside the house)
             local spawn_pos = nil
-            for dx = -2, 2 do
-                for dy = 0, 2 do
-                    for dz = -2, 2 do
-                        local check = {
-                            x = bed_pos.x + dx,
-                            y = bed_pos.y + dy,
-                            z = bed_pos.z + dz
-                        }
-                        local node = minetest.get_node(check)
-                        local below = minetest.get_node({x=check.x, y=check.y-1, z=check.z})
 
-                        if node.name == "air" and minetest.get_item_group(below.name, "solid") == 1 then
-                            spawn_pos = check
-                            goto spawn_found
+            -- Try to find a good spawn position in a 6-block radius
+            for dx = -8, 8 do
+                for dy = -1, 3 do
+                    for dz = -8, 8 do
+                        local dist = math.sqrt(dx*dx + dz*dz)
+                        -- Only check positions that are roughly 6 blocks away (between 5 and 7)
+                        if dist >= 5 and dist <= 7 then
+                            local check = {
+                                x = bed_pos.x + dx,
+                                y = bed_pos.y + dy,
+                                z = bed_pos.z + dz
+                            }
+                            local node = minetest.get_node(check)
+                            local above = minetest.get_node({x=check.x, y=check.y+1, z=check.z})
+                            local below = minetest.get_node({x=check.x, y=check.y-1, z=check.z})
+
+                            -- Need air at position and above, and solid ground below
+                            if node.name == "air" and above.name == "air" and
+                               minetest.get_item_group(below.name, "solid") == 1 then
+                                spawn_pos = check
+                                goto spawn_found
+                            end
                         end
                     end
                 end
             end
             ::spawn_found::
 
+            -- Fallback if no suitable outdoor position found
             if not spawn_pos then
-                spawn_pos = {x = bed_pos.x, y = bed_pos.y + 1, z = bed_pos.z}
+                spawn_pos = {x = bed_pos.x + 6, y = bed_pos.y, z = bed_pos.z}
             end
 
             -- Spawn the villager
