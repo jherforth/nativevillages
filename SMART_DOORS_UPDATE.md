@@ -34,6 +34,7 @@ This new system:
 DOOR_CHECK_INTERVAL = 1.0     -- Check for NPCs every second
 DOOR_DETECTION_RADIUS = 2.5   -- How close NPCs need to be
 DOOR_CLOSE_DELAY = 3          -- Seconds to wait before closing
+DOOR_COOLDOWN = 10            -- Seconds to wait between open/close operations
 ```
 
 ### NPC Detection Logic
@@ -53,25 +54,30 @@ This means:
 **Closed Door Timer:**
 ```
 1. Check if any friendly NPCs are within 2.5 blocks
-2. If yes: open the door
-3. Continue checking every second
+2. Check if 10 seconds have passed since last close (cooldown)
+3. If yes to both: open the door
+4. Continue checking every second
 ```
 
 **Open Door Timer:**
 ```
-1. Check if any friendly NPCs are still within 3.5 blocks
-2. If no NPCs found:
+1. Check if 10 seconds have passed since door opened (cooldown)
+2. Check if any friendly NPCs are still within 3.5 blocks
+3. If cooldown passed and no NPCs found:
    - Start countdown timer (3 seconds)
    - If still no NPCs after 3 seconds: close door
-3. If NPCs are found:
+4. If NPCs are found:
    - Reset countdown timer
-4. Continue checking every second
+5. Continue checking every second
 ```
 
 ### Door State Tracking
 - Uses node metadata to track `last_npc_time`
+- Uses node metadata to track `last_open_time`
+- Uses node metadata to track `last_close_time`
 - Only closes after no NPCs have been detected for the full delay period
-- Prevents doors from spam opening/closing
+- 10-second cooldown prevents rapid door cycling
+- Gives NPCs time to pass through doorways
 
 ## Benefits
 
@@ -80,7 +86,9 @@ This means:
 3. **Better Performance** - Only active doors run timers (ABM starts them when needed)
 4. **Automatic** - Works for all NPCs without special configuration
 5. **Multi-NPC Safe** - Multiple NPCs can share doors without conflicts
-6. **Quieter** - Door sounds at 30% volume (gain = 0.3)
+6. **Cooldown Protection** - 10-second cooldown prevents rapid cycling
+7. **NPC-Friendly** - Gives NPCs enough time to pass through doorways
+8. **Quieter** - Door sounds at 30% volume (gain = 0.3)
 
 ## Compatibility
 
@@ -94,11 +102,12 @@ Works with:
 To test the smart doors system:
 
 1. Spawn a villager near a door
-2. Watch as the villager approaches (door should open at 2.5 blocks)
+2. Watch as the villager approaches (door should open at 2.5 blocks if cooldown passed)
 3. Wait for the villager to walk through
-4. After the villager moves away, the door should close after 3 seconds
-5. Spawn multiple villagers - they should all be able to use the same door
-6. Spawn a hostile mob - the door should NOT open for it
+4. After the villager moves away, the door should wait at least 10 seconds, then close after 3 more seconds
+5. Try to trigger the door again immediately - it should wait for the 10-second cooldown
+6. Spawn multiple villagers - they should all be able to use the same door
+7. Spawn a hostile mob - the door should NOT open for it
 
 ## Future Enhancements
 

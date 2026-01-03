@@ -7,6 +7,7 @@ nativevillages.smart_doors = {}
 local DOOR_CHECK_INTERVAL = 1.0  -- Check for NPCs every second
 local DOOR_DETECTION_RADIUS = 2.5  -- How close NPCs need to be
 local DOOR_CLOSE_DELAY = 3  -- Seconds to wait before closing
+local DOOR_COOLDOWN = 10  -- Seconds to wait between open/close operations
 
 --------------------------------------------------------------------
 -- HELPER FUNCTIONS
@@ -57,6 +58,15 @@ end
 
 -- Open a door
 local function open_door(pos, node)
+	-- Check cooldown - don't open if recently closed
+	local meta = minetest.get_meta(pos)
+	local last_close_time = meta:get_float("last_close_time")
+	local current_time = minetest.get_gametime()
+
+	if last_close_time > 0 and (current_time - last_close_time) < DOOR_COOLDOWN then
+		return false  -- Still in cooldown, don't open
+	end
+
 	local open_name = get_open_door_name(node.name)
 
 	-- Check if the open door exists
@@ -68,6 +78,10 @@ local function open_door(pos, node)
 		if def and def.sound_open then
 			minetest.sound_play(def.sound_open, {pos = pos, gain = 0.3, max_hear_distance = 10})
 		end
+
+		-- Record the open time
+		meta:set_float("last_open_time", current_time)
+		meta:set_float("last_npc_time", 0)  -- Reset NPC tracking
 
 		-- Set timer to check for closing
 		local timer = minetest.get_node_timer(pos)
@@ -81,6 +95,15 @@ end
 
 -- Close a door
 local function close_door(pos, node)
+	-- Check cooldown - don't close if recently opened
+	local meta = minetest.get_meta(pos)
+	local last_open_time = meta:get_float("last_open_time")
+	local current_time = minetest.get_gametime()
+
+	if last_open_time > 0 and (current_time - last_open_time) < DOOR_COOLDOWN then
+		return false  -- Still in cooldown, don't close
+	end
+
 	local closed_name = get_closed_door_name(node.name)
 
 	-- Check if the closed door exists
@@ -92,6 +115,9 @@ local function close_door(pos, node)
 		if def and def.sound_close then
 			minetest.sound_play(def.sound_close, {pos = pos, gain = 0.3, max_hear_distance = 10})
 		end
+
+		-- Record the close time
+		meta:set_float("last_close_time", current_time)
 
 		return true
 	end
@@ -128,25 +154,32 @@ local function open_door_timer(pos, elapsed)
 		return false  -- Stop timer if node changed
 	end
 
+	local meta = minetest.get_meta(pos)
+	local current_time = minetest.get_gametime()
+	local last_open_time = meta:get_float("last_open_time")
+
+	-- Don't allow closing until cooldown has passed
+	if last_open_time > 0 and (current_time - last_open_time) < DOOR_COOLDOWN then
+		return true  -- Keep checking but don't close yet
+	end
+
 	-- Check if NPCs are still nearby
 	if not has_nearby_npcs(pos, DOOR_DETECTION_RADIUS + 1) then
 		-- Get or initialize last_npc_time
-		local meta = minetest.get_meta(pos)
 		local last_npc_time = meta:get_float("last_npc_time")
-		local current_time = minetest.get_gametime()
 
 		if last_npc_time == 0 then
 			-- First time with no NPCs nearby
 			meta:set_float("last_npc_time", current_time)
 		elseif current_time - last_npc_time >= DOOR_CLOSE_DELAY then
 			-- Enough time has passed, close the door
-			close_door(pos, node)
-			meta:set_float("last_npc_time", 0)
+			if close_door(pos, node) then
+				meta:set_float("last_npc_time", 0)
+			end
 			return true  -- Continue timer (now as closed door)
 		end
 	else
 		-- NPCs still nearby, reset timer
-		local meta = minetest.get_meta(pos)
 		meta:set_float("last_npc_time", 0)
 	end
 

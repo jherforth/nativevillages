@@ -44,9 +44,10 @@ Instead of NPCs trying to open doors, doors now detect NPCs and open automatical
 **How It Works:**
 1. **Node Timers**: Each door runs a timer checking every 1 second
 2. **Detection**: Doors detect NPCs within 2.5 blocks
-3. **Opening**: Doors automatically open when NPCs approach
-4. **Closing**: Doors close 3 seconds after all NPCs leave (3.5 block radius)
-5. **Sounds**: Door sounds play at 30% volume
+3. **Opening**: Doors automatically open when NPCs approach (if cooldown passed)
+4. **Cooldown**: 10-second cooldown between open→close and close→open operations
+5. **Closing**: Doors close 3 seconds after all NPCs leave (3.5 block radius) and cooldown passes
+6. **Sounds**: Door sounds play at 30% volume
 
 **Benefits:**
 - More reliable than NPC-based door interaction
@@ -54,12 +55,15 @@ Instead of NPCs trying to open doors, doors now detect NPCs and open automatical
 - Works for all villagers automatically
 - Better performance (only active doors check)
 - Multi-NPC coordination built-in
+- 10-second cooldown prevents rapid cycling
+- NPCs have time to pass through doorways
 
 **Configuration:**
 ```lua
 DOOR_CHECK_INTERVAL = 1.0     -- Check for NPCs every second
 DOOR_DETECTION_RADIUS = 2.5   -- How close NPCs need to be
 DOOR_CLOSE_DELAY = 3          -- Seconds to wait before closing
+DOOR_COOLDOWN = 10            -- Seconds to wait between open/close operations
 ```
 
 ### 3. Village Size Limits (Performance & Organization)
@@ -141,8 +145,11 @@ Users can adjust village size by editing `village_noise.lua`:
 - [ ] Witches chase at long range (5+ blocks)
 
 ### Door System (Smart Doors)
-- [ ] Doors open when NPCs approach (2.5 block radius)
-- [ ] Doors close after NPCs leave (3 second delay)
+- [ ] Doors open when NPCs approach (2.5 block radius, if cooldown passed)
+- [ ] Doors close after NPCs leave (3 second delay + 10 second cooldown)
+- [ ] 10-second cooldown enforced after opening before closing
+- [ ] 10-second cooldown enforced after closing before opening
+- [ ] NPCs have time to pass through before door closes
 - [ ] Multiple NPCs can use the same door
 - [ ] Door sounds play at appropriate volume (30%)
 - [ ] Doors don't open for hostile mobs

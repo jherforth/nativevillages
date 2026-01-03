@@ -23,6 +23,13 @@ Instead of NPCs trying to open doors, the doors themselves:
 - Doors detect NPCs within 2.5 blocks
 - Doors close when no NPCs are within 3.5 blocks for 3 seconds
 
+**Cooldown System**
+- 10-second cooldown between open→close operations
+- 10-second cooldown between close→open operations
+- Prevents rapid door cycling
+- Gives NPCs time to fully pass through doorways
+- Uses door metadata to track timestamps
+
 **Door Types**
 - Works with all standard Minetest doors (e.g., `doors:door_wood_b`)
 - Works with custom doors that follow the naming pattern: `doors:door_*_a` (open) and `doors:door_*_b` (closed)
@@ -42,6 +49,7 @@ Located in `smart_doors.lua`:
 DOOR_CHECK_INTERVAL = 1.0     -- Check for NPCs every second
 DOOR_DETECTION_RADIUS = 2.5   -- How close NPCs need to be to open door
 DOOR_CLOSE_DELAY = 3          -- Seconds to wait before closing
+DOOR_COOLDOWN = 10            -- Seconds to wait between open/close operations
 ```
 
 ## Sound Effects
@@ -61,6 +69,21 @@ Doors will NOT open for:
 - Raiders
 - Other hostile entities
 
+## Metadata Storage
+
+Doors use node metadata to track timing:
+
+```lua
+-- last_npc_time: Timestamp when NPCs left the area
+meta:set_float("last_npc_time", current_time)
+
+-- last_open_time: Timestamp when door was opened
+meta:set_float("last_open_time", current_time)
+
+-- last_close_time: Timestamp when door was closed
+meta:set_float("last_close_time", current_time)
+```
+
 ## Integration with NPC Behaviors
 
 The old door interaction code in `villager_behaviors.lua` has been disabled:
@@ -76,8 +99,11 @@ The old door interaction code in `villager_behaviors.lua` has been disabled:
 
 ## Testing Checklist
 
-- [ ] Doors open when NPCs approach
-- [ ] Doors close after NPCs leave
+- [ ] Doors open when NPCs approach (if cooldown passed)
+- [ ] Doors close after NPCs leave (if cooldown passed)
+- [ ] 10-second cooldown enforced after opening before closing
+- [ ] 10-second cooldown enforced after closing before opening
+- [ ] NPCs have time to pass through before door closes
 - [ ] Multiple NPCs can use the same door
 - [ ] Door sounds play at appropriate volume
 - [ ] Doors don't open for hostile mobs
