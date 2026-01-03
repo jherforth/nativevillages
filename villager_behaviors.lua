@@ -11,13 +11,10 @@ nativevillages.behaviors = {}
 nativevillages.behaviors.config = {
 	home_radius = 20,
 	sleep_radius = 3,
-	door_detection_radius = 2,  -- Used for nearby door scanning
 	social_detection_radius = 5,
 	food_share_detection_radius = 8,
 	social_interaction_cooldown = 45,
 	food_share_cooldown = 60,
-	door_close_distance = 4,  -- Doors close when NPC is this far away
-	door_close_time = 5,  -- Doors close after this many seconds of inactivity
 	stuck_teleport_threshold = 300,
 	bed_detection_radius = 8,  -- How far to detect beds during daytime
 	bed_avoidance_distance = 6,  -- Stay this far from beds during day
@@ -77,9 +74,8 @@ function nativevillages.behaviors.has_house(self)
 end
 
 --------------------------------------------------------------------
--- DOOR INTERACTION SYSTEM (Simplified using doors API)
+-- DOOR INTERACTION SYSTEM (Simplified using smart_doors.lua)
 --------------------------------------------------------------------
-nativevillages.behaviors.open_doors = {}  -- Track which doors are open by which NPCs
 
 -- Check if a node is a closed door
 local function is_closed_door(node_name)
@@ -155,13 +151,13 @@ function nativevillages.behaviors.handle_door_waiting(self)
 		self.nv_waiting_door_pos = nil
 	end
 
-	-- Check if there's a closed door nearby (within 3 blocks)
+	-- Check if there's a closed door nearby (within 4 blocks)
 	local found_closed_door = false
 	local door_pos = nil
 
-	for dx = -2, 2 do
+	for dx = -3, 3 do
 		for dy = -1, 2 do
-			for dz = -2, 2 do
+			for dz = -3, 3 do
 				local check_pos = {
 					x = math.floor(pos.x) + dx,
 					y = math.floor(pos.y) + dy,
@@ -170,7 +166,7 @@ function nativevillages.behaviors.handle_door_waiting(self)
 				local node = minetest.get_node(check_pos)
 				if is_closed_door(node.name) then
 					local dist = vector.distance(pos, check_pos)
-					if dist < 3 then
+					if dist < 4 then
 						found_closed_door = true
 						door_pos = check_pos
 						break
@@ -199,9 +195,9 @@ function nativevillages.behaviors.handle_door_waiting(self)
 			self:set_animation("stand")
 		end
 
-		-- Check timeout (5 seconds)
+		-- Check timeout (8 seconds - longer to give smart doors time to open)
 		local wait_time = current_time - self.nv_door_wait_start
-		if wait_time > 5 then
+		if wait_time > 8 then
 			-- Timeout - give up on this door
 			self.nv_waiting_for_door = false
 			self.nv_waiting_door_pos = nil
@@ -230,134 +226,6 @@ function nativevillages.behaviors.handle_door_waiting(self)
 	end
 end
 
-function nativevillages.behaviors.get_door_at_pos(pos)
-	-- Use the doors API to get door object
-	if doors and doors.get then
-		local success, door = pcall(doors.get, pos)
-		if success and door then
-			return door
-		end
-	end
-	return nil
-end
-
-function nativevillages.behaviors.find_nearby_doors(self)
-	if not self.object then return {} end
-	local pos = self.object:get_pos()
-	if not pos then return {} end
-
-	local radius = nativevillages.behaviors.config.door_detection_radius
-	local door_positions = {}
-
-	-- Check positions around the NPC (center, adjacent, and vertical)
-	local check_positions = {
-		pos,  -- Center
-		{x = pos.x + 1, y = pos.y, z = pos.z},
-		{x = pos.x - 1, y = pos.y, z = pos.z},
-		{x = pos.x, y = pos.y, z = pos.z + 1},
-		{x = pos.x, y = pos.y, z = pos.z - 1},
-		{x = pos.x, y = pos.y + 1, z = pos.z},  -- Above
-		{x = pos.x, y = pos.y - 1, z = pos.z},  -- Below
-	}
-
-	for _, check_pos in ipairs(check_positions) do
-		local node = minetest.get_node(check_pos)
-		if minetest.get_item_group(node.name, "door") > 0 then
-			table.insert(door_positions, vector.round(check_pos))
-		end
-	end
-
-	return door_positions
-end
-
-function nativevillages.behaviors.handle_door_interaction(self)
-	if not self.object then return end
-
-	-- Initialize NPC door tracking
-	if not self.nv_opened_doors then
-		self.nv_opened_doors = {}
-	end
-
-	local pos = self.object:get_pos()
-	if not pos then return end
-
-	-- Find nearby doors
-	local nearby_doors = nativevillages.behaviors.find_nearby_doors(self)
-	local npc_id = tostring(self.object)
-
-	-- Open nearby closed doors
-	for _, door_pos in ipairs(nearby_doors) do
-		local door = nativevillages.behaviors.get_door_at_pos(door_pos)
-		if door then
-			local door_key = minetest.pos_to_string(door_pos)
-
-			-- Check if door is closed
-			if not door:state() then
-				-- Open the door
-				local success = pcall(function()
-					door:open(nil)  -- nil player works for NPC access
-				end)
-
-				if success then
-					-- Track this door as opened by this NPC
-					self.nv_opened_doors[door_key] = {
-						pos = door_pos,
-						time = minetest.get_gametime()
-					}
-
-					-- Also track globally for cleanup
-					if not nativevillages.behaviors.open_doors[door_key] then
-						nativevillages.behaviors.open_doors[door_key] = {}
-					end
-					nativevillages.behaviors.open_doors[door_key][npc_id] = true
-				end
-			else
-				-- Door is already open, update timer
-				if self.nv_opened_doors[door_key] then
-					self.nv_opened_doors[door_key].time = minetest.get_gametime()
-				end
-			end
-		end
-	end
-
-	-- Close doors that NPC has moved away from
-	local current_time = minetest.get_gametime()
-	for door_key, door_data in pairs(self.nv_opened_doors) do
-		local dist = vector.distance(pos, door_data.pos)
-		local time_since = current_time - door_data.time
-
-		-- Close door if NPC is far away or hasn't been near it for a while
-		if dist > nativevillages.behaviors.config.door_close_distance or
-		   time_since > nativevillages.behaviors.config.door_close_time then
-			local door = nativevillages.behaviors.get_door_at_pos(door_data.pos)
-			if door and door:state() then  -- If door is open
-				-- Check if any other NPCs are near this door
-				local other_npcs_nearby = false
-				if nativevillages.behaviors.open_doors[door_key] then
-					for other_npc_id, _ in pairs(nativevillages.behaviors.open_doors[door_key]) do
-						if other_npc_id ~= npc_id then
-							other_npcs_nearby = true
-							break
-						end
-					end
-				end
-
-				-- Only close if no other NPCs are near
-				if not other_npcs_nearby then
-					pcall(function()
-						door:close(nil)
-					end)
-				end
-			end
-
-			-- Remove from tracking
-			self.nv_opened_doors[door_key] = nil
-			if nativevillages.behaviors.open_doors[door_key] then
-				nativevillages.behaviors.open_doors[door_key][npc_id] = nil
-			end
-		end
-	end
-end
 
 --------------------------------------------------------------------
 -- NIGHT-TIME BED PATHFINDING (Simplified - no sleeping animation)
@@ -972,10 +840,61 @@ function nativevillages.behaviors.handle_night_time_movement_with_avoidance(self
 end
 
 --------------------------------------------------------------------
+-- OBSTACLE DETECTION
+--------------------------------------------------------------------
+function nativevillages.behaviors.check_path_obstacles(self)
+	if not self.object then return false end
+	if not self._target then return false end
+
+	local pos = self.object:get_pos()
+	if not pos then return false end
+
+	-- Check if there's an obstacle in front of us
+	local dir = vector.direction(pos, self._target)
+	local check_pos = vector.add(pos, vector.multiply(dir, 1.5))
+	check_pos = vector.round(check_pos)
+
+	local node = minetest.get_node(check_pos)
+	local node_def = minetest.registered_nodes[node.name]
+
+	if node_def then
+		-- Check if node is not walkable (like glass, fences, walls)
+		if not node_def.walkable then
+			return false
+		end
+
+		-- Check if it's a door - doors are OK
+		if minetest.get_item_group(node.name, "door") > 0 then
+			return false
+		end
+
+		-- Check if it's a fence, glass pane, or similar obstacle
+		if node.name:match("fence") or
+		   node.name:match("pane") or
+		   node.name:match("glass") or
+		   node.name:match("bars") or
+		   node.name:match("wall") then
+			-- Found an obstacle, clear target to find new path
+			self._target = nil
+			self.state = "stand"
+			self:set_animation("stand")
+			return true
+		end
+	end
+
+	return false
+end
+
+--------------------------------------------------------------------
 -- MAIN UPDATE FUNCTION
 --------------------------------------------------------------------
 function nativevillages.behaviors.update(self, dtime)
 	nativevillages.behaviors.init_house(self)
+
+	-- Check for obstacles in path
+	if nativevillages.behaviors.check_path_obstacles(self) then
+		return
+	end
 
 	-- Check if NPC is waiting for a door to open
 	if nativevillages.behaviors.handle_door_waiting(self) then
@@ -1026,7 +945,6 @@ function nativevillages.behaviors.get_save_data(self)
 		nv_last_social_time = self.nv_last_social_time,
 		nv_last_food_share_time = self.nv_last_food_share_time,
 		nv_last_player_greeting_time = self.nv_last_player_greeting_time,
-		nv_opened_doors = self.nv_opened_doors,
 		nv_final_destination = self.nv_final_destination,
 		nv_waiting_for_door = self.nv_waiting_for_door,
 		nv_door_wait_start = self.nv_door_wait_start,
@@ -1044,7 +962,6 @@ function nativevillages.behaviors.load_save_data(self, data)
 	self.nv_last_social_time = data.nv_last_social_time or 0
 	self.nv_last_food_share_time = data.nv_last_food_share_time or 0
 	self.nv_last_player_greeting_time = data.nv_last_player_greeting_time or 0
-	self.nv_opened_doors = data.nv_opened_doors or {}
 	self.nv_final_destination = data.nv_final_destination
 	self.nv_waiting_for_door = data.nv_waiting_for_door or false
 	self.nv_door_wait_start = data.nv_door_wait_start or 0

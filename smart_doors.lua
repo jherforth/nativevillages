@@ -4,8 +4,8 @@
 nativevillages.smart_doors = {}
 
 -- Configuration
-local DOOR_CHECK_INTERVAL = 0.5  -- Check for NPCs twice per second
-local DOOR_DETECTION_RADIUS = 3  -- How close NPCs need to be (3 blocks)
+local DOOR_CHECK_INTERVAL = 0.3  -- Check for NPCs every 0.3 seconds
+local DOOR_DETECTION_RADIUS = 4  -- How close NPCs need to be (4 blocks)
 
 --------------------------------------------------------------------
 -- HELPER FUNCTIONS
@@ -154,9 +154,23 @@ end
 minetest.register_abm({
 	label = "Start door timers for NPC detection",
 	nodenames = {"group:door"},
-	interval = 10,
+	interval = 5,
 	chance = 1,
 	catch_up = false,
+	action = function(pos, node)
+		local timer = minetest.get_node_timer(pos)
+		if not timer:is_started() then
+			timer:start(DOOR_CHECK_INTERVAL)
+		end
+	end,
+})
+
+-- Also register on all door node names specifically
+minetest.register_lbm({
+	label = "Start door timers on load",
+	name = "nativevillages:start_door_timers",
+	nodenames = {"group:door"},
+	run_at_every_load = true,
 	action = function(pos, node)
 		local timer = minetest.get_node_timer(pos)
 		if not timer:is_started() then
