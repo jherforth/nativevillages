@@ -14,7 +14,7 @@ local function register_desert_building(params)
         name = "nativevillages:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:desert_sand","default:sand"},
-        sidelen = 40,
+        sidelen = 50,
         noise_params = village_noise,
         biomes = {"desert","mesa","everness:forsaken_desert"},
         y_min = 1,
@@ -39,7 +39,7 @@ local function register_desert_central(params)
         name = "nativevillages:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:desert_sand","default:sand"},
-        sidelen = 48,                          -- bigger grid for rare buildings
+        sidelen = 58,                          -- bigger grid for rare buildings
         noise_params = central_noise,
         biomes = {"desert","mesa","everness:forsaken_desert"},
         y_min = 0,

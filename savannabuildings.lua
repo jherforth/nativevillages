@@ -13,7 +13,7 @@ local function register_savanna_building(params)
         name = "nativevillages:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:dry_dirt_with_dry_grass","naturalbiomes:outback_litter"},
-        sidelen = 40,                          -- consistent with all other biomes
+        sidelen = 50,                          -- consistent with all other biomes
         noise_params = village_noise,
         biomes = {"savanna","prarie","naturalbiomes:outback"},
         y_min = 1,
@@ -37,7 +37,7 @@ local function register_savanna_central(params)
         name = "nativevillages:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:dry_dirt_with_dry_grass","naturalbiomes:outback_litter"},
-        sidelen = 48,                          -- rare, proud structures
+        sidelen = 58,                          -- rare, proud structures
         noise_params = central_noise,
         biomes = {"savanna","prarie","naturalbiomes:outback"},
         y_min = 1,

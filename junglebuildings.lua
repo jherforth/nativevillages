@@ -13,7 +13,7 @@ local function register_jungle_building(params)
         name = "nativevillages:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:dirt_with_rainforest_litter"},
-        sidelen = 48,                          -- jungle clearings are rare → give more space to find flat ones
+        sidelen = 58,                          -- jungle clearings are rare → give more space to find flat ones
         noise_params = village_noise,
         biomes = {"rainforest", "rainforest_swamp"},
         y_min = 4,
@@ -37,7 +37,7 @@ local function register_jungle_central(params)
         name = "nativevillages:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:dirt_with_rainforest_litter"},
-        sidelen = 64,                          -- ultra-rare legendary structures
+        sidelen = 74,                          -- ultra-rare legendary structures
         noise_params = central_noise,
         biomes = {"rainforest", "rainforest_swamp"},
         y_min = 4,
