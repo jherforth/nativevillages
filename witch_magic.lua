@@ -150,7 +150,7 @@ function nativevillages.witch_magic.custom_attack(self, dtime)
 
 	-- Initialize attack cooldown
 	if not self.nv_magic_attack_cooldown then
-		self.nv_magic_attack_cooldown = 4  -- 4 seconds between attacks
+		self.nv_magic_attack_cooldown = 2  -- 2 seconds between magic attacks (more frequent than melee)
 	end
 
 	self.nv_magic_attack_timer = self.nv_magic_attack_timer + dtime
@@ -169,9 +169,9 @@ function nativevillages.witch_magic.custom_attack(self, dtime)
 
 	local distance = vector.distance(pos, target_pos)
 
-	-- Only attack if within magic range (medium distance)
+	-- Only attack if within magic range (1-5 blocks)
 	if distance > 5 then return false end
-	if distance < 1.5 then return false end  -- Too close, use melee instead
+	if distance < 1 then return false end  -- Too close (within 1 block), use melee instead
 
 	-- Perform teleport attack (10 blocks in random direction)
 	local success = nativevillages.witch_magic.teleport_attack(self, self.attack, 10)

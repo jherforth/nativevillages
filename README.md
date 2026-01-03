@@ -29,7 +29,7 @@ Each village is populated with various NPC types, each with unique behaviors, tr
 - **Cleric** - Mystical NPCs with magical items
 - **Bum** - Humble NPCs with modest trades
 - **Entertainer** - Social NPCs that enhance village atmosphere
-- **Witch** - Hostile magic users with dual attacks: melee punches (7 damage) at close range, and teleportation spells (10 blocks random direction) at medium range
+- **Witch** - Hostile magic users with dual attacks: melee punches (7 damage, within 1 block) and frequent teleportation spells (10 blocks random direction, 1-5 blocks range, 2s cooldown)
 
 ### 🎭 Advanced Mood System
 
@@ -283,7 +283,7 @@ Contributions are welcome! Please ensure:
 ## Changelog
 
 ### Recent Updates
-- **Witch Dual-Attack System**: Witches are now hostile monsters with melee punches (close range, 7 damage) and magic teleportation (medium range, 10 blocks displacement)
+- **Witch Dual-Attack System**: Witches are now hostile monsters with melee punches (within 1 block, 7 damage) and frequent magic teleportation (1-5 blocks, 10 blocks displacement, 2s cooldown)
 - Added dynamic sound system with mood-based audio
 - Implemented configurable sound repeat delays
 - Enhanced NPC interaction feedback

@@ -4,6 +4,12 @@
 
 Modified witch combat system from single magic attack to dual-attack system with range-based behavior.
 
+**Latest Update:** Adjusted attack ranges and frequency:
+- Melee range reduced to 1 block (was 1.5 blocks)
+- Magic range expanded to 1-5 blocks (was 1.5-5 blocks)
+- Magic cooldown reduced to 2 seconds (was 4 seconds) - more frequent attacks
+- Magic is now the primary attack method
+
 ## What Changed
 
 ### witch_magic.lua
@@ -38,19 +44,21 @@ function nativevillages.witch_magic.teleport_attack(self, target, distance)
 
 ### Range-Based Attacks
 
-**Close Range (0-1.5 blocks):**
+**Close Range (0-1 blocks):**
 - Witch uses standard melee punch
 - Deals 7 damage per hit
-- No cooldown (standard melee timing)
+- Standard melee timing (less frequent)
 - Player takes damage but isn't displaced
+- Only happens when within 1 block
 
-**Medium Range (1.5-5 blocks):**
-- Witch casts teleport spell
+**Medium Range (1-5 blocks):**
+- Witch casts teleport spell (primary attack)
 - Teleports player 10 blocks away in random direction
 - **NO DAMAGE** - pure displacement
-- 4-second cooldown
+- 2-second cooldown (more frequent than melee)
 - Purple particles and magic sound
 - Forces player to reposition
+- Main threat due to wider range and faster cooldown
 
 **Long Range (5+ blocks):**
 - Witch chases target
@@ -59,10 +67,11 @@ function nativevillages.witch_magic.teleport_attack(self, target, distance)
 ### Player Tactics
 
 Players must now:
-- **Avoid close range** to prevent taking melee damage
-- **Manage medium range carefully** to avoid teleport disruption
+- **Stay out of 1-block range** to prevent taking melee damage
+- **Beware 1-5 block zone** where magic attacks happen frequently (every 2 seconds)
 - **Use positioning** to control engagement distance
 - **Deal with randomness** - can't predict teleport direction
+- **Magic is main threat** - more frequent and wider range than melee
 
 ## Technical Details
 
@@ -106,15 +115,16 @@ end
 
 ## Testing Checklist
 
-- [ ] Witches punch at 0-1.5 blocks dealing 7 damage
-- [ ] Witches teleport at 1.5-5 blocks
+- [ ] Witches punch at 0-1 blocks dealing 7 damage
+- [ ] Witches teleport at 1-5 blocks
 - [ ] Teleport sends player 10 blocks away (not 0.8)
 - [ ] Teleport direction is random (not always away from witch)
 - [ ] Teleport does NOT deal damage
 - [ ] Player stays at same Y-level after teleport
-- [ ] 4-second cooldown applies to magic (not melee)
+- [ ] 2-second cooldown applies to magic (more frequent than melee)
+- [ ] Magic attacks happen more often than melee
 - [ ] Purple particles only appear on magic attacks
-- [ ] Magic sound only plays on magic attacks
+- [ ] Magic sound only plays on magic attacks (at 10% volume)
 
 ## Compatibility
 

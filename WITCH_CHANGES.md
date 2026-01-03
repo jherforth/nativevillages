@@ -16,27 +16,30 @@ Created a complete magic system for witches with the following features:
 - Glow value of 10 for visibility
 
 **Teleport Attack (Medium Range)**
-- Magic attack used at 1.5-5 block distance
+- Magic attack used at 1-5 block distance
 - Teleports target 10 blocks away in random direction
 - **NO DAMAGE** - pure displacement/disruption
 - Random direction (360 degrees, keeps same Y-level)
 - Works on both players and entities
 - Visual feedback with line and area particle effects
-- Magic sound effect at 30% volume (gain = 0.3)
+- Magic sound effect at 10% volume (gain = 0.1)
+- 2-second cooldown (more frequent than melee)
 
 **Melee Punch Attack (Close Range)**
-- Standard dogfight attack used at 0-1.5 block distance
+- Standard dogfight attack used at 0-1 block distance
 - Deals 7 damage per hit
-- No special effects or cooldown
+- No special effects
 - Automatic mobs_redo melee behavior
+- Less frequent than magic attacks
 
 **Custom Attack Behavior**
-- 4-second cooldown between magic attacks (melee has no special cooldown)
-- Magic range: 1.5-5 blocks (medium distance)
-- Melee range: 0-1.5 blocks (close combat)
+- 2-second cooldown between magic attacks (magic is more frequent)
+- Magic range: 1-5 blocks (medium distance)
+- Melee range: 0-1 blocks (close combat only)
 - Only attacks when target is in range
 - Automatic timer management per witch entity
 - Dual-attack strategy based on distance
+- Magic is primary attack (more frequent and wider range)
 
 **Custom do_custom Function**
 - Handles magic attack logic
@@ -73,21 +76,23 @@ Created a complete magic system for witches with the following features:
 
 ### Attack Mechanics
 
-**Close Range (0-1.5 blocks):**
+**Close Range (0-1 blocks):**
 1. Witch detects target (players, NPCs)
 2. Uses standard mobs_redo melee attack
 3. Deals 7 damage per hit
 4. No special effects
+5. Less frequent than magic
 
-**Medium Range (1.5-5 blocks):**
+**Medium Range (1-5 blocks):**
 1. Witch detects target (players, NPCs)
-2. Checks attack timer (4-second cooldown)
-3. Validates distance (1.5-5 blocks)
+2. Checks attack timer (2-second cooldown)
+3. Validates distance (1-5 blocks)
 4. Calculates random teleport direction (10 blocks away)
 5. Teleports target to new position
 6. Spawns particle effects (line + area)
 7. No damage - pure disruption
 8. Resets cooldown timer
+9. More frequent than melee (primary attack)
 
 **Long Range (5+ blocks):**
 1. Witch chases target to get into magic range
@@ -135,11 +140,11 @@ Witches spawn in all biomes:
 - Trading: no
 - Attacks players and NPCs
 - **Dual Attack System:**
-  - **Melee punch** at 0-1.5 blocks: 7 damage, standard attack
-  - **Magic teleport** at 1.5-5 blocks: 10 blocks displacement, no damage
-- 4-second cooldown between magic attacks (not melee)
+  - **Melee punch** at 0-1 blocks: 7 damage, less frequent
+  - **Magic teleport** at 1-5 blocks: 10 blocks displacement, no damage, 2s cooldown (primary attack)
+- Magic attacks are more frequent than melee
 - Purple particle effects for magic
-- Magic sound effect (magic.ogg at 30% volume)
+- Magic sound effect (magic.ogg at 10% volume)
 
 ## Files Modified Summary
 1. ✅ `witch_magic.lua` - Created (main magic system)
@@ -152,12 +157,13 @@ Witches spawn in all biomes:
 ## Testing Checklist
 - [ ] Witches spawn in all biomes
 - [ ] Witches are hostile to players
-- [ ] Witches punch at close range (0-1.5 blocks) dealing 7 damage
-- [ ] Witches cast teleport at medium range (1.5-5 blocks)
+- [ ] Witches punch at close range (within 1 block) dealing 7 damage
+- [ ] Witches cast teleport at medium range (1-5 blocks)
 - [ ] Teleport sends player 10 blocks away in random direction
 - [ ] Teleport does NOT deal damage
 - [ ] Purple particle effects appear on magic attack
-- [ ] 4-second cooldown between magic attacks (not melee)
+- [ ] 2-second cooldown between magic attacks (faster than melee)
+- [ ] Magic attacks are more frequent than melee attacks
 - [ ] No errors in debug.txt
 - [ ] Other villager types unaffected
 - [ ] Witches don't crash on serialization

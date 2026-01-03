@@ -16,12 +16,13 @@
 **Key Features:**
 - Witches are now hostile monsters (type=monster, passive=false)
 - **Dual Attack System:**
-  - **Melee Punch (0-1.5 blocks):** 7 damage, standard dogfight attack
-  - **Magic Teleport (1.5-5 blocks):** Teleports target 10 blocks away in random direction, NO damage
+  - **Melee Punch (0-1 blocks):** 7 damage, less frequent
+  - **Magic Teleport (1-5 blocks):** Teleports target 10 blocks away in random direction, NO damage, 2s cooldown (primary attack)
 - Teleport attack: Random direction (360 degrees), keeps same Y-level, pure disruption
-- 4-second cooldown between magic attacks (melee has no special cooldown)
+- 2-second cooldown between magic attacks (more frequent than melee)
+- Magic is the primary attack (wider range, more frequent)
 - Purple particle effects using greeting-style particles for magic
-- Magic sound effect (magic.ogg at 30% volume) when casting
+- Magic sound effect (magic.ogg at 10% volume) when casting
 - No texture files needed - uses `default_cloud.png^[colorize:purple:150`
 - Witches don't trade anymore
 - Custom do_custom function for witch-specific behavior
@@ -129,13 +130,14 @@ Users can adjust village size by editing `village_noise.lua`:
 ### Witch Dual-Attack System
 - [ ] Witches spawn in all biomes
 - [ ] Witches attack players
-- [ ] **Melee punch at close range (0-1.5 blocks) deals 7 damage**
-- [ ] **Teleport at medium range (1.5-5 blocks) displaces player 10 blocks**
+- [ ] **Melee punch at close range (within 1 block) deals 7 damage**
+- [ ] **Teleport at medium range (1-5 blocks) displaces player 10 blocks**
 - [ ] **Teleport does NOT deal damage**
 - [ ] Teleport direction is random (360 degrees)
 - [ ] Purple particles appear on magic attacks
-- [ ] Magic sound (magic.ogg at 30% volume) plays when casting
-- [ ] 4-second cooldown enforced for magic (not melee)
+- [ ] Magic sound (magic.ogg at 10% volume) plays when casting
+- [ ] 2-second cooldown enforced for magic (more frequent than melee)
+- [ ] Magic attacks are primary threat (more frequent)
 - [ ] Witches chase at long range (5+ blocks)
 
 ### Door System (Smart Doors)

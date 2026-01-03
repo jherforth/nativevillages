@@ -15,21 +15,21 @@ Witches are now properly hostile monsters with two distinct attack types: melee 
 - **Range**: 5 blocks (magic range)
 
 ### 2. Melee Punch Attack (Close Range)
-When the witch is very close to the target (0-1.5 blocks):
+When the witch is very close to the target (0-1 blocks):
 - Uses standard mobs_redo dogfight attack
 - Deals 7 damage per hit
-- No cooldown (standard melee timing)
+- Standard melee timing (less frequent than magic)
 - No special effects
 - Automatic when in close range
 
 ### 3. Magic Attack: Teleport (Medium Range)
-When the witch is at medium distance (1.5-5 blocks):
+When the witch is at medium distance (1-5 blocks):
 - Teleports target 10 blocks away in a random direction
 - **NO DAMAGE** - pure disruption/displacement
 - Random direction (360 degrees, keeps same Y-level)
-- Has a 4-second cooldown between magic attacks
+- Has a 2-second cooldown between magic attacks (more frequent than melee)
 - Creates purple particle effects using greeting-style particles
-- Plays magic.ogg sound when casting (30% volume)
+- Plays magic.ogg sound when casting (10% volume)
 - Forces target to reposition and re-engage
 
 ### 4. Particle Effects
@@ -44,17 +44,18 @@ Instead of using texture-based particles, the witch magic uses the same particle
 ### 5. Attack Behavior Strategy
 Witches use a dual-attack strategy based on distance:
 
-**Close Range (0-1.5 blocks):**
+**Close Range (0-1 blocks):**
 - Automatically uses melee punch attack
 - Deals 7 damage per hit
 - No special effects or sounds
 - Standard mobs_redo dogfight behavior
+- Less frequent than magic attacks
 
-**Medium Range (1.5-5 blocks):**
+**Medium Range (1-5 blocks):**
 - Uses magic teleport attack
 - Teleports target 10 blocks away randomly
 - No damage (disruption only)
-- 4-second cooldown between magic casts
+- 2-second cooldown between magic casts (more frequent)
 - Purple particle effects and magic sound
 
 **Long Range (5+ blocks):**
@@ -64,9 +65,10 @@ Witches use a dual-attack strategy based on distance:
 **Combat Flow:**
 1. Witch spots player/NPC
 2. Chases if too far away (5+ blocks)
-3. Casts teleport when in range (1.5-5 blocks) every 4 seconds
-4. Punches if player gets too close (0-1.5 blocks)
-5. Player must carefully manage distance to avoid both attacks
+3. Casts teleport when in range (1-5 blocks) every 2 seconds
+4. Punches if player gets too close (within 1 block)
+5. Magic attacks are more frequent, making them the primary threat
+6. Player must carefully manage distance to avoid both attacks
 
 ## Technical Implementation
 
