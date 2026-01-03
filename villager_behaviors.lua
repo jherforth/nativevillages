@@ -11,12 +11,13 @@ nativevillages.behaviors = {}
 nativevillages.behaviors.config = {
 	home_radius = 20,
 	sleep_radius = 3,
-	door_detection_radius = 2,
+	door_detection_radius = 2,  -- Used for nearby door scanning
 	social_detection_radius = 5,
 	food_share_detection_radius = 8,
 	social_interaction_cooldown = 45,
 	food_share_cooldown = 60,
-	door_close_delay = 3,
+	door_close_distance = 4,  -- Doors close when NPC is this far away
+	door_close_time = 5,  -- Doors close after this many seconds of inactivity
 	stuck_teleport_threshold = 300,
 }
 
@@ -73,228 +74,137 @@ function nativevillages.behaviors.has_house(self)
 end
 
 --------------------------------------------------------------------
--- DOOR INTERACTION SYSTEM
+-- DOOR INTERACTION SYSTEM (Simplified using doors API)
 --------------------------------------------------------------------
-nativevillages.behaviors.door_timers = {}
-nativevillages.behaviors.door_states = {}  -- Track last known state of each door
+nativevillages.behaviors.open_doors = {}  -- Track which doors are open by which NPCs
 
-function nativevillages.behaviors.find_nearby_door(self)
-	if not self.object then return nil end
+function nativevillages.behaviors.get_door_at_pos(pos)
+	-- Use the doors API to get door object
+	if doors and doors.get then
+		local success, door = pcall(doors.get, pos)
+		if success and door then
+			return door
+		end
+	end
+	return nil
+end
+
+function nativevillages.behaviors.find_nearby_doors(self)
+	if not self.object then return {} end
 	local pos = self.object:get_pos()
-	if not pos then return nil end
+	if not pos then return {} end
 
 	local radius = nativevillages.behaviors.config.door_detection_radius
-	local doors = minetest.find_nodes_in_area(
-		{x = pos.x - radius, y = pos.y - 1, z = pos.z - radius},
-		{x = pos.x + radius, y = pos.y + 1, z = pos.z + radius},
-		"group:door"
-	)
+	local door_positions = {}
 
-	if #doors == 0 then return nil end
+	-- Check positions around the NPC (center, adjacent, and vertical)
+	local check_positions = {
+		pos,  -- Center
+		{x = pos.x + 1, y = pos.y, z = pos.z},
+		{x = pos.x - 1, y = pos.y, z = pos.z},
+		{x = pos.x, y = pos.y, z = pos.z + 1},
+		{x = pos.x, y = pos.y, z = pos.z - 1},
+		{x = pos.x, y = pos.y + 1, z = pos.z},  -- Above
+		{x = pos.x, y = pos.y - 1, z = pos.z},  -- Below
+	}
 
-	local closest_door = nil
-	local closest_dist = 999
-	for _, door_pos in ipairs(doors) do
-		local dist = vector.distance(pos, door_pos)
-		if dist < closest_dist then
-			closest_dist = dist
-			closest_door = door_pos
+	for _, check_pos in ipairs(check_positions) do
+		local node = minetest.get_node(check_pos)
+		if minetest.get_item_group(node.name, "door") > 0 then
+			table.insert(door_positions, vector.round(check_pos))
 		end
 	end
 
-	return closest_door
-end
-
-function nativevillages.behaviors.is_door_open(door_pos)
-	local node = minetest.get_node(door_pos)
-	return string.find(node.name, "_a") or string.find(node.name, "_open")
-end
-
-function nativevillages.behaviors.open_door(door_pos, self)
-	if nativevillages.behaviors.is_door_open(door_pos) then return end
-
-	local node = minetest.get_node(door_pos)
-	if not node or not node.name then return end
-
-	minetest.log("action", "[villagers] Attempting to open door: " .. node.name)
-
-	if minetest.get_item_group(node.name, "door") > 0 then
-		local door_def = minetest.registered_nodes[node.name]
-
-		-- Method 1: Try on_rightclick
-		if door_def and door_def.on_rightclick then
-			minetest.log("action", "[villagers] Trying on_rightclick method")
-			local success, err = pcall(function()
-				-- Try with nil player first
-				door_def.on_rightclick(door_pos, node, nil, nil)
-			end)
-			if success then
-				minetest.log("action", "[villagers] on_rightclick succeeded")
-			else
-				minetest.log("action", "[villagers] on_rightclick failed: " .. tostring(err))
-				-- Method 2: Try doors.door_toggle
-				if doors and doors.door_toggle then
-					minetest.log("action", "[villagers] Trying doors.door_toggle")
-					local toggle_success, toggle_err = pcall(function()
-						doors.door_toggle(door_pos, node, nil)
-					end)
-					if toggle_success then
-						minetest.log("action", "[villagers] doors.door_toggle succeeded")
-					else
-						minetest.log("action", "[villagers] doors.door_toggle failed: " .. tostring(toggle_err))
-						-- Method 3: Try swapping node directly
-						minetest.log("action", "[villagers] Trying direct node swap")
-						local closed_name = node.name
-						local open_name = closed_name:gsub("_b$", "_a"):gsub("_c$", "_a")
-						if open_name ~= closed_name then
-							local success_swap = pcall(function()
-								minetest.swap_node(door_pos, {name = open_name, param1 = node.param1, param2 = node.param2})
-							end)
-							if success_swap then
-								minetest.log("action", "[villagers] Direct swap succeeded: " .. closed_name .. " -> " .. open_name)
-							else
-								minetest.log("action", "[villagers] Direct swap failed")
-							end
-						end
-					end
-				end
-			end
-		elseif doors and doors.door_toggle then
-			-- Method 2: Direct doors.door_toggle (no on_rightclick)
-			minetest.log("action", "[villagers] No on_rightclick, using doors.door_toggle")
-			local success, err = pcall(function()
-				doors.door_toggle(door_pos, node, nil)
-			end)
-			if success then
-				minetest.log("action", "[villagers] doors.door_toggle succeeded")
-			else
-				minetest.log("action", "[villagers] doors.door_toggle failed: " .. tostring(err))
-			end
-		else
-			minetest.log("warning", "[villagers] No door API available for " .. node.name)
-		end
-	else
-		minetest.log("warning", "[villagers] Node is not in door group: " .. node.name)
-	end
-end
-
-function nativevillages.behaviors.schedule_door_close(door_pos)
-	local door_key = minetest.pos_to_string(door_pos)
-
-	if nativevillages.behaviors.door_timers[door_key] then
-		return
-	end
-
-	nativevillages.behaviors.door_timers[door_key] = true
-
-	minetest.after(nativevillages.behaviors.config.door_close_delay, function()
-		nativevillages.behaviors.door_timers[door_key] = nil
-
-		if nativevillages.behaviors.is_door_open(door_pos) then
-			local node = minetest.get_node(door_pos)
-			minetest.log("action", "[villagers] Closing door: " .. node.name .. " at " .. minetest.pos_to_string(door_pos))
-
-			if minetest.get_item_group(node.name, "door") > 0 then
-				local door_def = minetest.registered_nodes[node.name]
-
-				-- Method 1: Try on_rightclick
-				if door_def and door_def.on_rightclick then
-					minetest.log("action", "[villagers] Trying on_rightclick to close")
-					local success, err = pcall(function()
-						door_def.on_rightclick(door_pos, node, nil, nil)
-					end)
-					if success then
-						minetest.log("action", "[villagers] on_rightclick close succeeded")
-					else
-						minetest.log("action", "[villagers] on_rightclick close failed: " .. tostring(err))
-						-- Method 2: Try doors.door_toggle
-						if doors and doors.door_toggle then
-							minetest.log("action", "[villagers] Trying doors.door_toggle to close")
-							local toggle_success, toggle_err = pcall(function()
-								doors.door_toggle(door_pos, node, nil)
-							end)
-							if toggle_success then
-								minetest.log("action", "[villagers] doors.door_toggle close succeeded")
-							else
-								minetest.log("action", "[villagers] doors.door_toggle close failed: " .. tostring(toggle_err))
-								-- Method 3: Try swapping node directly
-								minetest.log("action", "[villagers] Trying direct node swap to close")
-								local open_name = node.name
-								local closed_name = open_name:gsub("_a$", "_b"):gsub("_open$", "_closed")
-								if closed_name ~= open_name then
-									local success_swap = pcall(function()
-										minetest.swap_node(door_pos, {name = closed_name, param1 = node.param1, param2 = node.param2})
-									end)
-									if success_swap then
-										minetest.log("action", "[villagers] Direct swap to close succeeded: " .. open_name .. " -> " .. closed_name)
-									else
-										minetest.log("action", "[villagers] Direct swap to close failed")
-									end
-								end
-							end
-						end
-					end
-				elseif doors and doors.door_toggle then
-					-- Method 2: Direct doors.door_toggle
-					minetest.log("action", "[villagers] Using doors.door_toggle to close")
-					local success, err = pcall(function()
-						doors.door_toggle(door_pos, node, nil)
-					end)
-					if success then
-						minetest.log("action", "[villagers] doors.door_toggle close succeeded")
-					else
-						minetest.log("action", "[villagers] doors.door_toggle close failed: " .. tostring(err))
-					end
-				else
-					minetest.log("warning", "[villagers] No door close API available for " .. node.name)
-				end
-			end
-			-- Update state to closed
-			nativevillages.behaviors.door_states[door_key] = false
-		else
-			minetest.log("action", "[villagers] Door already closed at " .. minetest.pos_to_string(door_pos))
-			nativevillages.behaviors.door_states[door_key] = false
-		end
-	end)
+	return door_positions
 end
 
 function nativevillages.behaviors.handle_door_interaction(self)
-	-- Only check doors occasionally to reduce spam
-	if not self.nv_door_check_timer then
-		self.nv_door_check_timer = 0
+	if not self.object then return end
+
+	-- Initialize NPC door tracking
+	if not self.nv_opened_doors then
+		self.nv_opened_doors = {}
 	end
 
-	self.nv_door_check_timer = self.nv_door_check_timer + 1
-	if self.nv_door_check_timer < 10 then
-		return
-	end
-	self.nv_door_check_timer = 0
+	local pos = self.object:get_pos()
+	if not pos then return end
 
-	local door_pos = nativevillages.behaviors.find_nearby_door(self)
-	if not door_pos then
-		self.nv_last_door_pos = nil
-		return
-	end
+	-- Find nearby doors
+	local nearby_doors = nativevillages.behaviors.find_nearby_doors(self)
+	local npc_id = tostring(self.object)
 
-	local door_key = minetest.pos_to_string(door_pos)
-	local is_open = nativevillages.behaviors.is_door_open(door_pos)
+	-- Open nearby closed doors
+	for _, door_pos in ipairs(nearby_doors) do
+		local door = nativevillages.behaviors.get_door_at_pos(door_pos)
+		if door then
+			local door_key = minetest.pos_to_string(door_pos)
 
-	-- Get last known state for this door
-	local last_state = nativevillages.behaviors.door_states[door_key]
+			-- Check if door is closed
+			if not door:state() then
+				-- Open the door
+				local success = pcall(function()
+					door:open(nil)  -- nil player works for NPC access
+				end)
 
-	-- If we don't know the state, or door is closed, open it
-	if last_state == nil or not is_open then
-		if not is_open then
-			-- Door is closed, open it (no auto-close)
-			local node = minetest.get_node(door_pos)
-			minetest.log("action", "[villagers] Opening door: " .. node.name .. " at " .. door_key)
-			nativevillages.behaviors.open_door(door_pos, self)
-			nativevillages.behaviors.door_states[door_key] = true
-			-- Removed: nativevillages.behaviors.schedule_door_close(door_pos)
+				if success then
+					-- Track this door as opened by this NPC
+					self.nv_opened_doors[door_key] = {
+						pos = door_pos,
+						time = minetest.get_gametime()
+					}
+
+					-- Also track globally for cleanup
+					if not nativevillages.behaviors.open_doors[door_key] then
+						nativevillages.behaviors.open_doors[door_key] = {}
+					end
+					nativevillages.behaviors.open_doors[door_key][npc_id] = true
+				end
+			else
+				-- Door is already open, update timer
+				if self.nv_opened_doors[door_key] then
+					self.nv_opened_doors[door_key].time = minetest.get_gametime()
+				end
+			end
 		end
 	end
 
-	self.nv_last_door_pos = door_pos
+	-- Close doors that NPC has moved away from
+	local current_time = minetest.get_gametime()
+	for door_key, door_data in pairs(self.nv_opened_doors) do
+		local dist = vector.distance(pos, door_data.pos)
+		local time_since = current_time - door_data.time
+
+		-- Close door if NPC is far away or hasn't been near it for a while
+		if dist > nativevillages.behaviors.config.door_close_distance or
+		   time_since > nativevillages.behaviors.config.door_close_time then
+			local door = nativevillages.behaviors.get_door_at_pos(door_data.pos)
+			if door and door:state() then  -- If door is open
+				-- Check if any other NPCs are near this door
+				local other_npcs_nearby = false
+				if nativevillages.behaviors.open_doors[door_key] then
+					for other_npc_id, _ in pairs(nativevillages.behaviors.open_doors[door_key]) do
+						if other_npc_id ~= npc_id then
+							other_npcs_nearby = true
+							break
+						end
+					end
+				end
+
+				-- Only close if no other NPCs are near
+				if not other_npcs_nearby then
+					pcall(function()
+						door:close(nil)
+					end)
+				end
+			end
+
+			-- Remove from tracking
+			self.nv_opened_doors[door_key] = nil
+			if nativevillages.behaviors.open_doors[door_key] then
+				nativevillages.behaviors.open_doors[door_key][npc_id] = nil
+			end
+		end
+	end
 end
 
 --------------------------------------------------------------------
@@ -677,7 +587,7 @@ function nativevillages.behaviors.update(self, dtime)
 		return
 	end
 
-	-- Handle door opening (no closing)
+	-- Handle door interactions (check every update for responsiveness)
 	nativevillages.behaviors.handle_door_interaction(self)
 
 	nativevillages.behaviors.check_stuck_and_recover(self, dtime)
@@ -711,6 +621,7 @@ function nativevillages.behaviors.get_save_data(self)
 		nv_last_social_time = self.nv_last_social_time,
 		nv_last_food_share_time = self.nv_last_food_share_time,
 		nv_last_player_greeting_time = self.nv_last_player_greeting_time,
+		nv_opened_doors = self.nv_opened_doors,
 	}
 end
 
@@ -724,6 +635,7 @@ function nativevillages.behaviors.load_save_data(self, data)
 	self.nv_last_social_time = data.nv_last_social_time or 0
 	self.nv_last_food_share_time = data.nv_last_food_share_time or 0
 	self.nv_last_player_greeting_time = data.nv_last_player_greeting_time or 0
+	self.nv_opened_doors = data.nv_opened_doors or {}
 end
 
 print(S("[MOD] Native Villages - Enhanced villager behaviors loaded"))
