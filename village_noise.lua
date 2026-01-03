@@ -4,14 +4,15 @@
 nativevillages = nativevillages or {}
 
 -- This is the ONE AND ONLY village noise used by EVERY biome
--- Optimized for compact, cohesive villages with grid layout
+-- Optimized for compact villages limited to 1-2 mapchunks (80-160 nodes)
+-- A mapchunk is 80x80x80 nodes
 nativevillages.global_village_noise = {
     offset = 0.0,
-    scale = 0.001,            -- Increased for better building clustering
-    spread = {x = 300, y = 300, z = 300},   -- Tighter spread = more compact villages
+    scale = 0.001,            -- Controls building spawn rate
+    spread = {x = 100, y = 100, z = 100},   -- REDUCED from 300 - creates tighter clusters
     seed = 987654321,
     octaves = 2,              -- Reduced octaves = smoother, more predictable areas
-    persistence = 0.6,
+    persistence = 0.5,        -- REDUCED from 0.6 - less variation at smaller scales
     lacunarity = 2.0,
     flags = "defaults",
 }
@@ -19,16 +20,30 @@ nativevillages.global_village_noise = {
 -- Rarer central buildings (church/market/stable)
 nativevillages.global_central_noise = table.copy(nativevillages.global_village_noise)
 nativevillages.global_central_noise.scale = 0.0001   -- appear in ~1 out of 10 villages
-nativevillages.global_central_noise.spread = {x = 400, y = 400, z = 400}
+nativevillages.global_central_noise.spread = {x = 120, y = 120, z = 120}  -- REDUCED from 400
 
 -- Path noise - slightly different seed for variation but similar scale
 nativevillages.global_path_noise = {
     offset = 0,
     scale = 0.001,
-    spread = {x = 300, y = 300, z = 300},
+    spread = {x = 100, y = 100, z = 100},  -- REDUCED from 300 to match village size
     seed = 987654322,        -- Different seed for slight offset
     octaves = 2,
-    persistence = 0.6,
+    persistence = 0.5,       -- REDUCED from 0.6 to match village noise
     lacunarity = 2.0,
     flags = "defaults",
 }
+
+--[[
+VILLAGE SIZE CONFIGURATION:
+- Spread parameter controls village compactness
+- Current spread (100, 100, 100) creates villages ~100-160 nodes across
+- This fits in 1-2 mapchunks (80x80x80 nodes each)
+- Reduce spread further (e.g., 80, 80, 80) for single mapchunk villages
+- Increase spread (e.g., 150, 150, 150) for larger villages
+
+BUILDING DENSITY:
+- Scale parameter (0.001) controls spawn rate
+- Lower scale = fewer buildings, more rare villages
+- Higher scale = more buildings, denser villages
+]]

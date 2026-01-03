@@ -114,6 +114,8 @@ Doors in villages automatically detect and respond to nearby NPCs:
 
 ### 🏗️ Village Buildings
 
+Villages are compact settlements that fit within 1-2 mapchunks (80-160 nodes across), creating well-organized communities rather than sprawling cities.
+
 Each biome features unique structures:
 
 - **Grassland**: Houses, stables, ponds, ceremonial blots, altars
@@ -122,6 +124,12 @@ Each biome features unique structures:
 - **Lake**: Waterfront houses, harbours, fish traps
 - **Ice**: Igloos, sledges, log piles, pelt storage
 - **Cannibal**: Tribal houses, cages, towers, ritual pits, shrines
+
+**Village Generation:**
+- Villages generate naturally in their respective biomes
+- Each village is limited to 1-2 mapchunks for compact, organized layouts
+- Central buildings (churches, markets, stables) are rare and only appear in established villages
+- Building placement uses noise-based distribution for natural, organic clustering
 
 ### 📦 Special Items & Blocks
 
@@ -164,6 +172,27 @@ nativevillages.mood.enable_visual_indicators = true  -- false to disable
 Adjust how often NPCs play sounds in `npcmood.lua`:
 ```lua
 nativevillages.mood.sound_repeat_delay = 10  -- seconds between sounds
+```
+
+### Village Size
+Adjust village compactness in `village_noise.lua`:
+```lua
+-- For single mapchunk villages (80 nodes)
+spread = {x = 80, y = 80, z = 80}
+
+-- For current size (1-2 mapchunks, 100-160 nodes) - DEFAULT
+spread = {x = 100, y = 100, z = 100}
+
+-- For larger villages (2-3 mapchunks, 160-240 nodes)
+spread = {x = 150, y = 150, z = 150}
+```
+
+### Smart Doors
+Adjust door detection in `smart_doors.lua`:
+```lua
+DOOR_CHECK_INTERVAL = 1.0     -- Check for NPCs every second
+DOOR_DETECTION_RADIUS = 2.5   -- How close NPCs need to be
+DOOR_CLOSE_DELAY = 3          -- Seconds to wait before closing
 ```
 
 ### Village Spawning
