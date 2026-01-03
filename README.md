@@ -219,22 +219,13 @@ nativevillages/
 └── locale/                  # Translations
 ```
 
-## Localization
-
-Currently supports:
-- English (default)
-- German (locale/nativevillages.de.tr)
-
-To add translations, create a `.tr` file in the `locale/` directory.
-
-## Known Issues
-
-- Village spawning is disabled by default (manual placement recommended)
-- Some older entity names may show warnings (automatically migrated)
-
 ## Credits
 
-This mod builds upon various Luanti modding techniques and community contributions.
+This mod builds upon various Luanti modding techniques and community contributions, including code and snippets from the following:
+
+- FreeLikeGNU's Witches https://content.luanti.org/packages/FreeLikeGNU/witches
+- Shaft's Automatic Door Opening https://content.luanti.org/packages/shaft/auto_door
+- Liil's Native Villages https://content.luanti.org/packages/Liil/nativevillages
 
 ## License
 
