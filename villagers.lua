@@ -212,7 +212,7 @@ local villager_classes = {
 		armor = 110,
 		attack_type = "dogfight",
 		attacks_monsters = false,
-		attack_npcs = true,
+		attack_npcs = false,
 		reach = 1,  -- Melee attack range
 		drops = {
 			{name = "default:mese_crystal", chance = 1, min = 0, max = 1},
