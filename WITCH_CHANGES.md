@@ -17,12 +17,12 @@ Created a complete magic system for witches with the following features:
 
 **Teleport Attack**
 - Primary witch attack: throws targets away and upward
-- Default strength: 8 blocks horizontal displacement
-- Default height: 5 blocks vertical lift
+- Default strength: 0.8 blocks horizontal displacement (reduced for balance)
+- Default height: 0.5 blocks vertical lift (reduced for balance)
 - Deals 7 damage to target
 - Works on both players and entities
 - Visual feedback with line and area particle effects
-- Sound support (if attack sounds are defined)
+- Magic sound effect at 30% volume (gain = 0.3)
 
 **Custom Attack Behavior**
 - 4-second cooldown between attacks
@@ -112,13 +112,13 @@ Witches spawn in all biomes:
 - Type: monster
 - Passive: false (actively hostile)
 - Attack type: dogfight (chases targets)
-- Range: 10 blocks (magic range)
+- Range: 5 blocks (magic range)
 - Trading: no
 - Attacks players and NPCs
-- Uses magic teleport attack
+- Uses magic teleport attack (minimal displacement)
 - 4-second attack cooldown
 - Purple particle effects
-- Magic sound effect (magic.ogg)
+- Magic sound effect (magic.ogg at 30% volume)
 
 ## Files Modified Summary
 1. ✅ `witch_magic.lua` - Created (main magic system)
