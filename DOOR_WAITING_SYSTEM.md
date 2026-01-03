@@ -5,10 +5,13 @@ Implemented a comprehensive door waiting and pathfinding system that makes all N
 
 ## Key Features
 
-### 1. Door Cooldown Extended
+### 1. Simplified Door System
 - **File**: `smart_doors.lua`
-- **Change**: Increased `DOOR_COOLDOWN` from 10 to 30 seconds
-- Prevents doors from rapidly opening and closing
+- **Changes**:
+  - Removed cooldown system entirely
+  - Doors open immediately when any NPC is within 3 blocks
+  - Doors close immediately when no NPCs are within 3 blocks
+  - Check interval reduced to 0.5 seconds (twice per second)
 - Doors now work for ALL entity types (NPCs and monsters)
 
 ### 2. Enhanced Pathfinding
@@ -71,8 +74,8 @@ Implemented a comprehensive door waiting and pathfinding system that makes all N
    - Sets `nv_waiting_for_door = true`
    - Records wait start time
    - Stops movement (velocity = 0, animation = "stand")
-7. smart_doors.lua detects NPC within 2.5 blocks
-8. smart_doors.lua opens door (respecting 30s cooldown)
+7. smart_doors.lua detects NPC within 3 blocks
+8. smart_doors.lua opens door immediately (no cooldown)
 9. `handle_door_waiting()` detects door is now open:
    - Sets `nv_waiting_for_door = false`
    - Clears wait data
@@ -101,14 +104,14 @@ All configuration in `villager_behaviors.lua`:
 - Wait trigger distance: 3 blocks (in `handle_door_waiting`)
 
 In `smart_doors.lua`:
-- `DOOR_DETECTION_RADIUS = 2.5` - How close NPCs must be to trigger door
-- `DOOR_COOLDOWN = 30` - Seconds between door operations
-- `DOOR_CLOSE_DELAY = 3` - Seconds after NPCs leave before closing
+- `DOOR_CHECK_INTERVAL = 0.5` - Check for NPCs twice per second
+- `DOOR_DETECTION_RADIUS = 3` - NPCs within 3 blocks trigger door opening/closing
 
 ## Testing Recommendations
 1. NPC walking through building with multiple rooms and doors
 2. Monster chasing player through doorways
 3. Multiple NPCs using same door simultaneously
-4. NPC pathfinding when door is on cooldown (should wait)
-5. Toads navigating through buildings
-6. Witches entering/exiting structures
+4. Door should stay open as long as any NPC is within 3 blocks
+5. Door should close immediately when last NPC moves beyond 3 blocks
+6. Toads navigating through buildings
+7. Witches entering/exiting structures
