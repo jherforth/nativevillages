@@ -90,8 +90,8 @@ function nativevillages.witch_magic.teleport_attack(self, target, distance)
 	-- Play magic sound (quieter)
 	minetest.sound_play("magic", {
 		pos = caster_pos,
-		gain = 0.3,
-		max_hear_distance = 32
+		gain = 0.1,
+		max_hear_distance = 16
 	}, true)
 
 	distance = distance or 10
