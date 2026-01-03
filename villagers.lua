@@ -204,7 +204,7 @@ local villager_classes = {
 		trade_items = {"farming:bread","default:gold_lump"},
 	},
 	witch = {
-		type = "npc",
+		type = "monster",
 		passive = true,
 		damage = 7,
 		hp_min = 60,
