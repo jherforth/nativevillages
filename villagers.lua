@@ -213,7 +213,7 @@ local villager_classes = {
 		attack_type = "dogfight",
 		attacks_monsters = false,
 		attack_npcs = true,
-		reach = 15,  -- Longer range for magic attacks
+		reach = 10,  -- Magic attack range
 		drops = {
 			{name = "default:mese_crystal", chance = 1, min = 0, max = 1},
 			{name = "nativevillages:zombietame", chance = 3, min = 0, max = 1}

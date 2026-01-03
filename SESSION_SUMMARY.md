@@ -17,8 +17,9 @@
 - Witches are now hostile monsters (type=monster, passive=false)
 - Teleport attack: throws targets 8 blocks away and 5 blocks up
 - 7 damage per attack with 4-second cooldown
-- Range: 3-15 blocks (magic casting range)
+- Range: 2-10 blocks (magic casting range)
 - Purple particle effects using greeting-style particles
+- Magic sound effect (magic.ogg) when casting
 - No texture files needed - uses `default_cloud.png^[colorize:purple:150`
 - Witches don't trade anymore
 - Custom do_custom function for witch-specific behavior
@@ -87,8 +88,9 @@ door_close_time = 5      -- Seconds of inactivity before closing
 - [ ] Witches attack players
 - [ ] Teleport attack works correctly
 - [ ] Purple particles appear
+- [ ] Magic sound (magic.ogg) plays when casting
 - [ ] 4-second cooldown enforced
-- [ ] Range (3-15 blocks) works
+- [ ] Range (2-10 blocks) works
 - [ ] Damage (7 HP) applied correctly
 
 ### Door System

@@ -87,14 +87,12 @@ function nativevillages.witch_magic.teleport_attack(self, target, strength, heig
 	local caster_pos = self.object:get_pos()
 	if not caster_pos then return false end
 
-	-- Play sound if available
-	if self.sounds and self.sounds.attack then
-		minetest.sound_play(self.sounds.attack, {
-			pos = caster_pos,
-			gain = 1.0,
-			max_hear_distance = 32
-		}, true)
-	end
+	-- Play magic sound
+	minetest.sound_play("magic", {
+		pos = caster_pos,
+		gain = 1.0,
+		max_hear_distance = 32
+	}, true)
 
 	strength = strength or 8
 	height = height or 5
@@ -174,8 +172,8 @@ function nativevillages.witch_magic.custom_attack(self, dtime)
 	local distance = vector.distance(pos, target_pos)
 
 	-- Only attack if within range (witches have longer range than melee)
-	if distance > 15 then return false end
-	if distance < 3 then return false end  -- Too close, need some distance
+	if distance > 10 then return false end
+	if distance < 2 then return false end  -- Too close, need some distance
 
 	-- Perform teleport attack
 	local success = nativevillages.witch_magic.teleport_attack(self, self.attack, 8, 5)

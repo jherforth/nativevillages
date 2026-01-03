@@ -112,12 +112,13 @@ Witches spawn in all biomes:
 - Type: monster
 - Passive: false (actively hostile)
 - Attack type: dogfight (chases targets)
-- Range: 15 blocks (magic range)
+- Range: 10 blocks (magic range)
 - Trading: no
 - Attacks players and NPCs
 - Uses magic teleport attack
 - 4-second attack cooldown
 - Purple particle effects
+- Magic sound effect (magic.ogg)
 
 ## Files Modified Summary
 1. ✅ `witch_magic.lua` - Created (main magic system)

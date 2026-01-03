@@ -12,7 +12,7 @@ Witches are now properly hostile monsters that use magic attacks instead of mele
 - **Type**: monster
 - **Passive**: false (actively hostile)
 - **Attacks**: Players and NPCs
-- **Range**: 15 blocks (longer than melee)
+- **Range**: 10 blocks (longer than melee)
 
 ### 2. Magic Attack: Teleport
 The witch's primary attack is a teleport spell that:
@@ -20,8 +20,9 @@ The witch's primary attack is a teleport spell that:
 - Lifts the target into the air
 - Deals 7 damage
 - Has a 4-second cooldown between attacks
-- Works at range (3-15 blocks)
+- Works at range (2-10 blocks)
 - Creates purple particle effects using greeting-style particles
+- Plays magic.ogg sound when casting
 
 ### 3. Particle Effects
 Instead of using texture-based particles, the witch magic uses the same particle system as the greeting particles in villager_behaviors.lua:
@@ -34,10 +35,11 @@ Instead of using texture-based particles, the witch magic uses the same particle
 
 ### 4. Attack Behavior
 - Witches only attack when they have a target
-- Minimum distance: 3 blocks (need some distance to cast)
-- Maximum distance: 15 blocks (magic range)
+- Minimum distance: 2 blocks (need some distance to cast)
+- Maximum distance: 10 blocks (magic range)
 - Cooldown: 4 seconds between attacks
 - Attack type: "dogfight" (will chase targets)
+- Sound effect: magic.ogg (plays when casting)
 
 ## Technical Implementation
 
