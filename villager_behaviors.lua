@@ -587,8 +587,9 @@ function nativevillages.behaviors.update(self, dtime)
 		return
 	end
 
-	-- Handle door interactions (check every update for responsiveness)
-	nativevillages.behaviors.handle_door_interaction(self)
+	-- Door interactions are now handled automatically by smart_doors.lua
+	-- Doors detect nearby NPCs and open/close themselves
+	-- nativevillages.behaviors.handle_door_interaction(self)
 
 	nativevillages.behaviors.check_stuck_and_recover(self, dtime)
 

@@ -100,6 +100,18 @@ Keep villagers happy by feeding them:
 - Resets hunger to 1
 - Resets interaction timer
 
+### 🚪 Smart Doors System
+
+Doors in villages automatically detect and respond to nearby NPCs:
+
+- **Automatic Opening** - Doors open when NPCs approach within 2.5 blocks
+- **Automatic Closing** - Doors close 3 seconds after all NPCs leave
+- **Multi-NPC Support** - Multiple NPCs can use the same door without conflicts
+- **Selective Opening** - Only opens for friendly NPCs, not hostile mobs
+- **Quiet Operation** - Door sounds play at 30% volume to reduce noise
+
+**Configuration**: Edit `smart_doors.lua` to adjust detection radius and timing.
+
 ### 🏗️ Village Buildings
 
 Each biome features unique structures:

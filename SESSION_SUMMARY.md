@@ -24,45 +24,39 @@
 - Witches don't trade anymore
 - Custom do_custom function for witch-specific behavior
 
-### 2. Door System (Complete Rewrite)
+### 2. Door System (Smart Doors)
 **Files Modified:**
-- `villager_behaviors.lua` - Completely rewrote door interaction system
+- `villager_behaviors.lua` - Disabled old door interaction code
+- `init.lua` - Added smart_doors.lua to load order
 
 **Files Created:**
-- `DOOR_FIX_FINAL.md` - Complete documentation of new door system
+- `smart_doors.lua` - New automatic door system
+- `SMART_DOORS_SYSTEM.md` - Complete documentation
+- `DOOR_FIX_FINAL.md` - Documentation of previous attempt
 
-**Key Improvements:**
-
-**Before (Broken):**
-- 220 lines of complex fallback code
-- Multiple methods: on_rightclick, doors.door_toggle, node swap
-- Timer-based checking (every 10 steps)
-- No automatic closing
-- Excessive logging
-- NPCs getting trapped
-
-**After (Working):**
-- 130 lines of clean, simple code
-- Single method using proper `doors.get()` API
-- Checked every update for responsiveness
-- Automatic closing (distance + time based)
-- Multi-NPC coordination
-- Clean error handling
+**Approach:**
+Instead of NPCs trying to open doors, doors now detect NPCs and open automatically.
 
 **How It Works:**
-1. **Detection**: Checks 7 positions around NPC (center, 4 cardinal, up, down)
-2. **Opening**: Uses `door:open(nil)` from doors API
-3. **Tracking**: Each NPC tracks which doors it opened with timestamp
-4. **Closing**: Doors close when NPC is >4 blocks away OR after 5 seconds
-5. **Coordination**: Won't close door if another NPC is using it
+1. **Node Timers**: Each door runs a timer checking every 1 second
+2. **Detection**: Doors detect NPCs within 2.5 blocks
+3. **Opening**: Doors automatically open when NPCs approach
+4. **Closing**: Doors close 3 seconds after all NPCs leave (3.5 block radius)
+5. **Sounds**: Door sounds play at 30% volume
+
+**Benefits:**
+- More reliable than NPC-based door interaction
+- Simpler NPC code
+- Works for all villagers automatically
+- Better performance (only active doors check)
+- Multi-NPC coordination built-in
 
 **Configuration:**
 ```lua
-door_close_distance = 4  -- Blocks away before closing
-door_close_time = 5      -- Seconds of inactivity before closing
+DOOR_CHECK_INTERVAL = 1.0     -- Check for NPCs every second
+DOOR_DETECTION_RADIUS = 2.5   -- How close NPCs need to be
+DOOR_CLOSE_DELAY = 3          -- Seconds to wait before closing
 ```
-
-**Inspiration:** Based on auto_door mod by blut (https://gitgud.io/blut/auto_door)
 
 ## Technical Benefits
 
@@ -93,33 +87,36 @@ door_close_time = 5      -- Seconds of inactivity before closing
 - [ ] Range (1.5-5 blocks) works
 - [ ] Damage (7 HP) applied correctly
 
-### Door System
-- [ ] NPCs open doors when approaching
-- [ ] NPCs walk through doors
-- [ ] Doors close after NPC leaves
-- [ ] Doors close after 5 seconds
-- [ ] Multiple NPCs can share doors
+### Door System (Smart Doors)
+- [ ] Doors open when NPCs approach (2.5 block radius)
+- [ ] Doors close after NPCs leave (3 second delay)
+- [ ] Multiple NPCs can use the same door
+- [ ] Door sounds play at appropriate volume (30%)
+- [ ] Doors don't open for hostile mobs
 - [ ] No errors in debug.txt
-- [ ] Works with all door types
+- [ ] Works with all door types (wood, steel, custom)
 
 ## Files Summary
 
-### New Files (7)
+### New Files (9)
 1. `witch_magic.lua` - Magic system implementation
-2. `WITCH_MAGIC_SYSTEM.md` - Witch magic docs
-3. `WITCH_CHANGES.md` - Witch change summary
-4. `DOOR_FIX_FINAL.md` - Door system docs
-5. `SESSION_SUMMARY.md` - This file
+2. `smart_doors.lua` - Automatic door system
+3. `WITCH_MAGIC_SYSTEM.md` - Witch magic docs
+4. `WITCH_CHANGES.md` - Witch change summary
+5. `SMART_DOORS_SYSTEM.md` - Smart doors docs
+6. `DOOR_FIX_FINAL.md` - Previous door system docs
+7. `SESSION_SUMMARY.md` - This file
 
 ### Modified Files (4)
-1. `villager_behaviors.lua` - Door system rewrite, added serialization
+1. `villager_behaviors.lua` - Disabled door interaction code
 2. `villagers.lua` - Witch class changes, conditional do_custom
-3. `init.lua` - Added witch_magic.lua to load order
+3. `init.lua` - Added witch_magic.lua and smart_doors.lua to load order
 4. `README.md` - Updated witch description and changelog
 
 ## Line Count Changes
 - `witch_magic.lua`: +210 lines (new)
-- `villager_behaviors.lua`: -90 lines (simpler door system)
+- `smart_doors.lua`: +200 lines (new)
+- `villager_behaviors.lua`: Door interaction disabled (commented out)
 - `villagers.lua`: +30 lines (conditional logic)
 - Documentation: +500 lines
 
