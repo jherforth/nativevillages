@@ -266,7 +266,8 @@ This mod builds upon various Luanti modding techniques and community contributio
 
 - FreeLikeGNU's Witches https://content.luanti.org/packages/FreeLikeGNU/witches
 - Shaft's Automatic Door Opening https://content.luanti.org/packages/shaft/auto_door
-- Liil's Native Villages https://content.luanti.org/packages/Liil/nativevillages
+- Liil's Native Villages https://content.luanti.org/packages/Liil/nativevillages (forked from)
+- Bosapara's Emoji https://content.luanti.org/packages/bosapara/emoji
 
 ## License
 
