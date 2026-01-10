@@ -1,17 +1,17 @@
-local S = minetest.get_translator("nativevillages")
+local S = minetest.get_translator("lualore")
 
 -- utils.lua is loaded only in init.lua → no need here
 -- (delete the dofile line if still present)
 
-local village_noise = nativevillages.global_village_noise
-local central_noise = nativevillages.global_central_noise
+local village_noise = lualore.global_village_noise
+local central_noise = lualore.global_central_noise
 
 -- ===================================================================
 -- Regular ice houses
 -- ===================================================================
 local function register_ice_building(params)
     minetest.register_decoration({
-        name = "nativevillages:" .. params.name,
+        name = "lualore:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:snowblock", "default:ice"},
         sidelen = 34,                       -- consistent with desert/grassland
@@ -26,7 +26,7 @@ local function register_ice_building(params)
         height = 0,
         height_max = 0,
 
-        schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
+        schematic = minetest.get_modpath("lualore") .. "/schematics/" .. params.file,
         rotation = "random",
     })
 end
@@ -36,7 +36,7 @@ end
 -- ===================================================================
 local function register_ice_central(params)
     minetest.register_decoration({
-        name = "nativevillages:" .. params.name,
+        name = "lualore:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:snowblock", "default:ice"},
         sidelen = 42,                       -- slightly larger grid for rare buildings
@@ -50,7 +50,7 @@ local function register_ice_central(params)
         height = 0,
         height_max = 0,
 
-        schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
+        schematic = minetest.get_modpath("lualore") .. "/schematics/" .. params.file,
         rotation = "random",
     })
 end
@@ -69,6 +69,7 @@ register_ice_building({name = "icehouse4", file = "icehouse4.mts"})
 register_ice_central({name = "icechurch",  file = "icechurch.mts"})
 register_ice_central({name = "icemarket",  file = "icemarket.mts"})
 register_ice_central({name = "icestable",  file = "icestable.mts"})
+
 
 
 
