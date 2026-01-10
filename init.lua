@@ -1,7 +1,7 @@
 -- init.lua
--- NativeVillages — Final perfected version
+-- lualore — Final perfected version
 
-nativevillages = {}
+lualore = {}
 
 local modname = minetest.get_current_modname()
 local modpath = minetest.get_modpath(modname)
@@ -9,7 +9,7 @@ local modpath = minetest.get_modpath(modname)
 -- Internationalization
 local S
 if minetest.get_translator then
-    S = minetest.get_translator("nativevillages")
+    S = minetest.get_translator("lualore")
 else
     S = dofile(modpath .. "/intllib.lua")
 end
@@ -22,7 +22,7 @@ minetest.serialize = function(data)
     if success then
         return result
     else
-        minetest.log("error", "[nativevillages] Serialization failed: " .. result)
+        minetest.log("error", "[lualore] Serialization failed: " .. result)
         return original_serialize({})
     end
 end
@@ -30,7 +30,7 @@ end
 -- Check for custom spawn file
 local spawn_file = io.open(modpath .. "/spawn.lua", "r")
 if spawn_file then
-    mobs.custom_spawn_nativevillages = true
+    mobs.custom_spawn_lualore = true
     spawn_file:close()
 end
 
@@ -72,7 +72,7 @@ dofile(modpath .. "/hunger.lua")
 dofile(modpath .. "/loot.lua")
 
 -- 7. Custom mob spawning (if exists)
-if mobs.custom_spawn_nativevillages then
+if mobs.custom_spawn_lualore then
     dofile(modpath .. "/spawn.lua")
 end
 
@@ -80,6 +80,6 @@ end
 -- Final message
 -- ===================================================================
 
-minetest.log("action", "[nativevillages] Successfully loaded — " ..
+minetest.log("action", "[lualore] Successfully loaded — " ..
     "6 biomes | perfect villages | villagers | exploding toads")
-print(S("[MOD] NativeVillages loaded — a living world awaits you"))
+print(S("[MOD] lualore loaded — a living world awaits you"))
