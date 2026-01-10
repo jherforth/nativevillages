@@ -1,6 +1,6 @@
-# Luanti Villagers
+# Lua Lore
 
-A comprehensive villager and village mod for Luanti (formerly Minetest) that adds living, breathing villages across multiple biomes with an advanced NPC mood and interaction system.
+A comprehensive villager and lore mod for Luanti (formerly Minetest) that adds living, breathing villages across multiple biomes with an advanced NPC mood and interaction system.
 
 ## Features
 
