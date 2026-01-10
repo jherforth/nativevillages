@@ -1,14 +1,14 @@
 -- villager_behaviors.lua
 -- Enhanced villager AI: sleep, daily routines, social interactions, food sharing, door usage
 
-local S = minetest.get_translator("nativevillages")
+local S = minetest.get_translator("lualore")
 
-nativevillages.behaviors = {}
+lualore.behaviors = {}
 
 --------------------------------------------------------------------
 -- CONFIGURATION
 --------------------------------------------------------------------
-nativevillages.behaviors.config = {
+lualore.behaviors.config = {
 	home_radius = 20,
 	sleep_radius = 3,
 	social_detection_radius = 5,
@@ -24,12 +24,12 @@ nativevillages.behaviors.config = {
 --------------------------------------------------------------------
 -- TIME OF DAY HELPERS
 --------------------------------------------------------------------
-function nativevillages.behaviors.get_time_of_day()
+function lualore.behaviors.get_time_of_day()
 	return minetest.get_timeofday()
 end
 
-function nativevillages.behaviors.get_time_period()
-	local tod = nativevillages.behaviors.get_time_of_day()
+function lualore.behaviors.get_time_period()
+	local tod = lualore.behaviors.get_time_of_day()
 
 	if tod >= 0.0 and tod < 0.25 then
 		return "night"
@@ -44,32 +44,32 @@ function nativevillages.behaviors.get_time_period()
 	end
 end
 
-function nativevillages.behaviors.is_night_time()
-	local tod = nativevillages.behaviors.get_time_of_day()
+function lualore.behaviors.is_night_time()
+	local tod = lualore.behaviors.get_time_of_day()
 	return (tod < 0.25 or tod >= 0.75)
 end
 
-function nativevillages.behaviors.is_day_time()
-	return not nativevillages.behaviors.is_night_time()
+function lualore.behaviors.is_day_time()
+	return not lualore.behaviors.is_night_time()
 end
 
 --------------------------------------------------------------------
 -- HOUSE POSITION MANAGEMENT
 --------------------------------------------------------------------
-function nativevillages.behaviors.init_house(self)
+function lualore.behaviors.init_house(self)
 	if not self.nv_house_pos then
 		self.nv_house_pos = nil
-		self.nv_home_radius = nativevillages.behaviors.config.home_radius
+		self.nv_home_radius = lualore.behaviors.config.home_radius
 		self.nv_sleeping = false
 		self.nv_stuck_timer = 0
 	end
 end
 
-function nativevillages.behaviors.get_house_position(self)
+function lualore.behaviors.get_house_position(self)
 	return self.nv_house_pos
 end
 
-function nativevillages.behaviors.has_house(self)
+function lualore.behaviors.has_house(self)
 	return self.nv_house_pos ~= nil
 end
 
@@ -86,7 +86,7 @@ local function is_closed_door(node_name)
 end
 
 -- Find the nearest door in the general direction of target
-function nativevillages.behaviors.find_nearest_door_to_target(self, target_pos)
+function lualore.behaviors.find_nearest_door_to_target(self, target_pos)
 	if not self.object or not target_pos then return nil end
 	local pos = self.object:get_pos()
 	if not pos then return nil end
@@ -139,7 +139,7 @@ function nativevillages.behaviors.find_nearest_door_to_target(self, target_pos)
 end
 
 -- Handle waiting at closed doors
-function nativevillages.behaviors.handle_door_waiting(self)
+function lualore.behaviors.handle_door_waiting(self)
 	if not self.object then return false end
 	local pos = self.object:get_pos()
 	if not pos then return false end
@@ -230,30 +230,30 @@ end
 --------------------------------------------------------------------
 -- NIGHT-TIME BED PATHFINDING (Simplified - no sleeping animation)
 --------------------------------------------------------------------
-function nativevillages.behaviors.should_go_to_bed(self)
-	return nativevillages.behaviors.is_night_time() and nativevillages.behaviors.has_house(self)
+function lualore.behaviors.should_go_to_bed(self)
+	return lualore.behaviors.is_night_time() and lualore.behaviors.has_house(self)
 end
 
-function nativevillages.behaviors.is_at_house(self)
-	if not nativevillages.behaviors.has_house(self) then return false end
+function lualore.behaviors.is_at_house(self)
+	if not lualore.behaviors.has_house(self) then return false end
 	if not self.object then return false end
 
 	local pos = self.object:get_pos()
 	if not pos then return false end
 
-	local house_pos = nativevillages.behaviors.get_house_position(self)
+	local house_pos = lualore.behaviors.get_house_position(self)
 	local dist = vector.distance(pos, house_pos)
 
-	return dist <= nativevillages.behaviors.config.sleep_radius
+	return dist <= lualore.behaviors.config.sleep_radius
 end
 
 
 --------------------------------------------------------------------
 -- DAILY ROUTINE & MOVEMENT
 --------------------------------------------------------------------
-function nativevillages.behaviors.get_activity_radius(self)
-	local period = nativevillages.behaviors.get_time_period()
-	local base_radius = self.nv_home_radius or nativevillages.behaviors.config.home_radius
+function lualore.behaviors.get_activity_radius(self)
+	local period = lualore.behaviors.get_time_period()
+	local base_radius = self.nv_home_radius or lualore.behaviors.config.home_radius
 
 	if period == "morning" then
 		return base_radius * 0.5
@@ -262,23 +262,23 @@ function nativevillages.behaviors.get_activity_radius(self)
 	elseif period == "evening" then
 		return base_radius * 0.7
 	else
-		return nativevillages.behaviors.config.sleep_radius
+		return lualore.behaviors.config.sleep_radius
 	end
 end
 
-function nativevillages.behaviors.update_movement_target(self)
-	if not nativevillages.behaviors.has_house(self) then return end
+function lualore.behaviors.update_movement_target(self)
+	if not lualore.behaviors.has_house(self) then return end
 	if not self.object then return end
 
-	local period = nativevillages.behaviors.get_time_period()
+	local period = lualore.behaviors.get_time_period()
 
 	if period == "night" then
-		if not self.nv_sleeping and not nativevillages.behaviors.is_at_house(self) then
-			local target = nativevillages.behaviors.get_house_position(self)
+		if not self.nv_sleeping and not lualore.behaviors.is_at_house(self) then
+			local target = lualore.behaviors.get_house_position(self)
 
 			-- Check for doors in the path
 			if target and not self.nv_waiting_for_door then
-				local door_pos = nativevillages.behaviors.find_nearest_door_to_target(self, target)
+				local door_pos = lualore.behaviors.find_nearest_door_to_target(self, target)
 				if door_pos then
 					-- Store the final destination
 					self.nv_final_destination = target
@@ -308,21 +308,21 @@ function nativevillages.behaviors.update_movement_target(self)
 	return nil
 end
 
-function nativevillages.behaviors.check_stuck_and_recover(self, dtime)
-	if not nativevillages.behaviors.has_house(self) then return end
+function lualore.behaviors.check_stuck_and_recover(self, dtime)
+	if not lualore.behaviors.has_house(self) then return end
 	if not self.object then return end
 
 	local pos = self.object:get_pos()
 	if not pos then return end
 
-	local house_pos = nativevillages.behaviors.get_house_position(self)
+	local house_pos = lualore.behaviors.get_house_position(self)
 	local dist = vector.distance(pos, house_pos)
-	local max_radius = nativevillages.behaviors.get_activity_radius(self) * 1.5
+	local max_radius = lualore.behaviors.get_activity_radius(self) * 1.5
 
 	if dist > max_radius then
 		self.nv_stuck_timer = (self.nv_stuck_timer or 0) + dtime
 
-		if self.nv_stuck_timer >= nativevillages.behaviors.config.stuck_teleport_threshold then
+		if self.nv_stuck_timer >= lualore.behaviors.config.stuck_teleport_threshold then
 			local teleport_pos = {
 				x = house_pos.x + math.random(-3, 3),
 				y = house_pos.y,
@@ -336,13 +336,13 @@ function nativevillages.behaviors.check_stuck_and_recover(self, dtime)
 	end
 end
 
-function nativevillages.behaviors.flee_to_house_on_low_health(self)
+function lualore.behaviors.flee_to_house_on_low_health(self)
 	if not self.health then return false end
-	if not nativevillages.behaviors.has_house(self) then return false end
+	if not lualore.behaviors.has_house(self) then return false end
 
 	if self.health < (self.hp_max or 20) * 0.3 then
 		if self.object then
-			local house_pos = nativevillages.behaviors.get_house_position(self)
+			local house_pos = lualore.behaviors.get_house_position(self)
 			return house_pos
 		end
 	end
@@ -353,12 +353,12 @@ end
 --------------------------------------------------------------------
 -- BED DETECTION & AVOIDANCE (Daytime behavior)
 --------------------------------------------------------------------
-function nativevillages.behaviors.find_nearby_beds(self)
+function lualore.behaviors.find_nearby_beds(self)
 	if not self.object then return {} end
 	local pos = self.object:get_pos()
 	if not pos then return {} end
 
-	local radius = nativevillages.behaviors.config.bed_detection_radius
+	local radius = lualore.behaviors.config.bed_detection_radius
 	local beds = {}
 
 	for x = -radius, radius do
@@ -380,12 +380,12 @@ function nativevillages.behaviors.find_nearby_beds(self)
 	return beds
 end
 
-function nativevillages.behaviors.get_bed_avoidance_position(self)
+function lualore.behaviors.get_bed_avoidance_position(self)
 	if not self.object then return nil end
 	local pos = self.object:get_pos()
 	if not pos then return nil end
 
-	local nearby_beds = nativevillages.behaviors.find_nearby_beds(self)
+	local nearby_beds = lualore.behaviors.find_nearby_beds(self)
 	if #nearby_beds == 0 then return nil end
 
 	local closest_bed = nil
@@ -399,7 +399,7 @@ function nativevillages.behaviors.get_bed_avoidance_position(self)
 		end
 	end
 
-	if closest_bed and closest_dist < nativevillages.behaviors.config.bed_avoidance_distance then
+	if closest_bed and closest_dist < lualore.behaviors.config.bed_avoidance_distance then
 		local away_dir = vector.direction(closest_bed, pos)
 		local away_pos = vector.add(pos, vector.multiply(away_dir, 8))
 		return away_pos
@@ -411,19 +411,19 @@ end
 --------------------------------------------------------------------
 -- SOCIAL INTERACTIONS (Villager-to-Villager)
 --------------------------------------------------------------------
-function nativevillages.behaviors.find_nearby_villagers(self, radius)
+function lualore.behaviors.find_nearby_villagers(self, radius)
 	if not self.object then return {} end
 	local pos = self.object:get_pos()
 	if not pos then return {} end
 
-	radius = radius or nativevillages.behaviors.config.social_detection_radius
+	radius = radius or lualore.behaviors.config.social_detection_radius
 	local objects = minetest.get_objects_inside_radius(pos, radius)
 	local nearby_villagers = {}
 
 	for _, obj in ipairs(objects) do
 		if obj ~= self.object then
 			local ent = obj:get_luaentity()
-			if ent and ent.name and string.match(ent.name, "nativevillages:") and ent.type == "npc" then
+			if ent and ent.name and string.match(ent.name, "lualore:") and ent.type == "npc" then
 				table.insert(nearby_villagers, ent)
 			end
 		end
@@ -432,8 +432,8 @@ function nativevillages.behaviors.find_nearby_villagers(self, radius)
 	return nearby_villagers
 end
 
-function nativevillages.behaviors.find_npc_to_socialize_with(self)
-	local nearby = nativevillages.behaviors.find_nearby_villagers(self, nativevillages.behaviors.config.npc_seek_radius)
+function lualore.behaviors.find_npc_to_socialize_with(self)
+	local nearby = lualore.behaviors.find_nearby_villagers(self, lualore.behaviors.config.npc_seek_radius)
 	if #nearby == 0 then return nil end
 
 	local pos = self.object:get_pos()
@@ -458,16 +458,16 @@ function nativevillages.behaviors.find_npc_to_socialize_with(self)
 	return closest_npc
 end
 
-function nativevillages.behaviors.should_socialize(self)
+function lualore.behaviors.should_socialize(self)
 	if not self.nv_last_social_time then
 		self.nv_last_social_time = 0
 	end
 
 	local current_time = minetest.get_gametime()
-	return (current_time - self.nv_last_social_time) >= nativevillages.behaviors.config.social_interaction_cooldown
+	return (current_time - self.nv_last_social_time) >= lualore.behaviors.config.social_interaction_cooldown
 end
 
-function nativevillages.behaviors.emit_social_particles(pos1, pos2)
+function lualore.behaviors.emit_social_particles(pos1, pos2)
 	local mid_pos = {
 		x = (pos1.x + pos2.x) / 2,
 		y = (pos1.y + pos2.y) / 2 + 1,
@@ -487,15 +487,15 @@ function nativevillages.behaviors.emit_social_particles(pos1, pos2)
 		maxexptime = 2,
 		minsize = 0.25,
 		maxsize = 0.5,
-		texture = "nativevillages_mood_happy.png",
+		texture = "lualore_mood_happy.png",
 		glow = 5,
 	})
 end
 
-function nativevillages.behaviors.handle_social_interactions(self)
-	if not nativevillages.behaviors.should_socialize(self) then return end
+function lualore.behaviors.handle_social_interactions(self)
+	if not lualore.behaviors.should_socialize(self) then return end
 
-	local nearby = nativevillages.behaviors.find_nearby_villagers(self)
+	local nearby = lualore.behaviors.find_nearby_villagers(self)
 	if #nearby == 0 then return end
 
 	local pos1 = self.object:get_pos()
@@ -505,7 +505,7 @@ function nativevillages.behaviors.handle_social_interactions(self)
 		if other.object then
 			local pos2 = other.object:get_pos()
 			if pos2 then
-				nativevillages.behaviors.emit_social_particles(pos1, pos2)
+				lualore.behaviors.emit_social_particles(pos1, pos2)
 
 				if self.nv_mood == "happy" or self.nv_mood == "content" then
 					if other.nv_mood_value then
@@ -528,18 +528,18 @@ end
 --------------------------------------------------------------------
 -- FOOD SHARING SYSTEM
 --------------------------------------------------------------------
-function nativevillages.behaviors.find_hungry_villager_nearby(self)
+function lualore.behaviors.find_hungry_villager_nearby(self)
 	if not self.object then return nil end
 	local pos = self.object:get_pos()
 	if not pos then return nil end
 
-	local radius = nativevillages.behaviors.config.food_share_detection_radius
+	local radius = lualore.behaviors.config.food_share_detection_radius
 	local objects = minetest.get_objects_inside_radius(pos, radius)
 
 	for _, obj in ipairs(objects) do
 		if obj ~= self.object then
 			local ent = obj:get_luaentity()
-			if ent and ent.name and string.match(ent.name, "nativevillages:") and ent.type == "npc" then
+			if ent and ent.name and string.match(ent.name, "lualore:") and ent.type == "npc" then
 				if ent.nv_hunger and ent.nv_hunger > 85 then
 					return ent
 				end
@@ -550,7 +550,7 @@ function nativevillages.behaviors.find_hungry_villager_nearby(self)
 	return nil
 end
 
-function nativevillages.behaviors.should_share_food(self)
+function lualore.behaviors.should_share_food(self)
 	if not self.nv_last_food_share_time then
 		self.nv_last_food_share_time = 0
 	end
@@ -560,10 +560,10 @@ function nativevillages.behaviors.should_share_food(self)
 	end
 
 	local current_time = minetest.get_gametime()
-	return (current_time - self.nv_last_food_share_time) >= nativevillages.behaviors.config.food_share_cooldown
+	return (current_time - self.nv_last_food_share_time) >= lualore.behaviors.config.food_share_cooldown
 end
 
-function nativevillages.behaviors.emit_food_share_particles(pos1, pos2)
+function lualore.behaviors.emit_food_share_particles(pos1, pos2)
 	local mid_pos = {
 		x = (pos1.x + pos2.x) / 2,
 		y = (pos1.y + pos2.y) / 2 + 1,
@@ -588,10 +588,10 @@ function nativevillages.behaviors.emit_food_share_particles(pos1, pos2)
 	})
 end
 
-function nativevillages.behaviors.handle_food_sharing(self)
-	if not nativevillages.behaviors.should_share_food(self) then return end
+function lualore.behaviors.handle_food_sharing(self)
+	if not lualore.behaviors.should_share_food(self) then return end
 
-	local hungry_villager = nativevillages.behaviors.find_hungry_villager_nearby(self)
+	local hungry_villager = lualore.behaviors.find_hungry_villager_nearby(self)
 	if not hungry_villager then return end
 
 	local pos1 = self.object:get_pos()
@@ -605,7 +605,7 @@ function nativevillages.behaviors.handle_food_sharing(self)
 		hungry_villager.health = math.min(hungry_villager.hp_max, hungry_villager.health + 3)
 	end
 
-	nativevillages.behaviors.emit_food_share_particles(pos1, pos2)
+	lualore.behaviors.emit_food_share_particles(pos1, pos2)
 
 	if hungry_villager.nv_mood_value then
 		hungry_villager.nv_mood_value = math.min(100, (hungry_villager.nv_mood_value or 50) + 10)
@@ -617,7 +617,7 @@ end
 --------------------------------------------------------------------
 -- GREETING PARTICLES
 --------------------------------------------------------------------
-function nativevillages.behaviors.emit_greeting_particles(self, player_pos)
+function lualore.behaviors.emit_greeting_particles(self, player_pos)
 	local pos = self.object:get_pos()
 	if not pos then return end
 
@@ -644,7 +644,7 @@ function nativevillages.behaviors.emit_greeting_particles(self, player_pos)
 	})
 end
 
-function nativevillages.behaviors.check_nearby_players(self)
+function lualore.behaviors.check_nearby_players(self)
 	if not self.object then return end
 	local pos = self.object:get_pos()
 	if not pos then return end
@@ -664,7 +664,7 @@ function nativevillages.behaviors.check_nearby_players(self)
 		if player_pos then
 			local dist = vector.distance(pos, player_pos)
 			if dist < 3 and dist > 1 then
-				nativevillages.behaviors.emit_greeting_particles(self, player_pos)
+				lualore.behaviors.emit_greeting_particles(self, player_pos)
 				self.nv_last_player_greeting_time = current_time
 				break
 			end
@@ -675,8 +675,8 @@ end
 --------------------------------------------------------------------
 -- DAYTIME BEHAVIOR (Bed avoidance & NPC seeking)
 --------------------------------------------------------------------
-function nativevillages.behaviors.handle_daytime_movement(self)
-	if not nativevillages.behaviors.is_day_time() then
+function lualore.behaviors.handle_daytime_movement(self)
+	if not lualore.behaviors.is_day_time() then
 		return false
 	end
 
@@ -705,11 +705,11 @@ function nativevillages.behaviors.handle_daytime_movement(self)
 		end
 	end
 
-	local avoid_pos = nativevillages.behaviors.get_bed_avoidance_position(self)
+	local avoid_pos = lualore.behaviors.get_bed_avoidance_position(self)
 	if avoid_pos then
 		-- Check for doors in path to avoid position
 		if not self.nv_waiting_for_door then
-			local door_pos = nativevillages.behaviors.find_nearest_door_to_target(self, avoid_pos)
+			local door_pos = lualore.behaviors.find_nearest_door_to_target(self, avoid_pos)
 			if door_pos then
 				self.nv_final_destination = avoid_pos
 				self._target = door_pos
@@ -734,7 +734,7 @@ function nativevillages.behaviors.handle_daytime_movement(self)
 	end
 
 	if math.random() < 0.1 then
-		local target_npc = nativevillages.behaviors.find_npc_to_socialize_with(self)
+		local target_npc = lualore.behaviors.find_npc_to_socialize_with(self)
 		if target_npc and target_npc.object then
 			local npc_pos = target_npc.object:get_pos()
 			if npc_pos then
@@ -742,7 +742,7 @@ function nativevillages.behaviors.handle_daytime_movement(self)
 				if dist > 3 then
 					-- Check for doors in path to NPC
 					if not self.nv_waiting_for_door then
-						local door_pos = nativevillages.behaviors.find_nearest_door_to_target(self, npc_pos)
+						local door_pos = lualore.behaviors.find_nearest_door_to_target(self, npc_pos)
 						if door_pos then
 							self.nv_final_destination = npc_pos
 							self._target = door_pos
@@ -775,16 +775,16 @@ end
 --------------------------------------------------------------------
 -- NIGHTTIME BEHAVIOR (Modified to ignore NPCs)
 --------------------------------------------------------------------
-function nativevillages.behaviors.handle_night_time_movement_with_avoidance(self)
-	if not nativevillages.behaviors.should_go_to_bed(self) then
+function lualore.behaviors.handle_night_time_movement_with_avoidance(self)
+	if not lualore.behaviors.should_go_to_bed(self) then
 		return false
 	end
 
-	if nativevillages.behaviors.is_at_house(self) then
+	if lualore.behaviors.is_at_house(self) then
 		return true
 	end
 
-	local house_pos = nativevillages.behaviors.get_house_position(self)
+	local house_pos = lualore.behaviors.get_house_position(self)
 	if house_pos and self.object then
 		local pos = self.object:get_pos()
 		if pos then
@@ -810,7 +810,7 @@ function nativevillages.behaviors.handle_night_time_movement_with_avoidance(self
 				if dist > 1 then
 					-- Check for doors in path to house
 					if not self.nv_waiting_for_door then
-						local door_pos = nativevillages.behaviors.find_nearest_door_to_target(self, house_pos)
+						local door_pos = lualore.behaviors.find_nearest_door_to_target(self, house_pos)
 						if door_pos then
 							self.nv_final_destination = house_pos
 							self._target = door_pos
@@ -842,7 +842,7 @@ end
 --------------------------------------------------------------------
 -- OBSTACLE DETECTION
 --------------------------------------------------------------------
-function nativevillages.behaviors.check_path_obstacles(self)
+function lualore.behaviors.check_path_obstacles(self)
 	if not self.object then return false end
 	if not self._target then return false end
 
@@ -888,47 +888,47 @@ end
 --------------------------------------------------------------------
 -- MAIN UPDATE FUNCTION
 --------------------------------------------------------------------
-function nativevillages.behaviors.update(self, dtime)
-	nativevillages.behaviors.init_house(self)
+function lualore.behaviors.update(self, dtime)
+	lualore.behaviors.init_house(self)
 
 	-- Check for obstacles in path
-	if nativevillages.behaviors.check_path_obstacles(self) then
+	if lualore.behaviors.check_path_obstacles(self) then
 		return
 	end
 
 	-- Check if NPC is waiting for a door to open
-	if nativevillages.behaviors.handle_door_waiting(self) then
+	if lualore.behaviors.handle_door_waiting(self) then
 		-- NPC is waiting, don't do anything else
 		return
 	end
 
-	if nativevillages.behaviors.is_night_time() then
-		if nativevillages.behaviors.handle_night_time_movement_with_avoidance(self) then
+	if lualore.behaviors.is_night_time() then
+		if lualore.behaviors.handle_night_time_movement_with_avoidance(self) then
 			return
 		end
 	else
-		if nativevillages.behaviors.handle_daytime_movement(self) then
+		if lualore.behaviors.handle_daytime_movement(self) then
 			return
 		end
 	end
 
-	nativevillages.behaviors.check_stuck_and_recover(self, dtime)
+	lualore.behaviors.check_stuck_and_recover(self, dtime)
 
-	if nativevillages.behaviors.is_day_time() then
+	if lualore.behaviors.is_day_time() then
 		if math.random() < 0.05 then
-			nativevillages.behaviors.handle_social_interactions(self)
+			lualore.behaviors.handle_social_interactions(self)
 		end
 
 		if math.random() < 0.03 then
-			nativevillages.behaviors.handle_food_sharing(self)
+			lualore.behaviors.handle_food_sharing(self)
 		end
 
 		if math.random() < 0.02 then
-			nativevillages.behaviors.check_nearby_players(self)
+			lualore.behaviors.check_nearby_players(self)
 		end
 	end
 
-	local flee_target = nativevillages.behaviors.flee_to_house_on_low_health(self)
+	local flee_target = lualore.behaviors.flee_to_house_on_low_health(self)
 	if flee_target then
 	end
 end
@@ -936,7 +936,7 @@ end
 --------------------------------------------------------------------
 -- SERIALIZATION HELPERS
 --------------------------------------------------------------------
-function nativevillages.behaviors.get_save_data(self)
+function lualore.behaviors.get_save_data(self)
 	return {
 		nv_house_pos = self.nv_house_pos,
 		nv_home_radius = self.nv_home_radius,
@@ -952,7 +952,7 @@ function nativevillages.behaviors.get_save_data(self)
 	}
 end
 
-function nativevillages.behaviors.load_save_data(self, data)
+function lualore.behaviors.load_save_data(self, data)
 	if not data then return end
 
 	self.nv_house_pos = data.nv_house_pos
