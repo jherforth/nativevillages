@@ -1,16 +1,16 @@
-local S = minetest.get_translator("nativevillages")
+local S = minetest.get_translator("lualore")
 
 -- utils.lua loaded in init.lua only → clean & safe
 
-local village_noise = nativevillages.global_village_noise
-local central_noise = nativevillages.global_central_noise
+local village_noise = lualore.global_village_noise
+local central_noise = lualore.global_central_noise
 
 -- ===================================================================
 -- Regular jungle treehouses (stilts already built into schematic)
 -- ===================================================================
 local function register_jungle_building(params)
     minetest.register_decoration({
-        name = "nativevillages:" .. params.name,
+        name = "lualore:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:dirt_with_rainforest_litter"},
         sidelen = 58,                          -- jungle clearings are rare → give more space to find flat ones
@@ -24,7 +24,7 @@ local function register_jungle_building(params)
         height = 0,
         height_max = 0,
 
-        schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
+        schematic = minetest.get_modpath("lualore") .. "/schematics/" .. params.file,
         rotation = "random",
     })
 end
@@ -34,7 +34,7 @@ end
 -- ===================================================================
 local function register_jungle_central(params)
     minetest.register_decoration({
-        name = "nativevillages:" .. params.name,
+        name = "lualore:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:dirt_with_rainforest_litter"},
         sidelen = 74,                          -- ultra-rare legendary structures
@@ -48,7 +48,7 @@ local function register_jungle_central(params)
         height = 0,
         height_max = 0,
 
-        schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
+        schematic = minetest.get_modpath("lualore") .. "/schematics/" .. params.file,
         rotation = "random",
     })
 end
@@ -67,4 +67,5 @@ register_jungle_building({name = "junglehouse4",   file = "junglehouse4.mts"})
 register_jungle_central({name = "junglechurch",    file = "junglechurch.mts"})
 register_jungle_central({name = "junglemarket",    file = "junglemarket.mts"})
 register_jungle_central({name = "junglestable",   file = "junglestable.mts"})
+
 
