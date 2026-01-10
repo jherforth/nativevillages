@@ -1,6 +1,6 @@
-local S = minetest.get_translator("nativevillages")
+local S = minetest.get_translator("lualore")
 
-minetest.register_node("nativevillages:grasslandaltar", {
+minetest.register_node("lualore:grasslandaltar", {
     description = "Altar",
     visual_scale = 1,
     mesh = "Grasslandaltar.b3d",
@@ -30,10 +30,10 @@ minetest.register_node("nativevillages:grasslandaltar", {
 minetest.register_craft({
 	type = "cooking",
 	output = "default:cobble",
-	recipe = "nativevillages:grasslandaltar",
+	recipe = "lualore:grasslandaltar",
 })
 
-minetest.register_node("nativevillages:grasslandbarrel", {
+minetest.register_node("lualore:grasslandbarrel", {
     description = S"Barrel",
     visual_scale = 1,
     mesh = "Grasslandbarrel.b3d",
@@ -63,10 +63,10 @@ minetest.register_node("nativevillages:grasslandbarrel", {
 minetest.register_craft({
 	type = "cooking",
 	output = "default:cobble",
-	recipe = "nativevillages:grasslandbarrel",
+	recipe = "lualore:grasslandbarrel",
 })
 
-minetest.register_node("nativevillages:cowdropping", {
+minetest.register_node("lualore:cowdropping", {
     description = S"Cow Dropping",
     visual_scale = 1,
     mesh = "Cowdropping.b3d",
@@ -96,6 +96,7 @@ minetest.register_node("nativevillages:cowdropping", {
 minetest.register_craft({
 	type = "cooking",
 	output = "default:coal_lump",
-	recipe = "nativevillages:cowdropping",
+	recipe = "lualore:cowdropping",
+
 
 })
