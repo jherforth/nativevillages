@@ -1,16 +1,16 @@
-local S = minetest.get_translator("nativevillages")
+local S = minetest.get_translator("lualore")
 
 -- utils.lua loaded only in init.lua → clean and safe
 
-local village_noise = nativevillages.global_village_noise
-local central_noise = nativevillages.global_central_noise
+local village_noise = lualore.global_village_noise
+local central_noise = lualore.global_central_noise
 
 -- ===================================================================
 -- Regular savanna houses
 -- ===================================================================
 local function register_savanna_building(params)
     minetest.register_decoration({
-        name = "nativevillages:" .. params.name,
+        name = "lualore:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:dry_dirt_with_dry_grass","naturalbiomes:outback_litter"},
         sidelen = 50,                          -- consistent with all other biomes
@@ -24,7 +24,7 @@ local function register_savanna_building(params)
         height = 0,
         height_max = 0,
 
-        schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
+        schematic = minetest.get_modpath("lualore") .. "/schematics/" .. params.file,
         rotation = "random",
     })
 end
@@ -34,7 +34,7 @@ end
 -- ===================================================================
 local function register_savanna_central(params)
     minetest.register_decoration({
-        name = "nativevillages:" .. params.name,
+        name = "lualore:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:dry_dirt_with_dry_grass","naturalbiomes:outback_litter"},
         sidelen = 58,                          -- rare, proud structures
@@ -48,7 +48,7 @@ local function register_savanna_central(params)
         height = 0,
         height_max = 0,
 
-        schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
+        schematic = minetest.get_modpath("lualore") .. "/schematics/" .. params.file,
         rotation = "random",
     })
 end
@@ -67,6 +67,7 @@ register_savanna_building({name = "savannahouse4", file = "savannahouse4.mts"})
 register_savanna_central({name = "savannachurch", file = "savannachurch.mts"})
 register_savanna_central({name = "savannamarket", file = "savannamarket.mts"})
 register_savanna_central({name = "savannastable", file = "savannastable.mts"})
+
 
 
 
