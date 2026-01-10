@@ -1,12 +1,12 @@
 -- village_noise.lua
 -- ONE global village noise — makes villages truly rare worldwide
 
-nativevillages = nativevillages or {}
+lualore = lualore or {}
 
 -- This is the ONE AND ONLY village noise used by EVERY biome
 -- Optimized for compact villages limited to 1-2 mapchunks (80-160 nodes)
 -- A mapchunk is 80x80x80 nodes
-nativevillages.global_village_noise = {
+lualore.global_village_noise = {
     offset = 0.0,
     scale = 0.001,            -- Controls building spawn rate
     spread = {x = 100, y = 100, z = 100},   -- REDUCED from 300 - creates tighter clusters
@@ -18,12 +18,12 @@ nativevillages.global_village_noise = {
 }
 
 -- Rarer central buildings (church/market/stable)
-nativevillages.global_central_noise = table.copy(nativevillages.global_village_noise)
-nativevillages.global_central_noise.scale = 0.0001   -- appear in ~1 out of 10 villages
-nativevillages.global_central_noise.spread = {x = 120, y = 120, z = 120}  -- REDUCED from 400
+lualore.global_central_noise = table.copy(lualore.global_village_noise)
+lualore.global_central_noise.scale = 0.0001   -- appear in ~1 out of 10 villages
+lualore.global_central_noise.spread = {x = 120, y = 120, z = 120}  -- REDUCED from 400
 
 -- Path noise - slightly different seed for variation but similar scale
-nativevillages.global_path_noise = {
+lualore.global_path_noise = {
     offset = 0,
     scale = 0.001,
     spread = {x = 100, y = 100, z = 100},  -- REDUCED from 300 to match village size
