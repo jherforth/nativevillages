@@ -1,6 +1,6 @@
-local S = minetest.get_translator("nativevillages")
+local S = minetest.get_translator("lualore")
 
-minetest.register_node("nativevillages:sledge", {
+minetest.register_node("lualore:sledge", {
     description = S"Sledge",
     visual_scale = 1,
     mesh = "Sledge.b3d",
@@ -30,10 +30,10 @@ minetest.register_node("nativevillages:sledge", {
 minetest.register_craft({
 	type = "cooking",
 	output = "default:bronzeblock",
-	recipe = "nativevillages:sledge",
+	recipe = "lualore:sledge",
 })
 
-minetest.register_node("nativevillages:blanket", {
+minetest.register_node("lualore:blanket", {
     description = S"Blanket",
     visual_scale = 1,
     mesh = "Blanket.b3d",
@@ -63,5 +63,6 @@ minetest.register_node("nativevillages:blanket", {
 minetest.register_craft({
 	type = "cooking",
 	output = "mobs:leather",
-	recipe = "nativevillages:blanket",
+	recipe = "lualore:blanket",
+
 })
