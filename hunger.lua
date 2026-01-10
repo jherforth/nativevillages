@@ -1,29 +1,30 @@
 if minetest.get_modpath("hunger_ng") ~= nil then
-hunger_ng.add_hunger_data('nativevillages:bucket_milk', {
+hunger_ng.add_hunger_data('lualore:bucket_milk', {
 		satiates = 1.0,
 	})
-	hunger_ng.add_hunger_data('nativevillages:cheese', {
+	hunger_ng.add_hunger_data('lualore:cheese', {
 		satiates = 1.0,
 	})
-	hunger_ng.add_hunger_data('nativevillages:catfish_raw', {
+	hunger_ng.add_hunger_data('lualore:catfish_raw', {
 		satiates = 1.0,
 	})
-	hunger_ng.add_hunger_data('nativevillages:catfish_cooked', {
+	hunger_ng.add_hunger_data('lualore:catfish_cooked', {
 		satiates = 2.0,
 	})
-	hunger_ng.add_hunger_data('nativevillages:chicken_raw', {
+	hunger_ng.add_hunger_data('lualore:chicken_raw', {
 		satiates = 1.0,
 	})
-	hunger_ng.add_hunger_data('nativevillages:chicken_cooked', {
+	hunger_ng.add_hunger_data('lualore:chicken_cooked', {
 		satiates = 2.0,
 	})
-	hunger_ng.add_hunger_data('nativevillages:chicken_egg_fried', {
+	hunger_ng.add_hunger_data('lualore:chicken_egg_fried', {
 		satiates = 1.0,
 	})
-	hunger_ng.add_hunger_data('nativevillages:butter', {
+	hunger_ng.add_hunger_data('lualore:butter', {
 		satiates = 1.0,
 	})
-	hunger_ng.add_hunger_data('nativevillages:driedhumanmeat', {
+	hunger_ng.add_hunger_data('lualore:driedhumanmeat', {
 		satiates = 2.0,
 	})
+
 end
