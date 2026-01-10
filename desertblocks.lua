@@ -1,6 +1,6 @@
-local S = minetest.get_translator("nativevillages")
+local S = minetest.get_translator("lualore")
 
-minetest.register_node("nativevillages:hookah", {
+minetest.register_node("lualore:hookah", {
     description = S"Hookah",
     visual_scale = 1,
     mesh = "Hookah.b3d",
@@ -30,10 +30,10 @@ minetest.register_node("nativevillages:hookah", {
 minetest.register_craft({
 	type = "cooking",
 	output = "default:bronzeblock",
-	recipe = "nativevillages:hookah",
+	recipe = "lualore:hookah",
 })
 
-minetest.register_node("nativevillages:desertcrpet", {
+minetest.register_node("lualore:desertcrpet", {
     description = S"Desert Carpet",
     visual_scale = 1,
     mesh = "Desertcarpet.b3d",
@@ -63,10 +63,10 @@ minetest.register_node("nativevillages:desertcrpet", {
 minetest.register_craft({
 	type = "cooking",
 	output = "wool:red",
-	recipe = "nativevillages:desertcarpet",
+	recipe = "lualore:desertcarpet",
 })
 
-minetest.register_node("nativevillages:desertcage", {
+minetest.register_node("lualore:desertcage", {
     description = S"Slave Bracelet",
     visual_scale = 1,
     mesh = "Desertcage.b3d",
@@ -97,10 +97,10 @@ minetest.register_node("nativevillages:desertcage", {
 minetest.register_craft({
 	type = "cooking",
 	output = "default:steelblock",
-	recipe = "nativevillages:desertcage",
+	recipe = "lualore:desertcage",
 })
 
-minetest.register_node("nativevillages:desertseeds", {
+minetest.register_node("lualore:desertseeds", {
     description = S"Desert Seeds",
     visual_scale = 1,
     mesh = "Desertseeds.b3d",
@@ -130,5 +130,6 @@ minetest.register_node("nativevillages:desertseeds", {
 minetest.register_craft({
 	type = "cooking",
 	output = "farming:bread",
-	recipe = "nativevillages:deserseeds",
+	recipe = "lualore:deserseeds",
+
 })
