@@ -7,8 +7,8 @@ local S = minetest.get_translator("nativevillages")
 local biome_spawn_config = {
 	grassland = {
 		nodes = {"default:dirt_with_grass", "default:cobble", "default:dirt_with_coniferous_litter", "default:clay"},
-		markers = {"nativevillages:grasslandbarrel"},
-		stay_near = {"nativevillages:grasslandbarrel"}
+		markers = {"beds:bed_bottom"},
+		stay_near = {"beds:bed_bottom"}
 	},
 	desert = {
 		nodes = {"default:desert_sand", "group:wool"},
@@ -32,8 +32,8 @@ local biome_spawn_config = {
 	},
 	cannibal = {
 		nodes = {"default:dirt_with_grass", "default:dirt_with_rainforest_litter"},
-		markers = {"nativevillages:cannibalshrine", "nativevillages:driedpeople"},
-		stay_near = {"nativevillages:cannibalshrine", "nativevillages:driedpeople"}
+		markers = {"nativevillages:cannibalshrine"},
+		stay_near = {"nativevillages:cannibalshrine"}
 	}
 }
 
@@ -73,7 +73,7 @@ local villager_classes = {
 	},
 	ranger = {
 		type = "npc",
-		passive = false,
+		passive = true,
 		damage = 5,
 		hp_min = 50,
 		hp_max = 80,
@@ -103,7 +103,7 @@ local villager_classes = {
 			{name = "default:gold_lump", chance = 1, min = 0, max = 1},
 			{name = "default:diamond", chance = 2, min = 0, max = 1}
 		},
-		trade_items = {"default:gold_lump"},
+		trade_items = {"farming:bread","default:gold_lump"},
 	},
 	farmer = {
 		type = "npc",
@@ -124,20 +124,20 @@ local villager_classes = {
 	},
 	blacksmith = {
 		type = "npc",
-		passive = false,
-		damage = 6,
+		passive = true,
+		damage = 4,
 		hp_min = 70,
 		hp_max = 100,
 		armor = 150,
 		attack_type = "dogfight",
 		attacks_monsters = true,
 		attack_npcs = false,
-		reach = 2,
+		reach = 1,
 		drops = {
 			{name = "default:iron_lump", chance = 1, min = 0, max = 2},
 			{name = "default:steel_ingot", chance = 1, min = 0, max = 1}
 		},
-		trade_items = {"default:iron_lump", "default:coal_lump"},
+		trade_items = {"farming:bread","default:iron_lump", "default:coal_lump"},
 	},
 	fisherman = {
 		type = "npc",
@@ -153,7 +153,7 @@ local villager_classes = {
 		drops = {
 			{name = "nativevillages:catfish_raw", chance = 1, min = 0, max = 2}
 		},
-		trade_items = {"nativevillages:catfish_raw", "nativevillages:catfish_cooked"},
+		trade_items = {"farming:bread", "default:paper"},
 	},
 	cleric = {
 		type = "npc",
@@ -169,7 +169,7 @@ local villager_classes = {
 		drops = {
 			{name = "default:mese_crystal", chance = 1, min = 0, max = 1}
 		},
-		trade_items = {"default:mese_crystal_fragment"},
+		trade_items = {"farming:bread","default:mese_crystal"},
 	},
 	bum = {
 		type = "npc",
@@ -201,24 +201,24 @@ local villager_classes = {
 		drops = {
 			{name = "default:gold_lump", chance = 1, min = 0, max = 1}
 		},
-		trade_items = {"default:gold_lump"},
+		trade_items = {"farming:bread","default:gold_lump"},
 	},
 	witch = {
-		type = "npc",
+		type = "monster",
 		passive = false,
 		damage = 7,
 		hp_min = 60,
 		hp_max = 90,
 		armor = 110,
 		attack_type = "dogfight",
-		attacks_monsters = true,
+		attacks_monsters = false,
 		attack_npcs = false,
-		reach = 3,
+		reach = 1,  -- Melee attack range
 		drops = {
 			{name = "default:mese_crystal", chance = 1, min = 0, max = 1},
 			{name = "nativevillages:zombietame", chance = 3, min = 0, max = 1}
 		},
-		trade_items = {"nativevillages:driedhumanmeat", "default:mese_crystal_fragment"},
+		trade_items = {},  -- Witches don't trade
 	},
 }
 
@@ -230,6 +230,37 @@ local class_order = {"hostile", "raider", "ranger", "jeweler", "farmer", "blacks
 --------------------------------------------------------------------
 local function register_villager(class_name, class_def, biome_name, biome_config)
 	local mob_name = "nativevillages:" .. biome_name .. "_" .. class_name
+
+	-- Determine which do_custom function to use
+	local custom_function
+	if class_name == "witch" then
+		-- Witches use magic-based custom function
+		custom_function = function(self, dtime)
+			if nativevillages.witch_magic then
+				nativevillages.witch_magic.do_custom(self, dtime)
+			end
+		end
+	else
+		-- Regular villagers use standard behavior
+		custom_function = function(self, dtime)
+			-- Wrap in error handler to prevent crashes
+			local success, err = pcall(function()
+				-- Update mood system
+				if nativevillages.mood then
+					nativevillages.mood.update_mood(self, dtime)
+				end
+
+				-- Update enhanced behaviors
+				if nativevillages.behaviors then
+					nativevillages.behaviors.update(self, dtime)
+				end
+			end)
+
+			if not success then
+				minetest.log("warning", "[nativevillages] do_custom error: " .. tostring(err))
+			end
+		end
+	end
 
 	mobs:register_mob(mob_name, {
 		type = class_def.type,
@@ -245,6 +276,7 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 		armor = class_def.armor,
 		reach = class_def.reach,
 		collisionbox = {-0.35, 0.0, -0.35, 0.35, 1.8, 0.35},
+		stepheight = 1.1,
 		visual = "mesh",
 		mesh = "character.b3d",
 		textures = {
@@ -284,19 +316,7 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 			die_rotate = true,
 		},
 
-		do_custom = function(self, dtime)
-			-- Wrap in error handler to prevent crashes
-			local success, err = pcall(function()
-				-- Update mood system
-				if nativevillages.mood then
-					nativevillages.mood.update_mood(self, dtime)
-				end
-			end)
-
-			if not success then
-				minetest.log("warning", "[nativevillages] do_custom error: " .. tostring(err))
-			end
-		end,
+		do_custom = custom_function,
 
 		on_activate = function(self, staticdata, dtime_s)
 			-- Wrap everything in error handler to prevent crashes
@@ -314,12 +334,22 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 						if nativevillages.mood and data.mood then
 							nativevillages.mood.on_activate_extra(self, data.mood)
 						end
+
+						-- Restore behavior data
+						if nativevillages.behaviors and data.behaviors then
+							nativevillages.behaviors.load_save_data(self, data.behaviors)
+						end
 					end
 				end
 
 				-- Initialize mood system
 				if nativevillages.mood then
 					nativevillages.mood.init_npc(self)
+				end
+
+				-- Initialize behaviors system
+				if nativevillages.behaviors then
+					nativevillages.behaviors.init_house(self)
 				end
 			end)
 
@@ -347,6 +377,11 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 				-- Add mood data if available
 				if nativevillages.mood then
 					tmp.mood = nativevillages.mood.get_staticdata_extra(self)
+				end
+
+				-- Add behavior data if available
+				if nativevillages.behaviors then
+					tmp.behaviors = nativevillages.behaviors.get_save_data(self)
 				end
 
 				return minetest.serialize(tmp)

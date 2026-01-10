@@ -111,7 +111,41 @@ end
 -- Check for nearby trade items
 --------------------------------------------------------------------
 function nativevillages.mood.check_nearby_trade_items(self)
-	if not self.object or not self.nv_trade_items then return false end
+	if not self.object then
+		return false
+	end
+
+	-- Try to initialize trade items from mob name if not set
+	if not self.nv_trade_items or #self.nv_trade_items == 0 then
+		-- Try to determine trade items from mob name
+		local mob_name = self.name or ""
+
+		-- Extract class from mob name (e.g., "nativevillages:grassland_farmer" -> "farmer")
+		local class_name = mob_name:match("_([^_]+)$")
+		if class_name then
+			-- Map of class to trade items (fallback if not set on spawn)
+			local class_trade_items = {
+				farmer = {"farming:bread", "farming:wheat"},
+				blacksmith = {"farming:bread","default:iron_lump", "default:coal_lump"},
+				jeweler = {"farming:bread","default:gold_lump"},
+				fisherman = {"farming:bread", "default:paper"},
+				ranger = {"farming:bread", "default:apple"},
+				cleric = {"farming:bread","default:mese_crystal"},
+				entertainer = {"farming:bread","default:gold_lump"},
+				witch = {"farming:bread", "default:apple","default:stick"},
+				bum = {"farming:bread", "default:apple"},
+			}
+
+			if class_trade_items[class_name] then
+				self.nv_trade_items = class_trade_items[class_name]
+			end
+		end
+	end
+
+	if not self.nv_trade_items or #self.nv_trade_items == 0 then
+		-- Still no trade items - this NPC doesn't trade
+		return false
+	end
 
 	local pos = self.object:get_pos()
 	if not pos then return false end
@@ -122,8 +156,12 @@ function nativevillages.mood.check_nearby_trade_items(self)
 			local wielded = obj:get_wielded_item()
 			if wielded then
 				local name = wielded:get_name()
-				for _, trade_item in ipairs(self.nv_trade_items) do
-					if name == trade_item then return true end
+				if name and name ~= "" then
+					for _, trade_item in ipairs(self.nv_trade_items) do
+						if name == trade_item then
+							return true
+						end
+					end
 				end
 			end
 		end
@@ -319,8 +357,6 @@ end
 -- Interaction callbacks
 --------------------------------------------------------------------
 function nativevillages.mood.on_feed(self, clicker, food_value)
-	minetest.log("action", "[nativevillages] on_feed called - Before: hunger=" .. tostring(self.nv_hunger) .. " health=" .. tostring(self.health))
-
 	self.nv_hunger           = 1
 	self.nv_last_fed         = 0
 	self.nv_last_interaction = 0
@@ -328,8 +364,6 @@ function nativevillages.mood.on_feed(self, clicker, food_value)
 	if self.health then
 		self.health = math.min(self.hp_max or 20, self.health + 5)
 	end
-
-	minetest.log("action", "[nativevillages] on_feed - After: hunger=" .. tostring(self.nv_hunger) .. " health=" .. tostring(self.health))
 
 	if self.object then
 		local pos = self.object:get_pos()
@@ -346,8 +380,6 @@ function nativevillages.mood.on_feed(self, clicker, food_value)
 	end
 
 	nativevillages.mood.update_mood(self, 0)
-
-	minetest.log("action", "[nativevillages] on_feed - After update_mood: hunger=" .. tostring(self.nv_hunger) .. " health=" .. tostring(self.health))
 end
 
 function nativevillages.mood.on_interact(self, clicker)
@@ -467,6 +499,8 @@ minetest.register_entity("nativevillages:mood_indicator", {
 	on_activate = function(self, staticdata)
 	end,
 })
+
+
 
 
 

@@ -10,38 +10,48 @@ local modpath = minetest.get_modpath("nativevillages")
 local loot_tables = {
     grassland = {
         {name = "farming:bread",          chance = 0.8, min = 1, max = 4},
-        {name = "farming:seeds_wheat",    chance = 0.6, min = 1, max = 3},
+        {name = "default:paper",          chance = 0.6, min = 1, max = 3},
         {name = "default:apple",          chance = 0.5, min = 1, max = 2},
         {name = "default:torch",          chance = 0.9, min = 3, max = 10},
         {name = "default:coal_lump",      chance = 0.4, min = 1, max = 3},
+        {name = "x_farming:seed_beetroot",chance = 0.3, min = 1, max = 3},
     },
     desert = {
         {name = "default:gold_lump",      chance = 0.3, min = 1, max = 2},
         {name = "default:desert_stone",   chance = 0.7, min = 5, max = 15},
         {name = "default:cactus",         chance = 0.6, min = 1, max = 3},
         {name = "default:glass",          chance = 0.4, min = 1, max = 3},
+        {name = "ethereal:bucket_cactus", chance = 0.2, min = 1, max = 1},
     },
     ice = {
         {name = "default:ice",            chance = 0.9, min = 3, max = 12},
         {name = "default:snowball",       chance = 0.8, min = 5, max = 16},
         {name = "default:coal_lump",      chance = 0.5, min = 1, max = 4},
         {name = "default:steel_ingot",    chance = 0.2, min = 1, max = 2},
+        {name = "default:steel_axe",      chance = 0.2, min = 1, max = 1},
+        {name = "default:flint",          chance = 0.4, min = 1, max = 2},
     },
     savanna = {
         {name = "default:acacia_wood",    chance = 0.7, min = 4, max = 10},
         {name = "default:dry_shrub",      chance = 0.6, min = 2, max = 6},
         {name = "default:bronze_ingot",   chance = 0.3, min = 1, max = 2},
+        {name = "bonemeal:bone",          chance = 0.3, min = 1, max = 2},
+        {name = "bonemeal:bonemeal",      chance = 0.3, min = 1, max = 10},
+        {name = "x_farming:seed_pumpkin", chance = 0.6, min = 2, max = 6}
     },
     lake = {
         {name = "default:clay_lump",      chance = 0.8, min = 3, max = 8},
         {name = "default:papyrus",        chance = 0.7, min = 2, max = 7},
         {name = "farming:string",         chance = 0.5, min = 1, max = 3},
+        {name = "everness:lotus_leaf_3",  chance = 0.5, min = 1, max = 3},
+        {name = "x_farming:seed_carrot",  chance = 0.3, min = 1, max = 6},
     },
     jungle = {
         {name = "default:junglewood",     chance = 0.8, min = 5, max = 12},
         {name = "default:vine",           chance = 0.6, min = 2, max = 6},
         {name = "default:emerald",        chance = 0.15, min = 1, max = 1},
         {name = "default:obsidian",       chance = 0.1, min = 1, max = 2},
+        {name = "default:steel_sword",    chance = 0.2, min = 1, max = 1},
     },
 }
 

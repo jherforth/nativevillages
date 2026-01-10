@@ -29,7 +29,7 @@ Each village is populated with various NPC types, each with unique behaviors, tr
 - **Cleric** - Mystical NPCs with magical items
 - **Bum** - Humble NPCs with modest trades
 - **Entertainer** - Social NPCs that enhance village atmosphere
-- **Witch** - Powerful magic users with rare potions and items
+- **Witch** - Hostile magic users with dual attacks: melee punches (7 damage, within 1 block) and frequent teleportation spells (10 blocks random direction, 1-5 blocks range, 2s cooldown)
 
 ### 🎭 Advanced Mood System
 
@@ -100,7 +100,21 @@ Keep villagers happy by feeding them:
 - Resets hunger to 1
 - Resets interaction timer
 
+### 🚪 Smart Doors System
+
+Doors in villages automatically detect and respond to nearby NPCs:
+
+- **Automatic Opening** - Doors open when NPCs approach within 2.5 blocks
+- **Automatic Closing** - Doors close 3 seconds after all NPCs leave
+- **Multi-NPC Support** - Multiple NPCs can use the same door without conflicts
+- **Selective Opening** - Only opens for friendly NPCs, not hostile mobs
+- **Quiet Operation** - Door sounds play at 30% volume to reduce noise
+
+**Configuration**: Edit `smart_doors.lua` to adjust detection radius and timing.
+
 ### 🏗️ Village Buildings
+
+Villages are compact settlements that fit within 1-2 mapchunks (80-160 nodes across), creating well-organized communities rather than sprawling cities.
 
 Each biome features unique structures:
 
@@ -110,6 +124,12 @@ Each biome features unique structures:
 - **Lake**: Waterfront houses, harbours, fish traps
 - **Ice**: Igloos, sledges, log piles, pelt storage
 - **Cannibal**: Tribal houses, cages, towers, ritual pits, shrines
+
+**Village Generation:**
+- Villages generate naturally in their respective biomes
+- Each village is limited to 1-2 mapchunks for compact, organized layouts
+- Central buildings (churches, markets, stables) are rare and only appear in established villages
+- Building placement uses noise-based distribution for natural, organic clustering
 
 ### 📦 Special Items & Blocks
 
@@ -152,6 +172,27 @@ nativevillages.mood.enable_visual_indicators = true  -- false to disable
 Adjust how often NPCs play sounds in `npcmood.lua`:
 ```lua
 nativevillages.mood.sound_repeat_delay = 10  -- seconds between sounds
+```
+
+### Village Size
+Adjust village compactness in `village_noise.lua`:
+```lua
+-- For single mapchunk villages (80 nodes)
+spread = {x = 80, y = 80, z = 80}
+
+-- For current size (1-2 mapchunks, 100-160 nodes) - DEFAULT
+spread = {x = 100, y = 100, z = 100}
+
+-- For larger villages (2-3 mapchunks, 160-240 nodes)
+spread = {x = 150, y = 150, z = 150}
+```
+
+### Smart Doors
+Adjust door detection in `smart_doors.lua`:
+```lua
+DOOR_CHECK_INTERVAL = 1.0     -- Check for NPCs every second
+DOOR_DETECTION_RADIUS = 2.5   -- How close NPCs need to be
+DOOR_CLOSE_DELAY = 3          -- Seconds to wait before closing
 ```
 
 ### Village Spawning
@@ -219,22 +260,14 @@ nativevillages/
 └── locale/                  # Translations
 ```
 
-## Localization
-
-Currently supports:
-- English (default)
-- German (locale/nativevillages.de.tr)
-
-To add translations, create a `.tr` file in the `locale/` directory.
-
-## Known Issues
-
-- Village spawning is disabled by default (manual placement recommended)
-- Some older entity names may show warnings (automatically migrated)
-
 ## Credits
 
-This mod builds upon various Luanti modding techniques and community contributions.
+This mod builds upon various Luanti modding techniques and community contributions, including code and snippets from the following:
+
+- FreeLikeGNU's Witches https://content.luanti.org/packages/FreeLikeGNU/witches
+- Shaft's Automatic Door Opening https://content.luanti.org/packages/shaft/auto_door
+- Liil's Native Villages https://content.luanti.org/packages/Liil/nativevillages (forked from)
+- Bosapara's Emoji https://content.luanti.org/packages/bosapara/emoji
 
 ## License
 
@@ -251,6 +284,7 @@ Contributions are welcome! Please ensure:
 ## Changelog
 
 ### Recent Updates
+- **Witch Dual-Attack System**: Witches are now hostile monsters with melee punches (within 1 block, 7 damage) and frequent magic teleportation (1-5 blocks, 10 blocks displacement, 2s cooldown)
 - Added dynamic sound system with mood-based audio
 - Implemented configurable sound repeat delays
 - Enhanced NPC interaction feedback

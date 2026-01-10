@@ -92,6 +92,12 @@ sounds = {
 		if mobs:protect(self, clicker) then return end
 		if mobs:capture_mob(self, clicker, 0, 25, 0, false, nil) then return end
 	end,
+	do_custom = function(self, dtime)
+		-- Handle door waiting for toads
+		if nativevillages.behaviors then
+			nativevillages.behaviors.handle_door_waiting(self)
+		end
+	end,
 })
 
 
@@ -227,6 +233,12 @@ on_rightclick = function(self, clicker)
 
 				minetest.chat_send_player(name, S("Exploding Toad will follow you."))
 			end
+		end
+	end,
+	do_custom = function(self, dtime)
+		-- Handle door waiting for tamed toads
+		if nativevillages.behaviors then
+			nativevillages.behaviors.handle_door_waiting(self)
 		end
 	end,
 })

@@ -59,6 +59,9 @@ dofile(modpath .. "/savannabuildings.lua")
 
 -- 4. Systems (villagers, mood, spawning)
 dofile(modpath .. "/npcmood.lua")
+dofile(modpath .. "/villager_behaviors.lua")
+dofile(modpath .. "/smart_doors.lua")
+dofile(modpath .. "/witch_magic.lua")
 dofile(modpath .. "/villagers.lua")
 dofile(modpath .. "/house_spawning.lua")
 
