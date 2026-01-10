@@ -1,6 +1,6 @@
-local S = minetest.get_translator("nativevillages")
+local S = minetest.get_translator("lualore")
 
-minetest.register_node("nativevillages:fishtrap", {
+minetest.register_node("lualore:fishtrap", {
     description = S"Fish Trap",
     visual_scale = 1,
     mesh = "Fishtrap.b3d",
@@ -29,11 +29,11 @@ minetest.register_node("nativevillages:fishtrap", {
 
 minetest.register_craft({
 	type = "fuel",
-	recipe = "nativevillages:fishtrap",
+	recipe = "lualore:fishtrap",
 	burntime = 3,
 })
 
-minetest.register_node("nativevillages:hangingfish", {
+minetest.register_node("lualore:hangingfish", {
     description = S"Hangning Fish",
     visual_scale = 1,
     mesh = "Hangingfish.b3d",
@@ -62,11 +62,12 @@ minetest.register_node("nativevillages:hangingfish", {
 
 minetest.register_craft({
 	type = "fuel",
-	recipe = "nativevillages:hangingfish",
+	recipe = "lualore:hangingfish",
 	burntime = 3,
 })
 
-minetest.register_craftitem("nativevillages:pearl", {
+minetest.register_craftitem("lualore:pearl", {
 	description = S("Pearl"),
-	inventory_image = "nativevillages_pearl.png",
+	inventory_image = "lualore_pearl.png",
+
 })
