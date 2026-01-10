@@ -1,18 +1,18 @@
-local S = minetest.get_translator("nativevillages")
+local S = minetest.get_translator("lualore")
 
 -- utils.lua is now loaded only in init.lua → safe & clean
 -- (you can delete the dofile line below if it's still there)
--- dofile(minetest.get_modpath("nativevillages") .. "/utils.lua")
+-- dofile(minetest.get_modpath("lualore") .. "/utils.lua")
 
-local village_noise = nativevillages.global_village_noise
-local central_noise = nativevillages.global_central_noise
+local village_noise = lualore.global_village_noise
+local central_noise = lualore.global_central_noise
 
 -- ===================================================================
 -- Normal grassland houses
 -- ===================================================================
 local function register_grassland_building(params)
     minetest.register_decoration({
-        name = "nativevillages:" .. params.name,
+        name = "lualore:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:dirt_with_grass", "default:dirt_with_coniferous_litter"},
         sidelen = 50,
@@ -28,7 +28,7 @@ local function register_grassland_building(params)
         height = 0,
         height_max = 0,
 
-        schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
+        schematic = minetest.get_modpath("lualore") .. "/schematics/" .. params.file,
         rotation = "random",
     })
 end
@@ -38,7 +38,7 @@ end
 -- ===================================================================
 local function register_grassland_central(params)
     minetest.register_decoration({
-        name = "nativevillages:" .. params.name,
+        name = "lualore:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:dirt_with_grass", "default:dirt_with_coniferous_litter"},
         sidelen = 58,
@@ -54,7 +54,7 @@ local function register_grassland_central(params)
         height = 0,
         height_max = 0,
 
-        schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
+        schematic = minetest.get_modpath("lualore") .. "/schematics/" .. params.file,
         rotation = "random",
     })
 end
@@ -73,6 +73,7 @@ register_grassland_building({name = "grasslandhouse4", file = "grasslandhouse4.m
 register_grassland_central({name = "grasslandchurch",   file = "grasslandchurch.mts"})
 register_grassland_central({name = "grasslandmarket",   file = "grasslandmarket.mts"})
 register_grassland_central({name = "grasslandstable",   file = "grasslandstable.mts"})
+
 
 
 
