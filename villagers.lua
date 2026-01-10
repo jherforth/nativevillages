@@ -1,5 +1,5 @@
 -- villagers.lua
-local S = minetest.get_translator("nativevillages")
+local S = minetest.get_translator("lualore")
 
 --------------------------------------------------------------------
 -- Biome / spawn configuration
@@ -12,28 +12,28 @@ local biome_spawn_config = {
 	},
 	desert = {
 		nodes = {"default:desert_sand", "group:wool"},
-		markers = {"nativevillages:hookah", "nativevillages:desertcrpet"},
-		stay_near = {"nativevillages:hookah", "nativevillages:desertcrpet"}
+		markers = {"lualore:hookah", "lualore:desertcrpet"},
+		stay_near = {"lualore:hookah", "lualore:desertcrpet"}
 	},
 	savanna = {
 		nodes = {"default:dry_dirt_with_dry_grass"},
-		markers = {"nativevillages:savannashrine"},
-		stay_near = {"nativevillages:savannashrine"}
+		markers = {"lualore:savannashrine"},
+		stay_near = {"lualore:savannashrine"}
 	},
 	lake = {
 		nodes = {"default:dirt", "default:sand"},
-		markers = {"nativevillages:fishtrap"},
-		stay_near = {"nativevillages:fishtrap"}
+		markers = {"lualore:fishtrap"},
+		stay_near = {"lualore:fishtrap"}
 	},
 	ice = {
 		nodes = {"default:snowblock", "default:ice", "default:snow"},
-		markers = {"nativevillages:sledge"},
-		stay_near = {"nativevillages:sledge"}
+		markers = {"lualore:sledge"},
+		stay_near = {"lualore:sledge"}
 	},
 	cannibal = {
 		nodes = {"default:dirt_with_grass", "default:dirt_with_rainforest_litter"},
-		markers = {"nativevillages:cannibalshrine"},
-		stay_near = {"nativevillages:cannibalshrine"}
+		markers = {"lualore:cannibalshrine"},
+		stay_near = {"lualore:cannibalshrine"}
 	}
 }
 
@@ -151,7 +151,7 @@ local villager_classes = {
 		attack_npcs = false,
 		reach = 1,
 		drops = {
-			{name = "nativevillages:catfish_raw", chance = 1, min = 0, max = 2}
+			{name = "lualore:catfish_raw", chance = 1, min = 0, max = 2}
 		},
 		trade_items = {"farming:bread", "default:paper"},
 	},
@@ -216,7 +216,7 @@ local villager_classes = {
 		reach = 1,  -- Melee attack range
 		drops = {
 			{name = "default:mese_crystal", chance = 1, min = 0, max = 1},
-			{name = "nativevillages:zombietame", chance = 3, min = 0, max = 1}
+			{name = "lualore:zombietame", chance = 3, min = 0, max = 1}
 		},
 		trade_items = {},  -- Witches don't trade
 	},
@@ -229,15 +229,15 @@ local class_order = {"hostile", "raider", "ranger", "jeweler", "farmer", "blacks
 -- Register a single villager mob
 --------------------------------------------------------------------
 local function register_villager(class_name, class_def, biome_name, biome_config)
-	local mob_name = "nativevillages:" .. biome_name .. "_" .. class_name
+	local mob_name = "lualore:" .. biome_name .. "_" .. class_name
 
 	-- Determine which do_custom function to use
 	local custom_function
 	if class_name == "witch" then
 		-- Witches use magic-based custom function
 		custom_function = function(self, dtime)
-			if nativevillages.witch_magic then
-				nativevillages.witch_magic.do_custom(self, dtime)
+			if lualore.witch_magic then
+				lualore.witch_magic.do_custom(self, dtime)
 			end
 		end
 	else
@@ -246,18 +246,18 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 			-- Wrap in error handler to prevent crashes
 			local success, err = pcall(function()
 				-- Update mood system
-				if nativevillages.mood then
-					nativevillages.mood.update_mood(self, dtime)
+				if lualore.mood then
+					lualore.mood.update_mood(self, dtime)
 				end
 
 				-- Update enhanced behaviors
-				if nativevillages.behaviors then
-					nativevillages.behaviors.update(self, dtime)
+				if lualore.behaviors then
+					lualore.behaviors.update(self, dtime)
 				end
 			end)
 
 			if not success then
-				minetest.log("warning", "[nativevillages] do_custom error: " .. tostring(err))
+				minetest.log("warning", "[lualore] do_custom error: " .. tostring(err))
 			end
 		end
 	end
@@ -331,30 +331,30 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 						self.nametag = data.nametag or ""
 
 						-- Restore mood data
-						if nativevillages.mood and data.mood then
-							nativevillages.mood.on_activate_extra(self, data.mood)
+						if lualore.mood and data.mood then
+							lualore.mood.on_activate_extra(self, data.mood)
 						end
 
 						-- Restore behavior data
-						if nativevillages.behaviors and data.behaviors then
-							nativevillages.behaviors.load_save_data(self, data.behaviors)
+						if lualore.behaviors and data.behaviors then
+							lualore.behaviors.load_save_data(self, data.behaviors)
 						end
 					end
 				end
 
 				-- Initialize mood system
-				if nativevillages.mood then
-					nativevillages.mood.init_npc(self)
+				if lualore.mood then
+					lualore.mood.init_npc(self)
 				end
 
 				-- Initialize behaviors system
-				if nativevillages.behaviors then
-					nativevillages.behaviors.init_house(self)
+				if lualore.behaviors then
+					lualore.behaviors.init_house(self)
 				end
 			end)
 
 			if not success then
-				minetest.log("warning", "[nativevillages] on_activate error: " .. tostring(err))
+				minetest.log("warning", "[lualore] on_activate error: " .. tostring(err))
 			end
 		end,
 
@@ -375,13 +375,13 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 				}
 
 				-- Add mood data if available
-				if nativevillages.mood then
-					tmp.mood = nativevillages.mood.get_staticdata_extra(self)
+				if lualore.mood then
+					tmp.mood = lualore.mood.get_staticdata_extra(self)
 				end
 
 				-- Add behavior data if available
-				if nativevillages.behaviors then
-					tmp.behaviors = nativevillages.behaviors.get_save_data(self)
+				if lualore.behaviors then
+					tmp.behaviors = lualore.behaviors.get_save_data(self)
 				end
 
 				return minetest.serialize(tmp)
@@ -391,7 +391,7 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 				return result
 			else
 				-- Log error and return empty string to prevent crash
-				minetest.log("warning", "[nativevillages] Serialization error: " .. tostring(result))
+				minetest.log("warning", "[lualore] Serialization error: " .. tostring(result))
 				return ""
 			end
 		end,
@@ -414,11 +414,11 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 		end,
 
 		on_punch = function(self, hitter, time_from_last_punch, tool_capabilities, dir)
-			minetest.log("action", "[nativevillages] on_punch called")
+			minetest.log("action", "[lualore] on_punch called")
 
 			-- Check if hitter is a player
 			if not hitter or not hitter:is_player() then
-				minetest.log("action", "[nativevillages] Not a player punch")
+				minetest.log("action", "[lualore] Not a player punch")
 				return
 			end
 
@@ -426,9 +426,9 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 			local item_name = item:get_name()
 			local player_name = hitter:get_player_name()
 
-			minetest.log("action", "[nativevillages] Player: " .. player_name .. " Item: " .. item_name)
-			minetest.log("action", "[nativevillages] Has trade_items: " .. tostring(self.nv_trade_items ~= nil))
-			minetest.log("action", "[nativevillages] Wants trade: " .. tostring(self.nv_wants_trade))
+			minetest.log("action", "[lualore] Player: " .. player_name .. " Item: " .. item_name)
+			minetest.log("action", "[lualore] Has trade_items: " .. tostring(self.nv_trade_items ~= nil))
+			minetest.log("action", "[lualore] Wants trade: " .. tostring(self.nv_wants_trade))
 
 			-- Check if player is holding a trade item this villager wants
 			if self.nv_trade_items then
@@ -440,7 +440,7 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 					end
 				end
 
-				minetest.log("action", "[nativevillages] Wants this item: " .. tostring(wants_this_item))
+				minetest.log("action", "[lualore] Wants this item: " .. tostring(wants_this_item))
 
 				if wants_this_item and self.nv_wants_trade then
 					-- Take the item from player (if not creative)
@@ -481,8 +481,8 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 					self.nv_trade_interest_timer = 0
 
 					-- Update mood for positive interaction
-					if nativevillages.mood then
-						nativevillages.mood.on_interact(self, hitter)
+					if lualore.mood then
+						lualore.mood.on_interact(self, hitter)
 					end
 
 					return
@@ -548,8 +548,8 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 					self.nv_trade_interest_timer = 0
 
 					-- Update mood for positive interaction
-					if nativevillages.mood then
-						nativevillages.mood.on_interact(self, clicker)
+					if lualore.mood then
+						lualore.mood.on_interact(self, clicker)
 					end
 
 					return
@@ -561,13 +561,13 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 
 			-- Feed with bread (reduces hunger and heals)
 			if item_name == "farming:bread" then
-				minetest.log("action", "[nativevillages] Bread feeding triggered")
+				minetest.log("action", "[lualore] Bread feeding triggered")
 
-				if nativevillages.mood then
-					minetest.log("action", "[nativevillages] mood module exists, calling on_feed")
-					nativevillages.mood.on_feed(self, clicker, 40)
+				if lualore.mood then
+					minetest.log("action", "[lualore] mood module exists, calling on_feed")
+					lualore.mood.on_feed(self, clicker, 40)
 				else
-					minetest.log("error", "[nativevillages] mood module is nil!")
+					minetest.log("error", "[lualore] mood module is nil!")
 				end
 
 				if not mobs.is_creative(name) then
@@ -581,13 +581,13 @@ local function register_villager(class_name, class_def, biome_name, biome_config
 
 			-- Feed with apple (reduces hunger less but still heals)
 			if item_name == "default:apple" then
-				minetest.log("action", "[nativevillages] Apple feeding triggered")
+				minetest.log("action", "[lualore] Apple feeding triggered")
 
-				if nativevillages.mood then
-					minetest.log("action", "[nativevillages] mood module exists, calling on_feed")
-					nativevillages.mood.on_feed(self, clicker, 25)
+				if lualore.mood then
+					minetest.log("action", "[lualore] mood module exists, calling on_feed")
+					lualore.mood.on_feed(self, clicker, 25)
 				else
-					minetest.log("error", "[nativevillages] mood module is nil!")
+					minetest.log("error", "[lualore] mood module is nil!")
 				end
 
 				if not mobs.is_creative(name) then
@@ -684,7 +684,7 @@ local function spawn_villagers_near(center_pos, biome_name)
 	local class_index = 0
 
 	for _, class_name in ipairs(class_order) do
-		local mob_name = "nativevillages:" .. biome_name .. "_" .. class_name
+		local mob_name = "lualore:" .. biome_name .. "_" .. class_name
 
 		local angle = (class_index / #class_order) * math.pi * 2
 		local distance = math.random(5, spawn_radius)
@@ -732,11 +732,11 @@ end
 --------------------------------------------------------------------
 -- Register a dummy entity that self-removes to handle old entity names
 local old_entity_names = {
-	"nativevillages:grassland_friendly",
-	"nativevillages:desert_friendly",
-	"nativevillages:savanna_friendly",
-	"nativevillages:lake_friendly",
-	"nativevillages:ice_friendly",
+	"lualore:grassland_friendly",
+	"lualore:desert_friendly",
+	"lualore:savanna_friendly",
+	"lualore:lake_friendly",
+	"lualore:ice_friendly",
 }
 
 for _, old_name in ipairs(old_entity_names) do
