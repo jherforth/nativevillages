@@ -2,9 +2,9 @@
 -- Magic system for witch monsters, inspired by witches mod
 -- Uses greeting particles instead of texture-based particles
 
-local S = minetest.get_translator("nativevillages")
+local S = minetest.get_translator("lualore")
 
-nativevillages.witch_magic = {}
+lualore.witch_magic = {}
 
 --------------------------------------------------------------------
 -- PARTICLE EFFECTS (using greeting particles style)
@@ -18,7 +18,7 @@ local function pos_to_vol(pos, vol)
 end
 
 -- Area effect using greeting-style particles
-function nativevillages.witch_magic.effect_area(pos1, pos2, density, color)
+function lualore.witch_magic.effect_area(pos1, pos2, density, color)
 	density = density or 100
 	color = color or "purple"
 
@@ -42,7 +42,7 @@ function nativevillages.witch_magic.effect_area(pos1, pos2, density, color)
 end
 
 -- Line effect using greeting-style particles
-function nativevillages.witch_magic.effect_line(pos1, pos2, density, color)
+function lualore.witch_magic.effect_line(pos1, pos2, density, color)
 	pos1 = vector.round(pos1)
 	pos2 = vector.round(pos2)
 	density = density or 10
@@ -80,7 +80,7 @@ end
 --------------------------------------------------------------------
 -- TELEPORT ATTACK (Main witch attack)
 --------------------------------------------------------------------
-function nativevillages.witch_magic.teleport_attack(self, target, distance)
+function lualore.witch_magic.teleport_attack(self, target, distance)
 	if not self or not self.object then return false end
 	if not target then return false end
 
@@ -124,10 +124,10 @@ function nativevillages.witch_magic.teleport_attack(self, target, distance)
 	target:set_pos(new_target_pos)
 
 	-- Visual effects using greeting-style particles
-	nativevillages.witch_magic.effect_line(caster_pos, new_target_pos, 50, "purple")
+	lualore.witch_magic.effect_line(caster_pos, new_target_pos, 50, "purple")
 
 	local vol = pos_to_vol(caster_pos, vector.new(2, 2, 2))
-	nativevillages.witch_magic.effect_area(vol[1], vol[2], 100, "purple")
+	lualore.witch_magic.effect_area(vol[1], vol[2], 100, "purple")
 
 	-- NO DAMAGE - teleport only!
 	-- Melee punch (dogfight) attack handles damage separately
@@ -138,7 +138,7 @@ end
 --------------------------------------------------------------------
 -- CUSTOM ATTACK BEHAVIOR
 --------------------------------------------------------------------
-function nativevillages.witch_magic.custom_attack(self, dtime)
+function lualore.witch_magic.custom_attack(self, dtime)
 	-- Only attack if we have a target
 	if not self.attack then return false end
 	if not self.object then return false end
@@ -174,7 +174,7 @@ function nativevillages.witch_magic.custom_attack(self, dtime)
 	if distance < 1 then return false end  -- Too close (within 1 block), use melee instead
 
 	-- Perform teleport attack (10 blocks in random direction)
-	local success = nativevillages.witch_magic.teleport_attack(self, self.attack, 10)
+	local success = lualore.witch_magic.teleport_attack(self, self.attack, 10)
 
 	if success then
 		-- Reset timer
@@ -188,32 +188,32 @@ end
 --------------------------------------------------------------------
 -- WITCH-SPECIFIC DO_CUSTOM FUNCTION
 --------------------------------------------------------------------
-function nativevillages.witch_magic.do_custom(self, dtime)
+function lualore.witch_magic.do_custom(self, dtime)
 	-- Handle magic attacks
 	if self.attack and self.state == "attack" then
-		nativevillages.witch_magic.custom_attack(self, dtime)
+		lualore.witch_magic.custom_attack(self, dtime)
 	end
 
 	-- Continue with normal behavior updates
 	local success, err = pcall(function()
 		-- Update mood system
-		if nativevillages.mood then
-			nativevillages.mood.update_mood(self, dtime)
+		if lualore.mood then
+			lualore.mood.update_mood(self, dtime)
 		end
 
 		-- Update enhanced behaviors (including door waiting for all entity types)
-		if nativevillages.behaviors then
+		if lualore.behaviors then
 			-- Only call handle_door_waiting for monsters, skip other behaviors
 			if self.type == "monster" then
-				nativevillages.behaviors.handle_door_waiting(self)
+				lualore.behaviors.handle_door_waiting(self)
 			else
-				nativevillages.behaviors.update(self, dtime)
+				lualore.behaviors.update(self, dtime)
 			end
 		end
 	end)
 
 	if not success then
-		minetest.log("warning", "[nativevillages] witch do_custom error: " .. tostring(err))
+		minetest.log("warning", "[lualore] witch do_custom error: " .. tostring(err))
 	end
 end
 
