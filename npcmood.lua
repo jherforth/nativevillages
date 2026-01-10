@@ -1,58 +1,58 @@
 -- npcmood.lua
-local S = minetest.get_translator("nativevillages")
+local S = minetest.get_translator("lualore")
 
-nativevillages.mood = {}
+lualore.mood = {}
 
 --------------------------------------------------------------------
 -- CONFIGURATION SETTINGS
 --------------------------------------------------------------------
 
 -- Visual mood indicators (set to true to show sprites above NPCs)
-nativevillages.mood.enable_visual_indicators = true
+lualore.mood.enable_visual_indicators = true
 
 -- Sound timing (seconds between sounds for each NPC)
 -- Lower = more frequent sounds, Higher = less frequent sounds
-nativevillages.mood.sound_repeat_delay = 14
+lualore.mood.sound_repeat_delay = 14
 
 -- Sound volume settings
 -- sound_volume: Master volume for mood sounds (0.0 = silent, 1.0 = full volume)
 -- Recommended range: 0.3 to 0.7 for ambient NPC sounds
-nativevillages.mood.sound_volume = 0.3
+lualore.mood.sound_volume = 0.3
 
 -- Sound distance settings (in nodes/blocks)
 -- sound_max_distance: Maximum distance player can hear NPC sounds
 -- sound_fade_distance: Distance where sounds start to fade out
 -- NPCs beyond max_distance won't be heard at all
-nativevillages.mood.sound_max_distance = 8       -- Can hear up to 8 blocks away
-nativevillages.mood.sound_fade_distance = 4      -- Starts fading at 4 blocks
+lualore.mood.sound_max_distance = 8       -- Can hear up to 8 blocks away
+lualore.mood.sound_fade_distance = 4      -- Starts fading at 4 blocks
 
 --------------------------------------------------------------------
 
-nativevillages.mood.trade_items = {}
+lualore.mood.trade_items = {}
 
-nativevillages.mood.moods = {
-	happy   = {texture = "nativevillages_mood_happy.png"},
-	content = {texture = "nativevillages_mood_content.png"},
-	neutral = {texture = "nativevillages_mood_neutral.png"},
-	sad     = {texture = "nativevillages_mood_sad.png"},
-	angry   = {texture = "nativevillages_mood_angry.png"},
-	hungry  = {texture = "nativevillages_mood_hungry.png"},
-	lonely  = {texture = "nativevillages_mood_lonely.png"},
-	scared  = {texture = "nativevillages_mood_scared.png"},
+lualore.mood.moods = {
+	happy   = {texture = "lualore_mood_happy.png"},
+	content = {texture = "lualore_mood_content.png"},
+	neutral = {texture = "lualore_mood_neutral.png"},
+	sad     = {texture = "lualore_mood_sad.png"},
+	angry   = {texture = "lualore_mood_angry.png"},
+	hungry  = {texture = "lualore_mood_hungry.png"},
+	lonely  = {texture = "lualore_mood_lonely.png"},
+	scared  = {texture = "lualore_mood_scared.png"},
 }
 
-nativevillages.mood.desires = {
-	food          = {texture = "nativevillages_desire_food.png",          priority = 1},
-	trade         = {texture = "nativevillages_desire_trade.png",         priority = 2},
-	companionship = {texture = "nativevillages_desire_companionship.png", priority = 3},
-	safety        = {texture = "nativevillages_desire_safety.png",        priority = 4},
-	rest          = {texture = "nativevillages_desire_rest.png",          priority = 5},
+lualore.mood.desires = {
+	food          = {texture = "lualore_desire_food.png",          priority = 1},
+	trade         = {texture = "lualore_desire_trade.png",         priority = 2},
+	companionship = {texture = "lualore_desire_companionship.png", priority = 3},
+	safety        = {texture = "lualore_desire_safety.png",        priority = 4},
+	rest          = {texture = "lualore_desire_rest.png",          priority = 5},
 }
 
 --------------------------------------------------------------------
 -- NPC mood initialisation
 --------------------------------------------------------------------
-function nativevillages.mood.init_npc(self)
+function lualore.mood.init_npc(self)
 	if not self.nv_mood then
 		self.nv_mood               = "neutral"
 		self.nv_mood_value         = 50
@@ -71,7 +71,7 @@ end
 --------------------------------------------------------------------
 -- Helper: get mood name from numeric value
 --------------------------------------------------------------------
-function nativevillages.mood.get_mood_from_value(value)
+function lualore.mood.get_mood_from_value(value)
 	if value >= 80 then return "happy"
 	elseif value >= 60 then return "content"
 	elseif value >= 40 then return "neutral"
@@ -82,7 +82,7 @@ end
 --------------------------------------------------------------------
 -- Desire calculation
 --------------------------------------------------------------------
-function nativevillages.mood.calculate_desire(self)
+function lualore.mood.calculate_desire(self)
 	local desires = {}
 
 	if self.nv_hunger > 70 then
@@ -110,7 +110,7 @@ end
 --------------------------------------------------------------------
 -- Check for nearby trade items
 --------------------------------------------------------------------
-function nativevillages.mood.check_nearby_trade_items(self)
+function lualore.mood.check_nearby_trade_items(self)
 	if not self.object then
 		return false
 	end
@@ -120,7 +120,7 @@ function nativevillages.mood.check_nearby_trade_items(self)
 		-- Try to determine trade items from mob name
 		local mob_name = self.name or ""
 
-		-- Extract class from mob name (e.g., "nativevillages:grassland_farmer" -> "farmer")
+		-- Extract class from mob name (e.g., "lualore:grassland_farmer" -> "farmer")
 		local class_name = mob_name:match("_([^_]+)$")
 		if class_name then
 			-- Map of class to trade items (fallback if not set on spawn)
@@ -172,13 +172,13 @@ end
 --------------------------------------------------------------------
 -- Play mood sound if player is nearby (with 3D positional audio)
 --------------------------------------------------------------------
-function nativevillages.mood.play_sound_if_nearby(self, dtime)
+function lualore.mood.play_sound_if_nearby(self, dtime)
 	if not self.object then return end
 	local pos = self.object:get_pos()
 	if not pos then return end
 
 	self.nv_sound_timer = (self.nv_sound_timer or 0) + dtime
-	if self.nv_sound_timer < nativevillages.mood.sound_repeat_delay then
+	if self.nv_sound_timer < lualore.mood.sound_repeat_delay then
 		return
 	end
 
@@ -188,7 +188,7 @@ function nativevillages.mood.play_sound_if_nearby(self, dtime)
 		if player_pos then
 			local distance = vector.distance(pos, player_pos)
 			-- Only play if within max hearing distance
-			if distance <= nativevillages.mood.sound_max_distance then
+			if distance <= lualore.mood.sound_max_distance then
 				local sound_to_play = nil
 
 				if self.nv_wants_trade then
@@ -201,14 +201,14 @@ function nativevillages.mood.play_sound_if_nearby(self, dtime)
 
 				if sound_to_play then
 					-- Calculate distance-based volume falloff with steeper curve
-					local distance_ratio = math.min(1, distance / nativevillages.mood.sound_fade_distance)
+					local distance_ratio = math.min(1, distance / lualore.mood.sound_fade_distance)
 					-- Use exponential falloff for more rapid sound decay
 					local distance_gain = math.max(0, 1.0 - (distance_ratio * distance_ratio * 0.95))
-					local final_gain = nativevillages.mood.sound_volume * distance_gain
+					local final_gain = lualore.mood.sound_volume * distance_gain
 
 					minetest.sound_play(sound_to_play, {
 						pos = pos,
-						max_hear_distance = nativevillages.mood.sound_max_distance,
+						max_hear_distance = lualore.mood.sound_max_distance,
 						gain = final_gain,
 						pitch = 1.0,
 						loop = false,
@@ -224,8 +224,8 @@ end
 --------------------------------------------------------------------
 -- Mood update (called from do_custom)
 --------------------------------------------------------------------
-function nativevillages.mood.update_mood(self, dtime)
-	nativevillages.mood.init_npc(self)
+function lualore.mood.update_mood(self, dtime)
+	lualore.mood.init_npc(self)
 
 	-- Mark as fully activated after first update cycle
 	self.nv_activation_timer = (self.nv_activation_timer or 0) + dtime
@@ -234,14 +234,14 @@ function nativevillages.mood.update_mood(self, dtime)
 	end
 
 	-- Sound timer runs every frame
-	nativevillages.mood.play_sound_if_nearby(self, dtime)
+	lualore.mood.play_sound_if_nearby(self, dtime)
 
 	self.nv_mood_timer = (self.nv_mood_timer or 0) + dtime
 	if self.nv_mood_timer < 5 then return end
 	self.nv_mood_timer = 0
 
 	-- ---- trade interest -------------------------------------------------
-	local player_has_trade_item = nativevillages.mood.check_nearby_trade_items(self)
+	local player_has_trade_item = lualore.mood.check_nearby_trade_items(self)
 	if player_has_trade_item then
 		self.nv_wants_trade = true
 		self.nv_trade_interest_timer = 0
@@ -287,20 +287,20 @@ function nativevillages.mood.update_mood(self, dtime)
 
 	-- ---- final mood string ---------------------------------------------
 	local old_mood = self.nv_mood
-	self.nv_mood = nativevillages.mood.get_mood_from_value(self.nv_mood_value)
+	self.nv_mood = lualore.mood.get_mood_from_value(self.nv_mood_value)
 
 	if self.nv_hunger > 80 then self.nv_mood = "hungry"
 	elseif self.nv_fear > 70 then self.nv_mood = "scared"
 	elseif self.nv_loneliness > 80 then self.nv_mood = "lonely" end
 
-	self.nv_current_desire = nativevillages.mood.calculate_desire(self)
-	nativevillages.mood.update_indicator(self)
+	self.nv_current_desire = lualore.mood.calculate_desire(self)
+	lualore.mood.update_indicator(self)
 end
 
 --------------------------------------------------------------------
 -- Cleanup mood indicator
 --------------------------------------------------------------------
-function nativevillages.mood.cleanup_indicator(self)
+function lualore.mood.cleanup_indicator(self)
 	if self.nv_mood_indicator then
 		self.nv_mood_indicator:remove()
 		self.nv_mood_indicator = nil
@@ -310,8 +310,8 @@ end
 --------------------------------------------------------------------
 -- Mood indicator (floating icon above head)
 --------------------------------------------------------------------
-function nativevillages.mood.update_indicator(self)
-	if not nativevillages.mood.enable_visual_indicators then return end
+function lualore.mood.update_indicator(self)
+	if not lualore.mood.enable_visual_indicators then return end
 	if not self.object then return end
 	if not self.nv_fully_activated then return end
 
@@ -324,8 +324,8 @@ function nativevillages.mood.update_indicator(self)
 	local pos = self.object:get_pos()
 	if not pos then return end
 
-	local mood_data   = nativevillages.mood.moods[self.nv_mood] or nativevillages.mood.moods.neutral
-	local desire_data = self.nv_current_desire and nativevillages.mood.desires[self.nv_current_desire]
+	local mood_data   = lualore.mood.moods[self.nv_mood] or lualore.mood.moods.neutral
+	local desire_data = self.nv_current_desire and lualore.mood.desires[self.nv_current_desire]
 
 	local texture = mood_data.texture
 	if desire_data and math.random(100) < 60 then
@@ -333,7 +333,7 @@ function nativevillages.mood.update_indicator(self)
 	end
 
 	-- Create new indicator
-	self.nv_mood_indicator = minetest.add_entity(pos, "nativevillages:mood_indicator")
+	self.nv_mood_indicator = minetest.add_entity(pos, "lualore:mood_indicator")
 	if self.nv_mood_indicator then
 		self.nv_mood_indicator:set_attach(
 			self.object,
@@ -356,7 +356,7 @@ end
 --------------------------------------------------------------------
 -- Interaction callbacks
 --------------------------------------------------------------------
-function nativevillages.mood.on_feed(self, clicker, food_value)
+function lualore.mood.on_feed(self, clicker, food_value)
 	self.nv_hunger           = 1
 	self.nv_last_fed         = 0
 	self.nv_last_interaction = 0
@@ -371,24 +371,24 @@ function nativevillages.mood.on_feed(self, clicker, food_value)
 			-- Use higher volume for feeding sound since it's an action feedback
 			minetest.sound_play("villager_fed", {
 				pos = pos,
-				max_hear_distance = nativevillages.mood.sound_max_distance,
-				gain = nativevillages.mood.sound_volume * 1.4,  -- 40% louder than mood sounds
+				max_hear_distance = lualore.mood.sound_max_distance,
+				gain = lualore.mood.sound_volume * 1.4,  -- 40% louder than mood sounds
 				pitch = 1.0,
 				loop = false,
 			}, true)  -- true = ephemeral (3D positional audio)
 		end
 	end
 
-	nativevillages.mood.update_mood(self, 0)
+	lualore.mood.update_mood(self, 0)
 end
 
-function nativevillages.mood.on_interact(self, clicker)
+function lualore.mood.on_interact(self, clicker)
 	self.nv_last_interaction = 0
 	self.nv_loneliness       = math.max(0, (self.nv_loneliness or 0) - 20)
-	nativevillages.mood.update_mood(self, 0)
+	lualore.mood.update_mood(self, 0)
 end
 
-function nativevillages.mood.on_trade(self, clicker)
+function lualore.mood.on_trade(self, clicker)
 	self.nv_last_interaction = 0
 	self.nv_loneliness       = math.max(0, (self.nv_loneliness or 0) - 25)
 	self.nv_hunger           = math.max(0, (self.nv_hunger or 50) - 15)
@@ -404,13 +404,13 @@ function nativevillages.mood.on_trade(self, clicker)
 		end
 	end
 
-	nativevillages.mood.update_mood(self, 0)
+	lualore.mood.update_mood(self, 0)
 end
 
 --------------------------------------------------------------------
 -- Serialization (only plain data)
 --------------------------------------------------------------------
-function nativevillages.mood.get_staticdata_extra(self)
+function lualore.mood.get_staticdata_extra(self)
 	return {
 		nv_mood               = self.nv_mood,
 		nv_mood_value         = self.nv_mood_value,
@@ -424,7 +424,7 @@ function nativevillages.mood.get_staticdata_extra(self)
 	}
 end
 
-function nativevillages.mood.on_activate_extra(self, data)
+function lualore.mood.on_activate_extra(self, data)
 	if not data then return end
 	self.nv_mood               = data.nv_mood or "neutral"
 	self.nv_mood_value         = data.nv_mood_value or 50
@@ -440,13 +440,13 @@ end
 --------------------------------------------------------------------
 -- Mood-indicator entity
 --------------------------------------------------------------------
-minetest.register_entity("nativevillages:mood_indicator", {
+minetest.register_entity("lualore:mood_indicator", {
 	initial_properties = {
 		physical      = false,
 		collisionbox  = {-0.25, -0.25, -0.25, 0.25, 0.25, 0.25},
 		visual        = "sprite",
 		visual_size   = {x=0.25, y=0.25},
-		textures      = {"nativevillages_mood_neutral.png"},
+		textures      = {"lualore_mood_neutral.png"},
 		is_visible    = true,
 		pointable     = true,
 		static_save   = false,
@@ -499,6 +499,7 @@ minetest.register_entity("nativevillages:mood_indicator", {
 	on_activate = function(self, staticdata)
 	end,
 })
+
 
 
 
