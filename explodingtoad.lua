@@ -1,6 +1,6 @@
-local S = minetest.get_translator("nativevillages")
+local S = minetest.get_translator("lualore")
 
-mobs:register_mob("nativevillages:toad", {
+mobs:register_mob("lualore:toad", {
 stepheight = 3,
 	type = "monster",
 	passive = false,
@@ -33,10 +33,10 @@ sounds = {
 	jump = true,
 	jump_height = 6,
 	sounds = {
-		attack = "nativevillages_toad",
-		random = "nativevillages_toad2",
-		damage = "nativevillages_toad",
-		death = "nativevillages_toad",
+		attack = "lualore_toad",
+		random = "lualore_toad2",
+		damage = "lualore_toad",
+		death = "lualore_toad",
 		distance = 10,
 	},
 	drops = {
@@ -76,7 +76,7 @@ sounds = {
 		if success then
 			return result
 		else
-			minetest.log("warning", "[nativevillages] Serialization error: " .. tostring(result))
+			minetest.log("warning", "[lualore] Serialization error: " .. tostring(result))
 			return ""
 		end
 	end,
@@ -94,8 +94,8 @@ sounds = {
 	end,
 	do_custom = function(self, dtime)
 		-- Handle door waiting for toads
-		if nativevillages.behaviors then
-			nativevillages.behaviors.handle_door_waiting(self)
+		if lualore.behaviors then
+			lualore.behaviors.handle_door_waiting(self)
 		end
 	end,
 })
@@ -105,9 +105,9 @@ if minetest.get_modpath("ethereal") then
 	spawn_on = "ethereal:prairie_dirt", "default:dirt_with_grass", "ethereal:green_dirt"
 end
 
-if not mobs.custom_spawn_nativevillages then
+if not mobs.custom_spawn_lualore then
 mobs:spawn({
-	name = "nativevillages:toad",
+	name = "lualore:toad",
 	nodes = {"default:dirt_with_grass"}, {"default:dirt_with_rainforest_litter"}, {"default:dry_dirt_with_dry_grass"},
 	neighbors = {"group:grass", "group:normal_grass"},
 	min_light = 0,
@@ -121,13 +121,13 @@ mobs:spawn({
 end
 
 
-mobs:register_egg("nativevillages:toad", S("Toad"), "atoad.png", 0)
+mobs:register_egg("lualore:toad", S("Toad"), "atoad.png", 0)
 
 
-mobs:alias_mob("nativevillages:toad", "nativevillages:toad") -- compatibility
+mobs:alias_mob("lualore:toad", "lualore:toad") -- compatibility
 
 
-mobs:register_mob("nativevillages:toadtamed", {
+mobs:register_mob("lualore:toadtamed", {
 stepheight = 3,
 	type = "NPC",
 	passive = false,
@@ -237,33 +237,34 @@ on_rightclick = function(self, clicker)
 	end,
 	do_custom = function(self, dtime)
 		-- Handle door waiting for tamed toads
-		if nativevillages.behaviors then
-			nativevillages.behaviors.handle_door_waiting(self)
+		if lualore.behaviors then
+			lualore.behaviors.handle_door_waiting(self)
 		end
 	end,
 })
 
 
 
-mobs:register_egg("nativevillages:toadtamed", S("Tamed Exploding Toad"), "atoad.png", 0)
+mobs:register_egg("lualore:toadtamed", S("Tamed Exploding Toad"), "atoad.png", 0)
 
 
-mobs:alias_mob("nativevillages:toadtamed", "nativevillages:toadtamed") -- compatibility
+mobs:alias_mob("lualore:toadtamed", "lualore:toadtamed") -- compatibility
 
-minetest.register_node("nativevillages:toadbag", {
+minetest.register_node("lualore:toadbag", {
 	description = S"Bag full of toads!",
 	tiles = {
-		"nativevillages_toadbag_top.png",
-		"nativevillages_toadbag_bottom.png",
-		"nativevillages_toadbag_right.png",
-		"nativevillages_toadbag_left.png",
-		"nativevillages_toadbag_back.png",
-		"nativevillages_toadbag_front.png"
+		"lualore_toadbag_top.png",
+		"lualore_toadbag_bottom.png",
+		"lualore_toadbag_right.png",
+		"lualore_toadbag_left.png",
+		"lualore_toadbag_back.png",
+		"lualore_toadbag_front.png"
 	},
 	groups = {crumbly = 3},
-	drop = "nativevillages:toadtamed 9",
+	drop = "lualore:toadtamed 9",
 	sounds = default.node_sound_dirt_defaults(),
 })
+
 
 
 
