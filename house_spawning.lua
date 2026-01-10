@@ -2,7 +2,7 @@
 -- Bed-based villager linking — 1 villager per bed, universal and natural
 -- Works with all villages regardless of biome
 
-local S = minetest.get_translator("nativevillages")
+local S = minetest.get_translator("lualore")
 
 -- Track which beds already have villagers (prevents duplicates)
 local beds_with_villagers = {}
@@ -16,24 +16,24 @@ local friendly_classes = {
 -- Map every marker node to its biome (used to determine which villager type to spawn)
 local marker_to_biome = {
     -- Grassland
-    ["nativevillages:grasslandbarrel"] = "grassland",
-    ["nativevillages:grasslandaltar"] = "grassland",
+    ["lualore:grasslandbarrel"] = "grassland",
+    ["lualore:grasslandaltar"] = "grassland",
     -- Desert
-    ["nativevillages:hookah"] = "desert",
-    ["nativevillages:desertcarpet"] = "desert",
-    ["nativevillages:desertcage"] = "desert",
+    ["lualore:hookah"] = "desert",
+    ["lualore:desertcarpet"] = "desert",
+    ["lualore:desertcage"] = "desert",
     -- Ice
-    ["nativevillages:sledge"] = "ice",
+    ["lualore:sledge"] = "ice",
     -- Lake
-    ["nativevillages:fishtrap"] = "lake",
-    ["nativevillages:hangingfish"] = "lake",
+    ["lualore:fishtrap"] = "lake",
+    ["lualore:hangingfish"] = "lake",
     -- Savanna
-    ["nativevillages:savannashrine"] = "savanna",
-    ["nativevillages:savannathrone"] = "savanna",
-    ["nativevillages:savannavessels"] = "savanna",
+    ["lualore:savannashrine"] = "savanna",
+    ["lualore:savannathrone"] = "savanna",
+    ["lualore:savannavessels"] = "savanna",
     -- Jungle
-    ["nativevillages:cannibalshrine"] = "cannibal",
-    ["nativevillages:driedpeople"] = "cannibal",
+    ["lualore:cannibalshrine"] = "cannibal",
+    ["lualore:driedpeople"] = "cannibal",
 }
 
 -- Build the full list of marker nodes for biome detection
@@ -174,7 +174,7 @@ minetest.register_on_generated(function(minp, maxp, blockseed)
 
             -- Spawn the villager
             local class = friendly_classes[math.random(#friendly_classes)]
-            local mob_name = "nativevillages:" .. biome .. "_" .. class
+            local mob_name = "lualore:" .. biome .. "_" .. class
 
             local obj = minetest.add_entity(spawn_pos, mob_name)
             if obj then
@@ -185,7 +185,7 @@ minetest.register_on_generated(function(minp, maxp, blockseed)
                 end
                 beds_with_villagers[bed_key] = true
                 processed_beds[bed_key] = true
-                minetest.log("action", "[nativevillages] Villager spawned near bed: " .. mob_name ..
+                minetest.log("action", "[lualore] Villager spawned near bed: " .. mob_name ..
                     " at " .. minetest.pos_to_string(spawn_pos) .. " linked to bed at " .. bed_key)
             end
 
