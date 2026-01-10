@@ -1,7 +1,7 @@
 -- loot.lua
 -- Random loot for village chests (schematic-placed only)
 
-local modpath = minetest.get_modpath("nativevillages")
+local modpath = minetest.get_modpath("lualore")
 
 -- ===================================================================
 -- LOOT TABLES
@@ -114,7 +114,7 @@ local function fill_chest_with_loot(pos, loot_table)
     end
 
     if items_added > 0 then
-        minetest.log("action", "[nativevillages] Added " .. items_added .. " items to chest at " .. minetest.pos_to_string(pos))
+        minetest.log("action", "[lualore] Added " .. items_added .. " items to chest at " .. minetest.pos_to_string(pos))
     end
 end
 
@@ -123,7 +123,7 @@ end
 -- ===================================================================
 
 minetest.register_lbm({
-    name = "nativevillages:initialize_village_chests",
+    name = "lualore:initialize_village_chests",
     nodenames = {"default:chest", "default:chest_locked"},
     run_at_every_load = false,
     action = function(pos, node)
@@ -135,11 +135,11 @@ minetest.register_lbm({
         end
 
         local meta = minetest.get_meta(pos)
-        if meta:get_string("nativevillages_loot_filled") == "true" then
+        if meta:get_string("lualore_loot_filled") == "true" then
             return
         end
 
-        meta:set_string("nativevillages_loot_filled", "true")
+        meta:set_string("lualore_loot_filled", "true")
 
         local loot_table = get_loot_table_for_biome(pos)
         if loot_table then
@@ -171,8 +171,8 @@ local function wrap_chest_rightclick(chest_name)
                     chest_def.on_construct(pos)
                 end
 
-                if meta:get_string("nativevillages_loot_filled") ~= "true" then
-                    meta:set_string("nativevillages_loot_filled", "true")
+                if meta:get_string("lualore_loot_filled") ~= "true" then
+                    meta:set_string("lualore_loot_filled", "true")
 
                     local loot_table = get_loot_table_for_biome(pos)
                     if loot_table then
@@ -191,4 +191,4 @@ end
 wrap_chest_rightclick("default:chest")
 wrap_chest_rightclick("default:chest_locked")
 
-minetest.log("action", "[nativevillages] Loot system loaded - schematic chests will have treasure")
+minetest.log("action", "[lualore] Loot system loaded - schematic chests will have treasure")
