@@ -1,6 +1,6 @@
-local S = minetest.get_translator("nativevillages")
+local S = minetest.get_translator("lualore")
 
-mobs:register_mob("nativevillages:tamecatfish", {
+mobs:register_mob("lualore:tamecatfish", {
 	stepheight = 1,
 	type = "animal",
 	passive = true,
@@ -42,7 +42,7 @@ mobs:register_mob("nativevillages:tamecatfish", {
 	},
 	view_range = 6,
 	drops = {
-		{name = "nativevillages:catfish_raw", chance = 1, min = 1, max = 3},
+		{name = "lualore:catfish_raw", chance = 1, min = 1, max = 3},
 	},
 	water_damage = 0,
         air_damage = 1,
@@ -79,7 +79,7 @@ mobs:register_mob("nativevillages:tamecatfish", {
 		if success then
 			return result
 		else
-			minetest.log("warning", "[nativevillages] Serialization error: " .. tostring(result))
+			minetest.log("warning", "[lualore] Serialization error: " .. tostring(result))
 			return ""
 		end
 	end,
@@ -99,39 +99,39 @@ mobs:register_mob("nativevillages:tamecatfish", {
 
 
 
-mobs:register_egg("nativevillages:tamecatfish", S("Domesticated Catfish"), "alakecatfish.png")
+mobs:register_egg("lualore:tamecatfish", S("Domesticated Catfish"), "alakecatfish.png")
 
 
-mobs:alias_mob("nativevillages:tamecatfish", "nativevillages:tamecatfish") -- compatibility
+mobs:alias_mob("lualore:tamecatfish", "lualore:tamecatfish") -- compatibility
 
 
 -- raw catfish
-minetest.register_craftitem(":nativevillages:catfish_raw", {
+minetest.register_craftitem(":lualore:catfish_raw", {
 	description = S("Raw Catfish"),
-	inventory_image = "nativevillages_catfish_raw.png",
+	inventory_image = "lualore_catfish_raw.png",
 	on_use = minetest.item_eat(4),
 	groups = {food_meat_raw = 1, flammable = 2},
 })
 
 -- cooked catfish
-minetest.register_craftitem(":nativevillages:catfish_cooked", {
+minetest.register_craftitem(":lualore:catfish_cooked", {
 	description = S("Cooked Catfish"),
-	inventory_image = "nativevillages_catfish_cooked.png",
+	inventory_image = "lualore_catfish_cooked.png",
 	on_use = minetest.item_eat(8),
 	groups = {food_meat = 1, flammable = 2},
 })
 
 minetest.register_craft({
 	type = "cooking",
-	output = "nativevillages:catfish_cooked",
-	recipe = "nativevillages:catfish_raw",
+	output = "lualore:catfish_cooked",
+	recipe = "lualore:catfish_raw",
 	cooktime = 2,
 })
 
 
 local S = mobs.intllib
 
-mobs:register_mob("nativevillages:zombietame", {
+mobs:register_mob("lualore:zombietame", {
 	type = "npc",
 	passive = false,
 	attack_type = "dogfight",
@@ -153,10 +153,10 @@ mobs:register_mob("nativevillages:zombietame", {
 	},
 	makes_footstep_sound = true,
 	sounds = {
-		attack = "nativevillages_tamedzombie2",
-		random = "nativevillages_tamedzombie",
-		damage = "nativevillages_tamedzombie3",
-		death = "nativevillages_tamedzombie4",
+		attack = "lualore_tamedzombie2",
+		random = "lualore_tamedzombie",
+		damage = "lualore_tamedzombie3",
+		death = "lualore_tamedzombie4",
 		distance = 10,
 	},
 	walk_velocity = 2,
@@ -164,11 +164,11 @@ mobs:register_mob("nativevillages:zombietame", {
 	jump = true,
 	drops = {		
 	},
-        stay_near = {{"nativevillages:cannibalshrine", "nativevillages:driedpeople"}, 5},
+        stay_near = {{"lualore:cannibalshrine", "lualore:driedpeople"}, 5},
 	water_damage = 0,
 	lava_damage = 2,
 	light_damage = 0,
-	follow = {"nativevillages:driedhumanmeat"},
+	follow = {"lualore:driedhumanmeat"},
 	view_range = 20,
 	owner = "",
 	order = "follow",
@@ -242,9 +242,9 @@ mobs:register_mob("nativevillages:zombietame", {
 })
 
 
-mobs:register_egg("nativevillages:zombietame", S("Tamed Zombie"), "azombietame.png" )
+mobs:register_egg("lualore:zombietame", S("Tamed Zombie"), "azombietame.png" )
 
-mobs:register_mob("nativevillages:domesticcow", {
+mobs:register_mob("lualore:domesticcow", {
 	type = "animal",
 	passive = false,
 	attack_type = "dogfight",
@@ -269,9 +269,9 @@ mobs:register_mob("nativevillages:domesticcow", {
 	},
 	makes_footstep_sound = true,
 	sounds = {
-		random = "nativevillages_cow",
-		attack = "nativevillages_cow2",
-		damage = "nativevillages_cow3",
+		random = "lualore_cow",
+		attack = "lualore_cow2",
+		damage = "lualore_cow3",
 	},
 	walk_velocity = 1,
 	run_velocity = 2,
@@ -333,7 +333,7 @@ mobs:register_mob("nativevillages:domesticcow", {
 		if success then
 			return result
 		else
-			minetest.log("warning", "[nativevillages] Serialization error: " .. tostring(result))
+			minetest.log("warning", "[lualore] Serialization error: " .. tostring(result))
 			return ""
 		end
 	end,
@@ -381,12 +381,12 @@ mobs:register_mob("nativevillages:domesticcow", {
 			tool:take_item()
 			clicker:set_wielded_item(tool)
 
-			if inv:room_for_item("main", {name = "nativevillages:bucket_milk"}) then
-				clicker:get_inventory():add_item("main", "nativevillages:bucket_milk")
+			if inv:room_for_item("main", {name = "lualore:bucket_milk"}) then
+				clicker:get_inventory():add_item("main", "lualore:bucket_milk")
 			else
 				local pos = self.object:get_pos()
 				pos.y = pos.y + 0.5
-				minetest.add_item(pos, {name = "nativevillages:bucket_milk"})
+				minetest.add_item(pos, {name = "lualore:bucket_milk"})
 			end
 
 			self.gotten = true -- milked
@@ -409,16 +409,16 @@ mobs:register_mob("nativevillages:domesticcow", {
 
 
 
-mobs:register_egg("nativevillages:domesticcow", S("Domesticated Cow"), "agrasslandcow.png")
+mobs:register_egg("lualore:domesticcow", S("Domesticated Cow"), "agrasslandcow.png")
 
 
-mobs:alias_mob("nativevillages:domesticcow", "nativevillages:domesticcow") -- compatibility
+mobs:alias_mob("lualore:domesticcow", "lualore:domesticcow") -- compatibility
 
 
 -- bucket of milk
-minetest.register_craftitem(":nativevillages:bucket_milk", {
+minetest.register_craftitem(":lualore:bucket_milk", {
 	description = S("Bucket of Milk"),
-	inventory_image = "nativevillages_bucket_milk.png",
+	inventory_image = "lualore_bucket_milk.png",
 	stack_max = 1,
 	on_use = minetest.item_eat(8, "bucket:bucket_empty"),
 	groups = {food_milk = 1, flammable = 3, drink = 1},
@@ -438,14 +438,14 @@ minetest.register_craft({
 	recipe = {
 		"vessels:drinking_glass", "vessels:drinking_glass",
 		"vessels:drinking_glass", "vessels:drinking_glass",
-		"nativevillages:bucket_milk"
+		"lualore:bucket_milk"
 	},
-	replacements = { {"nativevillages:bucket_milk", "bucket:bucket_empty"} }
+	replacements = { {"lualore:bucket_milk", "bucket:bucket_empty"} }
 })
 
 minetest.register_craft({
 	type = "shapeless",
-	output = "nativevillages:bucket_milk",
+	output = "lualore:bucket_milk",
 	recipe = {
 		"group:food_milk_glass", "group:food_milk_glass",
 		"group:food_milk_glass", "group:food_milk_glass",
@@ -458,9 +458,9 @@ minetest.register_craft({
 
 
 -- butter
-minetest.register_craftitem(":nativevillages:butter", {
+minetest.register_craftitem(":lualore:butter", {
 	description = S("Butter"),
-	inventory_image = "nativevillages_butter.png",
+	inventory_image = "lualore_butter.png",
 	on_use = minetest.item_eat(1),
 	groups = {food_butter = 1, flammable = 2},
 })
@@ -468,61 +468,61 @@ minetest.register_craftitem(":nativevillages:butter", {
 if minetest.get_modpath("farming") and farming and farming.mod then
 minetest.register_craft({
 	type = "shapeless",
-	output = "nativevillages:butter",
-	recipe = {"nativevillages:bucket_milk", "farming:salt"},
-	replacements = {{ "nativevillages:bucket_milk", "bucket:bucket_empty"}}
+	output = "lualore:butter",
+	recipe = {"lualore:bucket_milk", "farming:salt"},
+	replacements = {{ "lualore:bucket_milk", "bucket:bucket_empty"}}
 })
 else -- some saplings are high in sodium so makes a good replacement item
 minetest.register_craft({
 	type = "shapeless",
-	output = "nativevillages:butter",
-	recipe = {"nativevillages:bucket_milk", "default:sapling"},
-	replacements = {{ "nativevillages:bucket_milk", "bucket:bucket_empty"}}
+	output = "lualore:butter",
+	recipe = {"lualore:bucket_milk", "default:sapling"},
+	replacements = {{ "lualore:bucket_milk", "bucket:bucket_empty"}}
 })
 end
 
 -- cheese wedge
-minetest.register_craftitem(":nativevillages:cheese", {
+minetest.register_craftitem(":lualore:cheese", {
 	description = S("Mozzarella Cheese"),
-	inventory_image = "nativevillages_cheese.png",
+	inventory_image = "lualore_cheese.png",
 	on_use = minetest.item_eat(4),
 	groups = {food_cheese = 1, flammable = 2},
 })
 
 minetest.register_craft({
 	type = "cooking",
-	output = "nativevillages:cheese",
-	recipe = "nativevillages:bucket_milk",
+	output = "lualore:cheese",
+	recipe = "lualore:bucket_milk",
 	cooktime = 5,
-	replacements = {{ "nativevillages:bucket_milk", "bucket:bucket_empty"}}
+	replacements = {{ "lualore:bucket_milk", "bucket:bucket_empty"}}
 })
 
 -- cheese block
-minetest.register_node(":nativevillages:cheeseblock", {
+minetest.register_node(":lualore:cheeseblock", {
 	description = S("Mozzarella Cheese Block"),
-	tiles = {"nativevillages_cheeseblock.png"},
+	tiles = {"lualore_cheeseblock.png"},
 	is_ground_content = false,
 	groups = {crumbly = 3},
 	sounds = default.node_sound_dirt_defaults()
 })
 
 minetest.register_craft({
-	output = "nativevillages:cheeseblock",
+	output = "lualore:cheeseblock",
 	recipe = {
-		{"nativevillages:cheese", "nativevillages:cheese", "nativevillages:cheese"},
-		{"nativevillages:cheese", "nativevillages:cheese", "nativevillages:cheese"},
-		{"nativevillages:cheese", "nativevillages:cheese", "nativevillages:cheese"},
+		{"lualore:cheese", "lualore:cheese", "lualore:cheese"},
+		{"lualore:cheese", "lualore:cheese", "lualore:cheese"},
+		{"lualore:cheese", "lualore:cheese", "lualore:cheese"},
 	}
 })
 
 minetest.register_craft({
-	output = "nativevillages:cheese 9",
+	output = "lualore:cheese 9",
 	recipe = {
-		{"nativevillages:cheeseblock"},
+		{"lualore:cheeseblock"},
 	}
 })
 
-mobs:register_mob("nativevillages:desertchickentame", {
+mobs:register_mob("lualore:desertchickentame", {
 stepheight = 1,
 	type = "animal",
 	passive = true,
@@ -550,16 +550,16 @@ stepheight = 1,
 	},
 	makes_footstep_sound = true,
 	sounds = {
-		random = "nativevillages_chicken",
-		damage = "nativevillages_chicken2",
-		death = "nativevillages_chicken3",
+		random = "lualore_chicken",
+		damage = "lualore_chicken2",
+		death = "lualore_chicken3",
 	},
 	walk_velocity = 0.5,
 	run_velocity = 3,
 	runaway = true,
         runaway_from = {"animalworld:bear", "animalworld:crocodile", "animalworld:tiger", "animalworld:spider", "animalworld:spidermale", "animalworld:shark", "animalworld:hyena", "animalworld:kobra", "animalworld:monitor", "animalworld:snowleopard", "animalworld:volverine", "livingfloatlands:deinotherium", "livingfloatlands:carnotaurus", "livingfloatlands:lycaenops", "livingfloatlands:smilodon", "livingfloatlands:tyrannosaurus", "livingfloatlands:velociraptor", "animalworld:divingbeetle", "animalworld:scorpion"},
 	drops = {
-		{name = "nativevillages:chicken_raw", chance = 1, min = 1, max = 1},
+		{name = "lualore:chicken_raw", chance = 1, min = 1, max = 1},
 	},
         stay_near = {{"people:feeder", "marinara:reed_bundle", "naturalbiomes:reed_bundle", "farming:straw"}, 5},
 	water_damage = 1,
@@ -632,11 +632,11 @@ stepheight = 1,
 })
 
 
-mobs:register_egg("nativevillages:desertchickentame", S("Domesticated Desert Chicken"), "adesertchicken.png", 0)
+mobs:register_egg("lualore:desertchickentame", S("Domesticated Desert Chicken"), "adesertchicken.png", 0)
 
 local S = mobs.intllib
 
-mobs:register_mob("nativevillages:maleliontame", {
+mobs:register_mob("lualore:maleliontame", {
 	type = "npc",
 	passive = false,
 	attack_type = "dogfight",
@@ -658,10 +658,10 @@ mobs:register_mob("nativevillages:maleliontame", {
 	},
 	makes_footstep_sound = true,
 	sounds = {
-		attack = "nativevillages_lion2",
-		random = "nativevillages_lion",
-		damage = "nativevillages_lion4",
-		death = "nativevillages_lion3",
+		attack = "lualore_lion2",
+		random = "lualore_lion",
+		damage = "lualore_lion4",
+		death = "lualore_lion3",
 		distance = 10,
 	},
 	walk_velocity = 2,
@@ -669,7 +669,7 @@ mobs:register_mob("nativevillages:maleliontame", {
 	jump = true,
         stepheight = 2,
         fear_height = 3,
-        stay_near = {{"nativevillages:savannacorpse", "mobs:meatblock"}, 5},
+        stay_near = {{"lualore:savannacorpse", "mobs:meatblock"}, 5},
 	drops = {		
 	},
 	water_damage = 0,
@@ -677,7 +677,7 @@ mobs:register_mob("nativevillages:maleliontame", {
 	light_damage = 0,
 follow = {
 		"ethereal:fish_raw", "animalworld:rawfish", "mobs_fish:tropical",
-		"mobs:meat_raw", "animalworld:rabbit_raw", "animalworld:pork_raw", "water_life:meat_raw", "animalworld:chicken_raw", "nativevillages:chicken_raw", "mobs:meatblock_raw", "animalworld:chicken_raw", "livingfloatlands:ornithischiaraw", "livingfloatlands:largemammalraw", "livingfloatlands:theropodraw", "livingfloatlands:sauropodraw", "animalworld:raw_athropod", "animalworld:whalemeat_raw", "animalworld:rabbit_raw", "nativevillages:chicken_raw", "mobs:meat_raw", "animalworld:pork_raw", "people:mutton:raw"
+		"mobs:meat_raw", "animalworld:rabbit_raw", "animalworld:pork_raw", "water_life:meat_raw", "animalworld:chicken_raw", "lualore:chicken_raw", "mobs:meatblock_raw", "animalworld:chicken_raw", "livingfloatlands:ornithischiaraw", "livingfloatlands:largemammalraw", "livingfloatlands:theropodraw", "livingfloatlands:sauropodraw", "animalworld:raw_athropod", "animalworld:whalemeat_raw", "animalworld:rabbit_raw", "lualore:chicken_raw", "mobs:meat_raw", "animalworld:pork_raw", "people:mutton:raw"
 	},
 	view_range = 15,
 	owner = "",
@@ -716,7 +716,7 @@ speed_normal = 75,
 		if success then
 			return result
 		else
-			minetest.log("warning", "[nativevillages] Serialization error: " .. tostring(result))
+			minetest.log("warning", "[lualore] Serialization error: " .. tostring(result))
 			return ""
 		end
 	end,
@@ -764,11 +764,11 @@ speed_normal = 75,
 })
 
 
-mobs:register_egg("nativevillages:maleliontame", S("Tamed Male Lion"), "amalelion.png" )
+mobs:register_egg("lualore:maleliontame", S("Tamed Male Lion"), "amalelion.png" )
 
 local S = mobs.intllib
 
-mobs:register_mob("nativevillages:femaleliontame", {
+mobs:register_mob("lualore:femaleliontame", {
 	type = "npc",
 	passive = false,
 	attack_type = "dogfight",
@@ -790,10 +790,10 @@ mobs:register_mob("nativevillages:femaleliontame", {
 	},
 	makes_footstep_sound = true,
 	sounds = {
-		attack = "nativevillages_lion2",
-		random = "nativevillages_lion",
-		damage = "nativevillages_lion4",
-		death = "nativevillages_lion3",
+		attack = "lualore_lion2",
+		random = "lualore_lion",
+		damage = "lualore_lion4",
+		death = "lualore_lion3",
 		distance = 10,
 	},
 	walk_velocity = 2,
@@ -801,7 +801,7 @@ mobs:register_mob("nativevillages:femaleliontame", {
 	jump = true,
 	drops = {		
 	},
-        stay_near = {{"nativevillages:savannacorpse", "mobs:meatblock"}, 5},
+        stay_near = {{"lualore:savannacorpse", "mobs:meatblock"}, 5},
 	water_damage = 0,
 	lava_damage = 2,
 	light_damage = 0,
@@ -809,7 +809,7 @@ mobs:register_mob("nativevillages:femaleliontame", {
         fear_height = 3,
 follow = {
 		"ethereal:fish_raw", "animalworld:rawfish", "mobs_fish:tropical",
-		"mobs:meat_raw", "animalworld:rabbit_raw", "animalworld:pork_raw", "water_life:meat_raw", "animalworld:chicken_raw", "nativevillages:chicken_raw", "mobs:meatblock_raw", "animalworld:chicken_raw", "livingfloatlands:ornithischiaraw", "livingfloatlands:largemammalraw", "livingfloatlands:theropodraw", "livingfloatlands:sauropodraw", "animalworld:raw_athropod", "animalworld:whalemeat_raw", "animalworld:rabbit_raw", "nativevillages:chicken_raw", "mobs:meat_raw", "animalworld:pork_raw", "people:mutton:raw"
+		"mobs:meat_raw", "animalworld:rabbit_raw", "animalworld:pork_raw", "water_life:meat_raw", "animalworld:chicken_raw", "lualore:chicken_raw", "mobs:meatblock_raw", "animalworld:chicken_raw", "livingfloatlands:ornithischiaraw", "livingfloatlands:largemammalraw", "livingfloatlands:theropodraw", "livingfloatlands:sauropodraw", "animalworld:raw_athropod", "animalworld:whalemeat_raw", "animalworld:rabbit_raw", "lualore:chicken_raw", "mobs:meat_raw", "animalworld:pork_raw", "people:mutton:raw"
 	},
 	view_range = 15,
 	owner = "",
@@ -884,9 +884,9 @@ speed_normal = 75,
 })
 
 
-mobs:register_egg("nativevillages:femaleliontame", S("Tamed Female Lion"), "afemalelion.png" )
+mobs:register_egg("lualore:femaleliontame", S("Tamed Female Lion"), "afemalelion.png" )
 
-mobs:register_mob("nativevillages:grasslandcat", {
+mobs:register_mob("lualore:grasslandcat", {
 	stay_near = {"singleplayer", 10},
 	type = "animal",
 	visual = "mesh",
@@ -955,14 +955,14 @@ mobs:register_mob("nativevillages:grasslandcat", {
 	water_damage = 1,
 	makes_footstep_sound = true,
 	sounds = {
-		attack = "nativevillages_cat",
-		random = "nativevillages_cat2",
-		damage = "nativevillages_cat3",
-		death = "nativevillages_cat4",
+		attack = "lualore_cat",
+		random = "lualore_cat2",
+		damage = "lualore_cat3",
+		death = "lualore_cat4",
 		distance = 10,
 	},
 	follow = {"ethereal:fish_raw", "animalworld:rawfish", "mobs_fish:tropical",
-		"mobs:meat_raw", "animalworld:rabbit_raw", "xocean:fish_edible", "fishing:fish_raw", "water_life:meat_raw", "fishing:carp_raw", "animalworld:chicken_raw", "nativevillages:chicken_raw", "nativevillages:chicken_cooked", "nativevillages:catfish_raw", "nativevillages:catfish_cooked", "fishing:fish_cooked", "marinaramobs:cooked_exotic_fish", "animalworld:cookedfish", "marinara:mussels", "nativevillages:catfish_cooked", "fishing:pike_cooked", "animalworld:cooked_athropod", "livingfloatlands:theropodcooked", "mobs:meatblock", "animalworld:whelaemeat_cooked", "animalworld:rat_cooked", "mobs:meat", "animalworld:chicken_cooked", "livingfloatlands:sauropodcooked", "livingfloatlands:ornithischiacooked", "nativevillages:driedhumanmeat", "livingfloatlands:largemammalcooked", "pie:meat"},
+		"mobs:meat_raw", "animalworld:rabbit_raw", "xocean:fish_edible", "fishing:fish_raw", "water_life:meat_raw", "fishing:carp_raw", "animalworld:chicken_raw", "lualore:chicken_raw", "lualore:chicken_cooked", "lualore:catfish_raw", "lualore:catfish_cooked", "fishing:fish_cooked", "marinaramobs:cooked_exotic_fish", "animalworld:cookedfish", "marinara:mussels", "lualore:catfish_cooked", "fishing:pike_cooked", "animalworld:cooked_athropod", "livingfloatlands:theropodcooked", "mobs:meatblock", "animalworld:whelaemeat_cooked", "animalworld:rat_cooked", "mobs:meat", "animalworld:chicken_cooked", "livingfloatlands:sauropodcooked", "livingfloatlands:ornithischiacooked", "lualore:driedhumanmeat", "livingfloatlands:largemammalcooked", "pie:meat"},
 	get_staticdata = function(self)
 		local success, result = pcall(function()
 			if self.state == "die" or self.dead then
@@ -979,7 +979,7 @@ mobs:register_mob("nativevillages:grasslandcat", {
 		if success then
 			return result
 		else
-			minetest.log("warning", "[nativevillages] Serialization error: " .. tostring(result))
+			minetest.log("warning", "[lualore] Serialization error: " .. tostring(result))
 			return ""
 		end
 	end,
@@ -1018,5 +1018,6 @@ mobs:register_mob("nativevillages:grasslandcat", {
 	end
 })
 
-mobs:register_egg("nativevillages:grasslandcat", S"Cat", "agrasslandcat.png")
+mobs:register_egg("lualore:grasslandcat", S"Cat", "agrasslandcat.png")
+
 
