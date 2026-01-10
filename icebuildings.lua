@@ -14,15 +14,15 @@ local function register_ice_building(params)
         name = "nativevillages:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:snowblock", "default:ice"},
-        sidelen = 40,                       -- consistent with desert/grassland
+        sidelen = 34,                       -- consistent with desert/grassland
         noise_params = village_noise,
         biomes = {"icesheet", "icesheet_ocean"},  -- also allows coastal ice villages
-        y_min = -2,
+        y_min = -1,
         y_max = 40,
 
         -- THE THREE MAGIC LINES (identical to every other biome)
-        place_offset_y = 0,
-        flags = "place_center_x, place_center_z, force_placement, all_floors",
+        place_offset_y = -6,
+        flags = "place_center_x, place_center_z",
         height = 0,
         height_max = 0,
 
@@ -39,14 +39,14 @@ local function register_ice_central(params)
         name = "nativevillages:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:snowblock", "default:ice"},
-        sidelen = 48,                       -- slightly larger grid for rare buildings
+        sidelen = 42,                       -- slightly larger grid for rare buildings
         noise_params = central_noise,
         biomes = {"icesheet", "icesheet_ocean"},
-        y_min = -2,
+        y_min = -1,
         y_max = 40,
 
-        place_offset_y = 0,
-        flags = "place_center_x, place_center_z, force_placement, all_floors",
+        place_offset_y = -6,
+        flags = "place_center_x, place_center_z",
         height = 0,
         height_max = 0,
 
@@ -69,5 +69,11 @@ register_ice_building({name = "icehouse4", file = "icehouse4.mts"})
 register_ice_central({name = "icechurch",  file = "icechurch.mts"})
 register_ice_central({name = "icemarket",  file = "icemarket.mts"})
 register_ice_central({name = "icestable",  file = "icestable.mts"})
+
+
+
+
+
+
 
 

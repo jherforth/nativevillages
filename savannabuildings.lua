@@ -12,14 +12,14 @@ local function register_savanna_building(params)
     minetest.register_decoration({
         name = "nativevillages:" .. params.name,
         deco_type = "schematic",
-        place_on = {"default:dry_dirt_with_dry_grass"},
-        sidelen = 40,                          -- consistent with all other biomes
+        place_on = {"default:dry_dirt_with_dry_grass","naturalbiomes:outback_litter"},
+        sidelen = 50,                          -- consistent with all other biomes
         noise_params = village_noise,
-        biomes = {"savanna"},
+        biomes = {"savanna","prarie","naturalbiomes:outback"},
         y_min = 1,
-        y_max = 140,                           -- savannas can climb high!
+        y_max = 2040,                           -- savannas can climb high!
 
-        place_offset_y = 0,
+        place_offset_y = -6,
         flags = "place_center_x, place_center_z, force_placement, all_floors",
         height = 0,
         height_max = 0,
@@ -36,14 +36,14 @@ local function register_savanna_central(params)
     minetest.register_decoration({
         name = "nativevillages:" .. params.name,
         deco_type = "schematic",
-        place_on = {"default:dry_dirt_with_dry_grass"},
-        sidelen = 48,                          -- rare, proud structures
+        place_on = {"default:dry_dirt_with_dry_grass","naturalbiomes:outback_litter"},
+        sidelen = 58,                          -- rare, proud structures
         noise_params = central_noise,
-        biomes = {"savanna"},
+        biomes = {"savanna","prarie","naturalbiomes:outback"},
         y_min = 1,
-        y_max = 140,
+        y_max = 2040,
 
-        place_offset_y = 0,
+        place_offset_y = -6,
         flags = "place_center_x, place_center_z, force_placement, all_floors",
         height = 0,
         height_max = 0,
@@ -67,5 +67,6 @@ register_savanna_building({name = "savannahouse4", file = "savannahouse4.mts"})
 register_savanna_central({name = "savannachurch", file = "savannachurch.mts"})
 register_savanna_central({name = "savannamarket", file = "savannamarket.mts"})
 register_savanna_central({name = "savannastable", file = "savannastable.mts"})
+
 
 

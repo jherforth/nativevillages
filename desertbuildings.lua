@@ -13,14 +13,14 @@ local function register_desert_building(params)
     minetest.register_decoration({
         name = "nativevillages:" .. params.name,
         deco_type = "schematic",
-        place_on = {"default:desert_sand"},
-        sidelen = 40,
+        place_on = {"default:desert_sand","default:sand"},
+        sidelen = 50,
         noise_params = village_noise,
-        biomes = {"desert"},
+        biomes = {"desert","mesa","everness:forsaken_desert"},
         y_min = 1,
-        y_max = 50,
+        y_max = 2050,
 
-        place_offset_y = 0,
+        place_offset_y = -6,
         flags = "place_center_x, place_center_z, force_placement, all_floors",
         height = 0,
         height_max = 0,
@@ -38,14 +38,14 @@ local function register_desert_central(params)
     minetest.register_decoration({
         name = "nativevillages:" .. params.name,
         deco_type = "schematic",
-        place_on = {"default:desert_sand"},
-        sidelen = 48,                          -- bigger grid for rare buildings
+        place_on = {"default:desert_sand","default:sand"},
+        sidelen = 58,                          -- bigger grid for rare buildings
         noise_params = central_noise,
-        biomes = {"desert"},
+        biomes = {"desert","mesa","everness:forsaken_desert"},
         y_min = 0,
-        y_max = 50,
+        y_max = 2050,
 
-        place_offset_y = 0,
+        place_offset_y = -6,
         flags = "place_center_x, place_center_z, force_placement, all_floors",
         height = 0,
         height_max = 0,
@@ -67,5 +67,6 @@ register_desert_building({name = "deserthouse4", file = "deserthouse4.mts"})
 register_desert_central({name = "desertchurch",  file = "desertchurch.mts"})
 register_desert_central({name = "desertmarket",  file = "desertmarket.mts"})
 register_desert_central({name = "desertstable",  file = "desertstable.mts"})
+
 
 

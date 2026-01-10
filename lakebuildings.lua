@@ -13,7 +13,7 @@ local function register_lake_building(params)
         name = "nativevillages:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:dirt", "default:sand", "default:clay"},
-        sidelen = 48,                            -- lake shores are narrow → give more space to find flat spots
+        sidelen = 58,                            -- lake shores are narrow → give more space to find flat spots
         noise_params = village_noise,
         biomes = {
             "deciduous_forest_shore",
@@ -40,7 +40,7 @@ local function register_lake_central(params)
         name = "nativevillages:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:dirt", "default:sand", "default:clay"},
-        sidelen = 64,                            -- ultra-rare water temples
+        sidelen = 74,                            -- ultra-rare water temples
         noise_params = central_noise,
         biomes = {
             "deciduous_forest_shore",
@@ -73,6 +73,5 @@ register_lake_building({name = "lakehouse4", file = "lakehouse4.mts"})
 register_lake_central({name = "lakechurch", file = "lakechurch.mts"})
 register_lake_central({name = "lakemarket", file = "lakemarket.mts"})
 register_lake_central({name = "lakestable", file = "lakestable.mts"})
-
 
 

@@ -15,13 +15,13 @@ local function register_grassland_building(params)
         name = "nativevillages:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:dirt_with_grass", "default:dirt_with_coniferous_litter"},
-        sidelen = 40,
+        sidelen = 50,
         noise_params = village_noise,
         biomes = {"grassland"},
         y_min = 1,
-        y_max = 110,
+        y_max = 2010,
 
-        place_offset_y = 0,
+        place_offset_y = -6,
         flags = "place_center_x, place_center_z, force_placement, all_floors",
 
         -- Check height across ENTIRE schematic footprint (not just center)
@@ -41,13 +41,13 @@ local function register_grassland_central(params)
         name = "nativevillages:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:dirt_with_grass", "default:dirt_with_coniferous_litter"},
-        sidelen = 48,
+        sidelen = 58,
         noise_params = central_noise,
         biomes = {"grassland"},
         y_min = 1,
-        y_max = 110,
+        y_max = 2010,
 
-        place_offset_y = 0,
+        place_offset_y = -6,
         flags = "place_center_x, place_center_z, force_placement, all_floors",
 
         -- Check height across ENTIRE schematic footprint (not just center)
@@ -73,5 +73,8 @@ register_grassland_building({name = "grasslandhouse4", file = "grasslandhouse4.m
 register_grassland_central({name = "grasslandchurch",   file = "grasslandchurch.mts"})
 register_grassland_central({name = "grasslandmarket",   file = "grasslandmarket.mts"})
 register_grassland_central({name = "grasslandstable",   file = "grasslandstable.mts"})
+
+
+
 
 
