@@ -1,17 +1,17 @@
-local S = minetest.get_translator("nativevillages")
+local S = minetest.get_translator("lualore")
 
 -- Load utils once (init.lua already does this — you can delete this line if you want)
--- dofile(minetest.get_modpath("nativevillages") .. "/utils.lua")
+-- dofile(minetest.get_modpath("lualore") .. "/utils.lua")
 
-local village_noise = nativevillages.global_village_noise
-local central_noise = nativevillages.global_central_noise
+local village_noise = lualore.global_village_noise
+local central_noise = lualore.global_central_noise
 
 -- ===================================================================
 -- Normal houses
 -- ===================================================================
 local function register_desert_building(params)
     minetest.register_decoration({
-        name = "nativevillages:" .. params.name,
+        name = "lualore:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:desert_sand","default:sand"},
         sidelen = 50,
@@ -25,7 +25,7 @@ local function register_desert_building(params)
         height = 0,
         height_max = 0,
 
-        schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
+        schematic = minetest.get_modpath("lualore") .. "/schematics/" .. params.file,
         rotation = "random",
 
     })
@@ -36,7 +36,7 @@ end
 -- ===================================================================
 local function register_desert_central(params)
     minetest.register_decoration({
-        name = "nativevillages:" .. params.name,
+        name = "lualore:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:desert_sand","default:sand"},
         sidelen = 58,                          -- bigger grid for rare buildings
@@ -50,7 +50,7 @@ local function register_desert_central(params)
         height = 0,
         height_max = 0,
 
-        schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
+        schematic = minetest.get_modpath("lualore") .. "/schematics/" .. params.file,
         rotation = "random",
     })
 end
@@ -67,6 +67,7 @@ register_desert_building({name = "deserthouse4", file = "deserthouse4.mts"})
 register_desert_central({name = "desertchurch",  file = "desertchurch.mts"})
 register_desert_central({name = "desertmarket",  file = "desertmarket.mts"})
 register_desert_central({name = "desertstable",  file = "desertstable.mts"})
+
 
 
 
