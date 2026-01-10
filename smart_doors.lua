@@ -1,7 +1,7 @@
 -- smart_doors.lua
 -- Makes doors automatically open for NPCs
 
-nativevillages.smart_doors = {}
+lualore.smart_doors = {}
 
 -- Configuration
 local DOOR_CHECK_INTERVAL = 0.3  -- Check for NPCs every 0.3 seconds
@@ -41,8 +41,8 @@ local function has_nearby_npcs(pos, radius)
 	for _, obj in ipairs(objects) do
 		if obj and obj:get_luaentity() then
 			local entity = obj:get_luaentity()
-			-- Check if it's a villager or monster (has the nativevillages marker)
-			if entity.name and entity.name:match("^nativevillages:") then
+			-- Check if it's a villager or monster (has the lualore marker)
+			if entity.name and entity.name:match("^lualore:") then
 				-- Open for all NPC types including monsters
 				return true
 			end
@@ -168,7 +168,7 @@ minetest.register_abm({
 -- Also register on all door node names specifically
 minetest.register_lbm({
 	label = "Start door timers on load",
-	name = "nativevillages:start_door_timers",
+	name = "lualore:start_door_timers",
 	nodenames = {"group:door"},
 	run_at_every_load = true,
 	action = function(pos, node)
@@ -195,7 +195,7 @@ minetest.register_on_mods_loaded(function()
 		end
 	end
 
-	minetest.log("action", "[nativevillages] Smart doors initialized")
+	minetest.log("action", "[lualore] Smart doors initialized")
 end)
 
-minetest.log("action", "[nativevillages] Smart doors system loaded")
+minetest.log("action", "[lualore] Smart doors system loaded")
