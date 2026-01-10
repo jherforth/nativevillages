@@ -1,6 +1,6 @@
-local S = minetest.get_translator("nativevillages")
+local S = minetest.get_translator("lualore")
 
-minetest.register_node("nativevillages:savannathrone", {
+minetest.register_node("lualore:savannathrone", {
     description = S"Savanna Throne",
     visual_scale = 1,
     mesh = "Savannathrone.b3d",
@@ -31,10 +31,10 @@ minetest.register_node("nativevillages:savannathrone", {
 minetest.register_craft({
 	type = "cooking",
 	output = "default:bronzeblock",
-	recipe = "nativevillages:savannathrone",
+	recipe = "lualore:savannathrone",
 })
 
-minetest.register_node("nativevillages:savannavessels", {
+minetest.register_node("lualore:savannavessels", {
     description = S"Savanna Vessels",
     visual_scale = 1,
     mesh = "Savannavessels.b3d",
@@ -64,10 +64,10 @@ minetest.register_node("nativevillages:savannavessels", {
 minetest.register_craft({
 	type = "cooking",
 	output = "default:bronzeblock",
-	recipe = "nativevillages:savannavessels",
+	recipe = "lualore:savannavessels",
 })
 
-minetest.register_node("nativevillages:savannavshrine", {
+minetest.register_node("lualore:savannavshrine", {
     description = S"Savanna Shrine",
     visual_scale = 1,
     mesh = "Savannashrine.b3d",
@@ -98,10 +98,10 @@ minetest.register_node("nativevillages:savannavshrine", {
 minetest.register_craft({
 	type = "cooking",
 	output = "default:bronzeblock",
-	recipe = "nativevillages:savannashrine",
+	recipe = "lualore:savannashrine",
 })
 
-minetest.register_node("nativevillages:savannacorpse", {
+minetest.register_node("lualore:savannacorpse", {
     description = S"Savanna Corpse",
     visual_scale = 1,
     mesh = "Savannacorpse.b3d",
@@ -132,5 +132,6 @@ minetest.register_node("nativevillages:savannacorpse", {
 minetest.register_craft({
 	type = "cooking",
 	output = "mobs:meat",
-	recipe = "nativevillages:savannacorpse",
+	recipe = "lualore:savannacorpse",
+
 })
