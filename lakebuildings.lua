@@ -1,16 +1,16 @@
-local S = minetest.get_translator("nativevillages")
+local S = minetest.get_translator("lualore")
 
 -- utils.lua loaded only in init.lua → clean
 
-local village_noise = nativevillages.global_village_noise
-local central_noise = nativevillages.global_central_noise
+local village_noise = lualore.global_village_noise
+local central_noise = lualore.global_central_noise
 
 -- ===================================================================
 -- Regular lake stilt houses
 -- ===================================================================
 local function register_lake_building(params)
     minetest.register_decoration({
-        name = "nativevillages:" .. params.name,
+        name = "lualore:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:dirt", "default:sand", "default:clay"},
         sidelen = 58,                            -- lake shores are narrow → give more space to find flat spots
@@ -27,7 +27,7 @@ local function register_lake_building(params)
         height = 0,
         height_max = 0,
 
-        schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
+        schematic = minetest.get_modpath("lualore") .. "/schematics/" .. params.file,
         rotation = "random",
     })
 end
@@ -37,7 +37,7 @@ end
 -- ===================================================================
 local function register_lake_central(params)
     minetest.register_decoration({
-        name = "nativevillages:" .. params.name,
+        name = "lualore:" .. params.name,
         deco_type = "schematic",
         place_on = {"default:dirt", "default:sand", "default:clay"},
         sidelen = 74,                            -- ultra-rare water temples
@@ -54,7 +54,7 @@ local function register_lake_central(params)
         height = 0,
         height_max = 0,
 
-        schematic = minetest.get_modpath("nativevillages") .. "/schematics/" .. params.file,
+        schematic = minetest.get_modpath("lualore") .. "/schematics/" .. params.file,
         rotation = "random",
     })
 end
@@ -73,5 +73,6 @@ register_lake_building({name = "lakehouse4", file = "lakehouse4.mts"})
 register_lake_central({name = "lakechurch", file = "lakechurch.mts"})
 register_lake_central({name = "lakemarket", file = "lakemarket.mts"})
 register_lake_central({name = "lakestable", file = "lakestable.mts"})
+
 
 
